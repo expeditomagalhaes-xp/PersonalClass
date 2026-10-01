@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Controle de Aulas</title>
+<meta name="theme-color" content="#0e7a8a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Aulas">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#eef2f4;--card:#fff;--ink:#14212b;--mut:#5d6d78;--line:#d5dde2;--ac:#0e7a8a;--acs:#d9eff2;--bad:#b4402f;--ok:#2e7d4f;--okb:#dff1e6;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f171d;--card:#17222a;--ink:#e8eef1;--mut:#9aabb5;--line:#2b3a44;--ac:#4cc3d3;--acs:#16363c;--bad:#e8806f;--ok:#6fcf97;--okb:#173325}}
+:root[data-theme="dark"]{--bg:#0f171d;--card:#17222a;--ink:#e8eef1;--mut:#9aabb5;--line:#2b3a44;--ac:#4cc3d3;--acs:#16363c;--bad:#e8806f;--ok:#6fcf97;--okb:#173325}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:640px;margin:0 auto;padding:12px 14px 170px}
+h2{font-size:20px;margin:0 0 8px}
+input,select,button{font:inherit;color:var(--ink)}
+input,select{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+label{display:block;font-size:14px;color:var(--mut);margin:10px 0 4px}
+.btn{padding:11px 16px;border-radius:10px;border:1px solid var(--ac);background:var(--ac);color:#fff;font-weight:600;cursor:pointer}
+.btn.sec{background:transparent;color:var(--ac)}
+.btn.del{background:transparent;color:var(--bad);border-color:var(--bad)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.row{display:flex;gap:8px;align-items:center}
+.row>*{flex:1}
+.grow{flex:1;min-width:0}
+.date-bar{display:flex;gap:6px}
+.date-bar input{flex:1}
+.ib{width:48px;font-size:22px;border:1px solid var(--line);background:var(--card);border-radius:10px;cursor:pointer}
+.date-bar .btn{flex:none}
+.dname{color:var(--mut);margin:8px 2px 12px;text-transform:capitalize}
+.aula{display:flex;align-items:center;gap:12px;padding:14px;background:var(--okb);border:1px solid var(--ok);border-radius:12px;margin-bottom:8px;cursor:pointer}
+.aula .h{font-weight:700;font-size:18px;width:112px;flex:none}
+.prev{background:var(--acs);border-radius:12px;padding:10px 12px;margin-bottom:12px}
+.prev h3{font-size:16px;margin:2px 0 6px}
+.item{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--line);flex-wrap:wrap}
+.item:first-of-type{border-top:0}
+.prev .btn{padding:9px 14px}
+.mut{color:var(--mut);font-size:14px}
+.empty{color:var(--mut);text-align:center;padding:22px 0}
+.fab{position:fixed;right:18px;bottom:calc(76px + env(safe-area-inset-bottom,0px));width:62px;height:62px;border-radius:50%;border:0;background:var(--ac);color:#fff;font-size:34px;line-height:1;box-shadow:0 4px 14px rgba(0,0,0,.3);cursor:pointer;z-index:6}
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+.tabs button{flex:1;padding:16px 4px;border:0;background:none;font-weight:600;color:var(--mut);cursor:pointer}
+.tabs button.on{color:var(--ac);box-shadow:inset 0 3px 0 var(--ac)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{background:var(--acs);color:var(--ac);border-radius:8px;padding:3px 9px;font-size:14px;font-weight:500}
+.chip button{border:0;background:none;color:inherit;font-size:16px;padding:0 0 0 5px;cursor:pointer}
+.pick{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-weight:600;cursor:pointer}
+.pick.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.pick.busy{opacity:.45;text-decoration:line-through}
+.tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}
+.tgrid .pick{padding:12px 0;text-align:center}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:10px 0 0}
+.seg button{flex:1;padding:9px;border:0;background:var(--card);cursor:pointer;font-weight:600}
+.seg button.on{background:var(--acs);color:var(--ac)}
+.rep{border-top:1px solid var(--line);padding:12px 0}
+.rep:first-of-type{border-top:0}
+.num{font-size:26px;font-weight:700;color:var(--ac)}
+dialog{border:1px solid var(--line);border-radius:14px;padding:16px;width:min(94vw,440px);max-height:92vh;background:var(--card);color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+#toast{position:fixed;left:50%;bottom:calc(150px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+#toast.on{opacity:1}
+.hide{display:none}
+@media print{.tabs,.fab,.noprint{display:none!important}body{background:#fff;color:#000}.wrap{padding:0}.chip{background:none;color:#000;border:1px solid #999}}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+</style>
+</head>
+<body>
+<main class="wrap">
+<section id="v-dia">
+<div class="date-bar"><button class="ib" id="prev" aria-label="Dia anterior">‹</button><input type="date" id="dt"><button class="ib" id="next" aria-label="Próximo dia">›</button><button class="btn sec" id="hoje">Hoje</button></div>
+<div class="dname" id="dname"></div>
+<div id="prevBox"></div>
+<div id="dia"></div>
+</section>
+
+<section id="v-alunos" class="hide">
+<div class="card"><div class="row" style="margin-bottom:6px"><h2 class="grow" style="margin:0">Alunos</h2><button class="btn" id="addAluno" style="flex:none">Novo aluno</button></div><div id="lista"></div></div>
+</section>
+
+<section id="v-rel" class="hide">
+<div class="card"><label for="mes" style="margin-top:0">Mês de referência</label><input type="month" id="mes">
+<div class="row noprint" style="margin-top:10px"><button class="btn" id="copy">Copiar relatório</button><button class="btn sec" id="print">Imprimir / PDF</button></div>
+<div class="mut noprint" id="copied" style="margin-top:6px"></div></div>
+<div class="card" id="relOut"></div>
+<div class="card noprint"><h2>Backup dos dados</h2><div class="mut">Os dados ficam só neste aparelho. Copie um backup de vez em quando e guarde nas suas notas ou mande no WhatsApp para você mesmo.</div>
+<div class="row" style="margin-top:10px"><button class="btn sec" id="bkCopy">Copiar backup</button><button class="btn sec" id="bkRest">Restaurar backup</button></div></div>
+</section>
+</main>
+
+<button class="fab" id="fab" aria-label="Registrar aula">+</button>
+<nav class="tabs"><button data-t="dia" class="on">Aulas</button><button data-t="alunos">Alunos</button><button data-t="rel">Relatório</button></nav>
+<div id="toast"></div>
+
+<dialog id="dlg">
+<h2 id="dtitle">Registrar aula</h2>
+<label style="margin-top:0">Aluno</label><div class="chips" id="dAl"></div>
+<div class="row"><div><label for="dD">Data</label><input type="date" id="dD"></div><div><label for="dH">Início</label><input type="time" id="dH"></div></div>
+<div class="seg" id="seg"><button data-o="0">Hora cheia</button><button data-o="30">Meia hora</button></div>
+<div class="tgrid" id="tg"></div>
+<div class="mut" id="dFim" style="margin-top:8px"></div>
+<div class="row" style="margin-top:12px"><button class="btn" id="dSave">Salvar</button><button class="btn del hide" id="dDel">Excluir</button><button class="btn sec" id="dCancel">Fechar</button></div>
+</dialog>
+
+<dialog id="dlA">
+<h2 id="aTitle">Aluno</h2>
+<label for="an" style="margin-top:0">Nome</label><input id="an" placeholder="Nome">
+<label for="at">Telefone (opcional)</label><input id="at" inputmode="tel">
+<label for="ao">Observações (opcional)</label><input id="ao">
+<label>Horários fixos na semana</label>
+<div class="row"><select id="pd"><option value="0">Domingo</option><option value="1">Segunda</option><option value="2">Terça</option><option value="3">Quarta</option><option value="4">Quinta</option><option value="5">Sexta</option><option value="6">Sábado</option></select><input type="time" id="ph"><button class="btn sec" id="pAdd" style="flex:none">Adicionar</button></div>
+<div class="chips" id="pList"></div>
+<div class="row" style="margin-top:14px"><button class="btn" id="aSave">Salvar</button><button class="btn del hide" id="aDel">Excluir</button><button class="btn sec" id="aClose">Fechar</button></div>
+</dialog>
+
+<script>
+(function(){
+const KEY='agenda_personal_v1',DN=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+let db={alunos:[],aulas:[],skips:[],cfg:{off:0,last:''}},cur='',editing=null,isNew=true,selA='',editA=null,tmpPre=[];
+const $=i=>document.getElementById(i);
+function load(){try{const r=localStorage.getItem(KEY);if(r)db=Object.assign(db,JSON.parse(r))}catch(e){}db.skips=db.skips||[];db.cfg=db.cfg||{off:0,last:''}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const parse=s=>{const p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2])};
+const mins=h=>{const p=h.split(':');return +p[0]*60+ +p[1]};
+const hh=m=>String(Math.floor(m/60)%24).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+const fim=h=>hh(mins(h)+60);
+const fmtD=s=>{const p=s.split('-');return p[2]+'/'+p[1]};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nome=id=>{const a=db.alunos.find(x=>x.id===id);return a?a.nome:'(aluno removido)'};
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1800)}
+function copy(t,ok,fail){const fb=()=>{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok()}catch(e){fail()}ta.remove()};
+if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,fb);else fb()}
+
+// abas
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
+document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));
+['dia','alunos','rel'].forEach(t=>$('v-'+t).classList.toggle('hide',t!==b.dataset.t));
+$('fab').classList.toggle('hide',b.dataset.t!=='dia');
+if(b.dataset.t==='rel')renderRel();if(b.dataset.t==='alunos')renderAlunos();if(b.dataset.t==='dia')renderDia()});
+
+// previstas (horários fixos)
+function previstas(d){const w=parse(d).getDay(),out=[];
+db.alunos.forEach(a=>(a.pre||[]).forEach(p=>{if(p.d!==w)return;
+const feita=db.aulas.some(x=>x.alunoId===a.id&&x.data===d&&mins(x.hora)===mins(p.h));
+const pulou=db.skips.some(k=>k.alunoId===a.id&&k.data===d&&k.hora===p.h);
+if(!feita&&!pulou)out.push({a,h:p.h,d})}));
+return out.sort((x,y)=>x.h.localeCompare(y.h))}
+const confirmar=v=>db.aulas.push({id:uid(),alunoId:v.a.id,data:v.d,hora:v.h});
+function bloco(box,tit,list){
+if(!list.length)return;const w=document.createElement('div');w.className='prev';w.innerHTML='<h3>'+tit+'</h3>';
+list.forEach(v=>{const it=document.createElement('div');it.className='item';
+it.innerHTML='<div class="grow"><b>'+esc(v.a.nome)+'</b><div class="mut">'+DN[parse(v.d).getDay()]+' '+fmtD(v.d)+' · '+v.h+'–'+fim(v.h)+'</div></div>';
+const c=document.createElement('button');c.className='btn';c.textContent='✓ Confirmar';
+c.onclick=()=>{confirmar(v);save();toast('Registrado: '+v.a.nome+' '+v.h);renderDia()};
+const n=document.createElement('button');n.className='btn sec';n.textContent='Não teve';
+n.onclick=()=>{db.skips.push({alunoId:v.a.id,data:v.d,hora:v.h});save();renderDia()};
+it.appendChild(c);it.appendChild(n);w.appendChild(it)});
+if(list.length>1){const t=document.createElement('button');t.className='btn';t.style.cssText='width:100%;margin-top:6px';t.textContent='✓ Confirmar todas ('+list.length+')';
+t.onclick=()=>{list.forEach(confirmar);save();toast(list.length+' aulas registradas');renderDia()};w.appendChild(t)}
+box.appendChild(w)}
+
+// dia
+function renderDia(){
+if(!cur)return;
+const dia=db.aulas.filter(a=>a.data===cur).sort((a,b)=>a.hora.localeCompare(b.hora));
+$('dname').textContent=parse(cur).toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})+(dia.length?' · '+dia.length+' aula'+(dia.length>1?'s':''):'');
+const box=$('prevBox');box.innerHTML='';
+bloco(box,'Previstas para este dia',previstas(cur));
+let pend=[];for(let i=1;i<=14;i++){const x=new Date();x.setDate(x.getDate()-i);const k=iso(x);if(k!==cur)pend=pend.concat(previstas(k))}
+bloco(box,'Pendentes dos últimos 14 dias',pend);
+const L=$('dia');L.innerHTML='';
+if(!dia.length){L.innerHTML='<div class="empty">Nenhuma aula registrada neste dia.<br>Toque no + para registrar.</div>';return}
+dia.forEach(a=>{const e=document.createElement('div');e.className='aula';e.tabIndex=0;
+e.innerHTML='<span class="h">'+a.hora+'–'+fim(a.hora)+'</span><b class="grow">'+esc(nome(a.alunoId))+'</b><span class="mut">editar</span>';
+e.onclick=()=>openDlg(a);L.appendChild(e)})}
+function setDate(d){cur=d;$('dt').value=d;renderDia()}
+function shift(n){const d=parse(cur);d.setDate(d.getDate()+n);setDate(iso(d))}
+$('prev').onclick=()=>shift(-1);$('next').onclick=()=>shift(1);$('hoje').onclick=()=>setDate(iso(new Date()));
+$('dt').onchange=()=>{if($('dt').value)setDate($('dt').value)};
+$('fab').onclick=()=>openDlg(null);
+
+// diálogo da aula
+function drawAl(){const b=$('dAl');b.innerHTML='';
+db.alunos.slice().sort((a,b)=>a.nome.localeCompare(b.nome)).forEach(a=>{const e=document.createElement('button');e.className='pick'+(a.id===selA?' on':'');e.textContent=a.nome;e.onclick=()=>{selA=a.id;drawAl()};b.appendChild(e)})}
+function drawTg(){const g=$('tg');g.innerHTML='';const off=db.cfg.off||0;
+$('seg').querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.o===off));
+const d=$('dD').value;
+for(let m=6*60+off;m<=21*60+off;m+=60){const h=hh(m);const e=document.createElement('button');
+const busy=db.aulas.some(x=>x.data===d&&mins(x.hora)===m&&(!editing||x.id!==editing.id));
+e.className='pick'+(h===$('dH').value?' on':'')+(busy?' busy':'');e.textContent=h;
+e.onclick=()=>{$('dH').value=h;if(isNew)doSave();else{drawTg();upFim()}};g.appendChild(e)}}
+function upFim(){$('dFim').textContent=$('dH').value?'Das '+$('dH').value+' às '+fim($('dH').value)+' (1 hora)':''}
+$('seg').querySelectorAll('button').forEach(b=>b.onclick=()=>{db.cfg.off=+b.dataset.o;save();drawTg()});
+$('dD').onchange=drawTg;$('dH').oninput=()=>{drawTg();upFim()};
+function openDlg(a){
+if(!db.alunos.length){alert('Cadastre um aluno primeiro (aba Alunos).');return}
+editing=a;isNew=!a;
+selA=a?a.alunoId:(db.alunos.some(x=>x.id===db.cfg.last)?db.cfg.last:db.alunos[0].id);
+$('dtitle').textContent=a?'Editar aula':'Registrar aula';
+$('dD').value=a?a.data:cur;$('dH').value=a?a.hora:'';
+$('dDel').classList.toggle('hide',!a);$('dSave').classList.toggle('hide',isNew);
+drawAl();drawTg();upFim();$('dlg').showModal()}
+function doSave(){
+const d=$('dD').value,h=$('dH').value;if(!d||!h){alert('Informe data e horário.');return}
+const conf=db.aulas.some(x=>x.data===d&&Math.abs(mins(x.hora)-mins(h))<60&&(!editing||x.id!==editing.id));
+if(conf&&!confirm('Já existe uma aula que coincide com esse horário. Registrar mesmo assim?'))return;
+if(editing){editing.alunoId=selA;editing.data=d;editing.hora=h}else db.aulas.push({id:uid(),alunoId:selA,data:d,hora:h});
+db.cfg.last=selA;save();$('dlg').close();toast((isNew?'Registrado: ':'Salvo: ')+nome(selA)+' '+h);setDate(d)}
+$('dSave').onclick=doSave;$('dCancel').onclick=()=>$('dlg').close();
+$('dDel').onclick=()=>{if(!confirm('Excluir esta aula?'))return;db.aulas=db.aulas.filter(x=>x!==editing);save();$('dlg').close();renderDia()};
+
+// alunos
+function dpre(){const L=$('pList');L.innerHTML='';tmpPre.sort((a,b)=>a.d-b.d||a.h.localeCompare(b.h));
+tmpPre.forEach((p,i)=>{const c=document.createElement('span');c.className='chip';c.textContent=DN[p.d]+' '+p.h;
+const x=document.createElement('button');x.textContent='×';x.setAttribute('aria-label','Remover');x.onclick=()=>{tmpPre.splice(i,1);dpre()};c.appendChild(x);L.appendChild(c)});
+if(!tmpPre.length)L.innerHTML='<span class="mut">Nenhum horário fixo.</span>'}
+function openAl(a){editA=a;$('aTitle').textContent=a?'Editar aluno':'Novo aluno';
+$('an').value=a?a.nome:'';$('at').value=(a&&a.tel)||'';$('ao').value=(a&&a.obs)||'';
+tmpPre=a&&a.pre?a.pre.map(x=>({d:x.d,h:x.h})):[];$('aDel').classList.toggle('hide',!a);dpre();$('dlA').showModal()}
+$('addAluno').onclick=()=>openAl(null);$('aClose').onclick=()=>$('dlA').close();
+$('pAdd').onclick=()=>{const h=$('ph').value,d=+$('pd').value;if(!h){alert('Informe o horário.');return}
+if(!tmpPre.some(p=>p.d===d&&p.h===h))tmpPre.push({d,h});dpre()};
+$('aSave').onclick=()=>{const n=$('an').value.trim();if(!n){alert('Informe o nome do aluno.');return}
+if(editA){editA.nome=n;editA.tel=$('at').value.trim();editA.obs=$('ao').value.trim();editA.pre=tmpPre}
+else db.alunos.push({id:uid(),nome:n,tel:$('at').value.trim(),obs:$('ao').value.trim(),pre:tmpPre});
+save();$('dlA').close();renderAlunos();renderDia()};
+$('aDel').onclick=()=>{const a=editA,n=db.aulas.filter(x=>x.alunoId===a.id).length;
+if(!confirm('Excluir '+a.nome+(n?' e suas '+n+' aula(s)?':'?')))return;
+db.alunos=db.alunos.filter(x=>x!==a);db.aulas=db.aulas.filter(x=>x.alunoId!==a.id);save();$('dlA').close();renderAlunos();renderDia()};
+function renderAlunos(){const L=$('lista');
+if(!db.alunos.length){L.innerHTML='<div class="empty">Nenhum aluno cadastrado ainda.</div>';return}
+L.innerHTML='';
+db.alunos.slice().sort((a,b)=>a.nome.localeCompare(b.nome)).forEach(a=>{const r=document.createElement('div');r.className='item';
+const fx=(a.pre||[]).slice().sort((x,y)=>x.d-y.d||x.h.localeCompare(y.h)).map(p=>DN[p.d]+' '+p.h).join(', ');
+r.innerHTML='<div class="grow"><b>'+esc(a.nome)+'</b><div class="mut">'+esc(fx||'Sem horário fixo')+(a.tel?' • '+esc(a.tel):'')+(a.obs?' • '+esc(a.obs):'')+'</div></div>';
+const e=document.createElement('button');e.className='btn sec';e.textContent='Editar';e.onclick=()=>openAl(a);r.appendChild(e);L.appendChild(r)})}
+
+// relatório
+function dados(){const m=$('mes').value;if(!m)return[];
+return db.alunos.map(a=>({nome:a.nome,aulas:db.aulas.filter(x=>x.alunoId===a.id&&x.data.slice(0,7)===m).sort((x,y)=>(x.data+x.hora).localeCompare(y.data+y.hora))}))
+.filter(r=>r.aulas.length).sort((a,b)=>a.nome.localeCompare(b.nome))}
+function renderRel(){const r=dados(),m=$('mes').value,out=$('relOut');if(!m){out.innerHTML='';return}
+const tit=parse(m+'-01').toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+if(!r.length){out.innerHTML='<div class="empty">Nenhuma aula em '+tit+'.</div>';return}
+const tot=r.reduce((s,x)=>s+x.aulas.length,0);
+out.innerHTML='<h2>Relatório de '+tit+'</h2><div class="mut">Total: '+tot+' aula(s) · '+r.length+' aluno(s)</div>'+
+r.map(x=>'<div class="rep"><div class="row"><b class="grow">'+esc(x.nome)+'</b><span class="num" style="flex:none">'+x.aulas.length+'</span></div><div class="chips">'+
+x.aulas.map(a=>'<span class="chip">'+fmtD(a.data)+' · '+a.hora+'–'+fim(a.hora)+'</span>').join('')+'</div></div>').join('')}
+function texto(){const r=dados(),m=$('mes').value;if(!r.length)return'';
+let t='RELATÓRIO DE AULAS - '+parse(m+'-01').toLocaleDateString('pt-BR',{month:'long',year:'numeric'})+'\n\n';
+r.forEach(x=>{t+=x.nome+': '+x.aulas.length+' aula(s)\n  '+x.aulas.map(a=>fmtD(a.data)+' '+a.hora+'-'+fim(a.hora)).join(', ')+'\n\n'});return t.trim()}
+$('mes').onchange=renderRel;$('print').onclick=()=>window.print();
+$('copy').onclick=()=>{const t=texto();if(!t){$('copied').textContent='Não há aulas neste mês.';return}
+copy(t,()=>$('copied').textContent='Relatório copiado.',()=>$('copied').textContent='Não foi possível copiar.')};
+$('bkCopy').onclick=()=>copy(JSON.stringify(db),()=>toast('Backup copiado'),()=>alert('Não foi possível copiar.'));
+$('bkRest').onclick=()=>{const t=prompt('Cole aqui o backup copiado:');if(!t)return;
+try{const o=JSON.parse(t);if(!Array.isArray(o.alunos)||!Array.isArray(o.aulas))throw 0;
+if(!confirm('Isto substitui todos os dados atuais por '+o.alunos.length+' aluno(s) e '+o.aulas.length+' aula(s). Continuar?'))return;
+db=Object.assign({alunos:[],aulas:[],skips:[],cfg:{off:0,last:''}},o);save();renderDia();renderAlunos();toast('Backup restaurado')}catch(e){alert('Backup inválido.')}};
+
+load();const hoje=iso(new Date());$('mes').value=hoje.slice(0,7);setDate(hoje);
+try{if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
+})();
+</script>
+</body>
+</html>
