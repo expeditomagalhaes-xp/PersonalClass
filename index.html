@@ -266,7 +266,7 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 <div class="msg" style="margin-top:0"><b>Modo sem cadastro.</b> Seus dados ficam salvos só neste aparelho.</div>
 <div class="mut">Crie uma conta para guardar seus alunos e aulas na nuvem e usar o app em outro aparelho. Os dados que já estão aqui podem ser enviados na primeira vez que você entrar.</div>
 <div class="row" style="margin-top:14px"><button class="btn" id="ctIn">Entrar</button><button class="btn sec" id="ctUp">Criar conta</button></div>
-<div class="mut" style="margin-top:10px">Use também o Backup dos dados para guardar uma cópia.</div>
+<div class="mut" style="margin-top:10px">Use também o Backup dos dados para guardar uma cópia. No iPhone, o navegador pode apagar dados de sites pouco usados: com uma conta, seus dados ficam protegidos na nuvem.</div>
 </div>
 <div id="ctOn" class="hide">
 <div class="msg" style="margin-top:0">Conectado como <b id="ctMail"></b></div>
@@ -336,6 +336,8 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 <label for="ao">Observações (opcional)</label><input id="ao">
 <label for="avl">Valor da hora-aula em R$ (opcional)</label><input id="avl" inputmode="decimal" placeholder="Ex.: 80,00">
 <div class="mut" style="margin-top:4px">Usado no valor do dia, no relatório do profissional e no texto de fechamento do mês. Não aparece na mensagem de dias previstos nem no relatório de aulas realizadas.</div>
+<label for="ai">Aluno desde (opcional)</label><input type="date" id="ai">
+<div class="mut" style="margin-top:4px">Os horários fixos só são lembrados a partir desta data.</div>
 <label>Horários fixos na semana</label>
 <div class="row"><div><label for="pd" style="margin-top:0">Dia</label><select id="pd"><option value="0">Domingo</option><option value="1">Segunda</option><option value="2">Terça</option><option value="3">Quarta</option><option value="4">Quinta</option><option value="5">Sexta</option><option value="6">Sábado</option></select></div><div><label for="ph" style="margin-top:0">Início</label><input type="time" id="ph"></div></div>
 <div class="row" style="align-items:flex-end;margin-top:8px"><div><label for="pf" style="margin-top:0">Término (opcional)</label><input type="time" id="pf"></div><button class="btn sec" id="pAdd" style="flex:none">Adicionar</button></div>
@@ -354,10 +356,10 @@ const THEMES=[
 {id:'claro',nome:'Claro',desc:'Fundo branco, limpo e profissional',cores:['#2563eb','#f6f7f9','#ffffff']},
 {id:'escuro',nome:'Escuro',desc:'Fundo escuro com destaque verde, estilo fitness',cores:['#34d399','#0b1115','#151e25']}];
 const BAR={petroleo:'#0e7a8a',claro:'#ffffff',escuro:'#151e25'};
-let db={alunos:[],aulas:[],skips:[],cfg:Object.assign({perfil:{nome:'',logo:'',pix:'',cobrarRep:false}},CFG0)},cur='',view='dia',editing=null,isNew=true,selA='',editA=null,tmpPre=[];
+let db={alunos:[],aulas:[],skips:[],del:[],cfg:Object.assign({perfil:{nome:'',logo:'',pix:'',cobrarRep:false}},CFG0)},cur='',view='dia',editing=null,isNew=true,selA='',editA=null,tmpPre=[];
 const $=i=>document.getElementById(i);
 function load(){try{const r=localStorage.getItem(KEY);if(r)db=Object.assign(db,JSON.parse(r))}catch(e){}
-db.alunos=db.alunos||[];db.aulas=db.aulas||[];db.skips=db.skips||[];db.cfg=Object.assign({},CFG0,db.cfg||{});db.cfg.perfil=Object.assign({nome:'',logo:'',pix:'',cobrarRep:false},db.cfg.perfil||{})}
+db.alunos=db.alunos||[];db.aulas=db.aulas||[];db.skips=db.skips||[];db.del=Array.isArray(db.del)?db.del:[];db.cfg=Object.assign({},CFG0,db.cfg||{});db.cfg.perfil=Object.assign({nome:'',logo:'',pix:'',cobrarRep:false},db.cfg.perfil||{})}
 const BK_KEY='agenda_personal_bk_v1';
 function bkList(){try{return JSON.parse(localStorage.getItem(BK_KEY)||'[]')}catch(e){return[]}}
 function snapshot(why,p){const o=JSON.parse(JSON.stringify(p||{alunos:db.alunos,aulas:db.aulas,skips:db.skips,perfil:db.cfg.perfil}));
@@ -374,7 +376,20 @@ const mins=h=>{const p=h.split(':');return +p[0]*60+ +p[1]};
 const hh=m=>String(Math.floor(m/60)%24).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
 const fim=h=>hh(mins(h)+60);
 const fmtD=s=>{const p=s.split('-');return p[2]+'/'+p[1]};
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeLogo=u=>/^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+\/=]+$/.test(u||'')?u:'';
+function tomb(id){db.del=db.del||[];db.del=db.del.filter(x=>x.id!==id);db.del.push({id,t:Date.now()})}
+const skKey=k=>'sk|'+k.alunoId+'|'+k.data+'|'+k.hora;
+const RT=/^\d{2}:\d{2}$/,RD=/^\d{4}-\d{2}-\d{2}$/;
+function clean(p){p=p&&typeof p==='object'?p:{};let bad=0;const arr=x=>Array.isArray(x)?x:[];
+const A=arr(p.alunos).filter(a=>{const ok=a&&typeof a==='object'&&typeof a.id==='string'&&a.id&&typeof a.nome==='string';if(!ok)bad++;return ok}).map(a=>{
+a.pre=arr(a.pre).filter(q=>q&&Number.isInteger(q.d)&&q.d>=0&&q.d<=6&&RT.test(q.h||'')&&(!q.f||RT.test(q.f)));a.valor=+a.valor>0?+a.valor:0;if(a.ini&&!RD.test(a.ini))delete a.ini;return a});
+const U=arr(p.aulas).filter(l=>{const ok=l&&typeof l==='object'&&typeof l.id==='string'&&typeof l.alunoId==='string'&&RD.test(l.data||'')&&RT.test(l.hora||'');if(!ok)bad++;return ok}).map(l=>{
+if(!(+l.dur>0))delete l.dur;else l.dur=+l.dur;if(typeof l.rep!=='boolean')delete l.rep;if(typeof l.v!=='number'||!(l.v>=0))delete l.v;return l});
+const K=arr(p.skips).filter(k=>k&&typeof k.alunoId==='string'&&RD.test(k.data||'')&&RT.test(k.hora||'')||(bad++,false));
+const D=arr(p.del).filter(x=>x&&typeof x.id==='string'&&typeof x.t==='number');
+return{alunos:A,aulas:U,skips:K,del:D,perfil:p.perfil&&typeof p.perfil==='object'?p.perfil:{},bad}}
+
 const nome=id=>{const a=db.alunos.find(x=>x.id===id);return a?a.nome:'(aluno removido)'};
 function ini(n){const p=String(n).trim().split(/\s+/);return ((p[0]||'?')[0]+(p.length>1?p[p.length-1][0]:'')).toUpperCase()}
 function hue(n){let h=0;for(const c of String(n))h=(h*31+c.charCodeAt(0))%360;return h}
@@ -392,7 +407,8 @@ const fimL=l=>hh(mins(l.hora)+durOf(l));
 const fimP=x=>x.f||fim(x.h);
 const fmtDur=m=>m===60?'1 hora':(m%60===0?(m/60)+' horas':String(Math.round(m/6)/10).replace('.',',')+' h');
 const fmtH=h=>String(Math.round(h*10)/10).replace('.',',');
-const valorL=l=>Math.round(valorDe(l.alunoId)*durOf(l)/60*100)/100;
+const rateL=l=>typeof l.v==='number'?l.v:valorDe(l.alunoId);
+const valorL=l=>Math.round(rateL(l)*durOf(l)/60*100)/100;
 const saud=()=>{const h=new Date().getHours();return h<12?'Bom dia!':h<18?'Boa tarde!':'Boa noite!'};
 const msgHr=x=>x.f?'das '+fh(x.h)+' às '+fh(x.f):'às '+fh(x.h);
 const mesNome=m=>parse(m+'-01').toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
@@ -446,13 +462,22 @@ fbP=(async()=>{const [a,au,fs]=await Promise.all([import(FB_URL+'firebase-app.js
 const app=a.initializeApp(FB_CFG);fb={au,fs,auth:au.getAuth(app),db:fs.getFirestore(app)};return fb})().catch(e=>{fbP=null;throw e});return fbP}
 function initAuth(f){if(authOn)return;authOn=true;f.au.onAuthStateChanged(f.auth,onUser)}
 const hasData=()=>db.alunos.length>0||db.aulas.length>0;
-const payload=()=>({alunos:db.alunos,aulas:db.aulas,skips:db.skips,perfil:db.cfg.perfil});
+const payload=()=>({alunos:db.alunos,aulas:db.aulas,skips:db.skips,del:db.del,perfil:db.cfg.perfil});
 function applyCloud(p){db.alunos=Array.isArray(p.alunos)?p.alunos:[];db.aulas=Array.isArray(p.aulas)?p.aulas:[];db.skips=Array.isArray(p.skips)?p.skips:[];
+db.del=Array.isArray(p.del)?p.del:[];
 db.cfg.perfil=Object.assign({nome:'',logo:'',pix:'',cobrarRep:false},p.perfil||{})}
-function mergeP(c){const un=(a,b)=>{const m=new Map();(b||[]).forEach(x=>m.set(x.id,x));(a||[]).forEach(x=>{if(!m.has(x.id))m.set(x.id,x)});return[...m.values()]};
-const sk=new Map();(c.skips||[]).concat(db.skips).forEach(k=>sk.set(k.alunoId+'|'+k.data+'|'+k.hora,k));
+function mergeP(c){
+const dl=new Map();(c.del||[]).concat(db.del||[]).forEach(x=>{if(x&&x.id&&(!dl.has(x.id)||dl.get(x.id).t<x.t))dl.set(x.id,x)});
+const un=(a,b)=>{const m=new Map();(b||[]).forEach(x=>m.set(x.id,x));(a||[]).forEach(x=>{if(!m.has(x.id))m.set(x.id,x)});return[...m.values()].filter(x=>!dl.has(x.id))};
+const nk=x=>String(x||'').trim().toLowerCase(),seen=new Map(),remap={};
+const al=un(db.alunos,c.alunos).filter(a=>{const k=nk(a.nome);if(!seen.has(k)){seen.set(k,a);return true}
+const k0=seen.get(k);remap[a.id]=k0.id;k0.pre=k0.pre||[];(a.pre||[]).forEach(p=>{if(!k0.pre.some(q=>q.d===p.d&&q.h===p.h))k0.pre.push(p)});if(!k0.ini&&a.ini)k0.ini=a.ini;if(!(k0.valor>0)&&a.valor>0)k0.valor=a.valor;return false});
+const fix=x=>remap[x.alunoId]?Object.assign({},x,{alunoId:remap[x.alunoId]}):x;
+const sa=new Set(),au=un(db.aulas,c.aulas).map(fix).filter(l=>{if(dl.has(l.alunoId))return false;const k=l.alunoId+'|'+l.data+'|'+l.hora;if(sa.has(k))return false;sa.add(k);return true});
+const sk=new Map();(c.skips||[]).concat(db.skips).map(fix).forEach(k=>{const key=skKey(k),d=dl.get(key);if(dl.has(k.alunoId))return;if(d&&(k.t||0)<=d.t)return;const o=sk.get(key);if(!o||(k.t||0)>(o.t||0))sk.set(key,k)});
 const pf=Object.assign({},db.cfg.perfil,c.perfil&&c.perfil.nome?c.perfil:{});
-return{alunos:un(db.alunos,c.alunos),aulas:un(db.aulas,c.aulas),skips:[...sk.values()],perfil:pf}}
+const lim=Date.now()-180*864e5;
+return{alunos:al,aulas:au,skips:[...sk.values()],del:[...dl.values()].filter(x=>x.t>lim),perfil:pf}}
 function refreshViews(){if($('app').classList.contains('hide'))return;
 ({dia:renderDia,alunos:renderAlunos,rel:renderRel,msg:renderMsg,perfil:renderPerfil,conta:renderConta})[view]?.()}
 function setStatus(t){syncMsg=t;if($('ctStatus'))$('ctStatus').textContent=t}
@@ -463,11 +488,16 @@ return'Não foi possível sincronizar ('+c+').'}
 function hora(){return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
 function schedulePush(){clearTimeout(pushT);pushT=setTimeout(()=>{if(user)push()},1500)}
 async function push(){if(!user||syncing)return;syncing=true;const r0=rev;
-try{const f=await fbLoad(),at=Date.now(),str=JSON.stringify(payload());
-if(str.length>900000){setStatus('Os dados ficaram grandes demais para a nuvem (limite de 1 MB). Faça um backup e fale comigo.');return}
-await f.fs.setDoc(f.fs.doc(f.db,'users',user.uid),{payload:str,updatedAt:at,v:1});
-const c=cl();c.uid=user.uid;c.at=at;c.dirty=(rev!==r0);saveRaw();setStatus('Sincronizado às '+hora()+'.');if(c.dirty)schedulePush()}
-catch(e){setStatus(cloudErr(e))}finally{syncing=false}}
+try{const f=await fbLoad(),at=Date.now(),c=cl(),ref=f.fs.doc(f.db,'users',user.uid);let merged=false,big=false;
+await f.fs.runTransaction(f.db,async tx=>{merged=false;big=false;const sn=await tx.get(ref);
+if(sn.exists()){const d=sn.data();
+if(c.uid!==user.uid){const e=new Error('reconcile');e.code='app/need-reconcile';throw e}
+if(d.updatedAt!==c.at){let cP=null;try{cP=clean(JSON.parse(d.payload))}catch(e){}if(cP){applyCloud(mergeP(cP));merged=true}}}
+const str=JSON.stringify(payload());if(str.length>900000){big=true;return}
+tx.set(ref,{payload:str,updatedAt:at,v:1})});
+if(big){setStatus('Os dados ficaram grandes demais para a nuvem (limite de 1 MB). Faça um backup e fale comigo.');return}
+c.uid=user.uid;c.at=at;c.dirty=(rev!==r0);saveRaw();setStatus('Sincronizado às '+hora()+'.');if(merged)refreshViews();if(c.dirty)schedulePush()}
+catch(e){if(e&&e.code==='app/need-reconcile'){setStatus('Conferindo dados da nuvem…');setTimeout(()=>{if(!recBusy)reconcile()},0)}else setStatus(cloudErr(e))}finally{syncing=false}}
 function askSync(cP){return new Promise(res=>{
 $('sMsg').textContent='Na nuvem: '+(cP.alunos||[]).length+' aluno(s) e '+(cP.aulas||[]).length+' aula(s). Neste aparelho: '+db.alunos.length+' aluno(s) e '+db.aulas.length+' aula(s).';
 const done=v=>{$('dlS').close();res(v)};
@@ -478,9 +508,10 @@ try{const f=await fbLoad(),snap=await f.fs.getDoc(f.fs.doc(f.db,'users',user.uid
 if(c.uid!==user.uid&&hasData())snapshot('Antes de entrar na conta '+(user.email||''));
 if(!snap.exists()){if(pendingName&&!db.cfg.perfil.nome)db.cfg.perfil.nome=pendingName;pendingName='';c.uid=user.uid;c.dirty=true;saveRaw();await push();renderDHead();return}
 pendingName='';
-const d=snap.data();let cP;try{cP=JSON.parse(d.payload)}catch(e){setStatus('Os dados da nuvem estão ilegíveis.');return}
+const d=snap.data();let cP;try{cP=clean(JSON.parse(d.payload))}catch(e){setStatus('Os dados da nuvem estão ilegíveis.');return}
 if(c.uid===user.uid&&d.updatedAt===c.at){if(c.dirty)await push();else setStatus('Sincronizado às '+hora()+'.');return}
 if(c.uid===user.uid&&!c.dirty){applyCloud(cP);c.at=d.updatedAt;saveRaw();renderDHead();refreshViews();setStatus('Atualizado com os dados da nuvem às '+hora()+'.');return}
+if(c.uid===user.uid){snapshot('Antes de juntar com a nuvem');applyCloud(mergeP(cP));c.at=d.updatedAt;c.dirty=true;saveRaw();renderDHead();refreshViews();await push();return}
 if(c.uid!==user.uid&&!hasData()){applyCloud(cP);c.uid=user.uid;c.at=d.updatedAt;c.dirty=false;saveRaw();renderDHead();refreshViews();setStatus('Dados da nuvem carregados às '+hora()+'.');toast('Dados da nuvem carregados');return}
 const ch=await askSync(cP);
 if(ch==='cancel'){try{await f.au.signOut(f.auth)}catch(e){}return}
@@ -494,7 +525,7 @@ await reconcile();
 if(!$('login').classList.contains('hide')){db.cfg.entered=true;saveRaw();showApp()}
 renderDHead();renderConta()}
 function renderConta(){const on=!!user;$('ctOff').classList.toggle('hide',on);$('ctOn').classList.toggle('hide',!on);
-if(on){$('ctMail').textContent=user.email||'';$('ctStatus').textContent=syncMsg}}
+if(on){$('ctMail').textContent=(user.email||'')+(user.emailVerified?'':' (e-mail ainda não confirmado: veja sua caixa de entrada)');$('ctStatus').textContent=syncMsg}}
 const authErr=e=>{const c=(e&&e.code)||'';
 if(c==='auth/invalid-credential'||c==='auth/wrong-password'||c==='auth/user-not-found')return'E-mail ou senha incorretos.';
 if(c==='auth/email-already-in-use')return'Já existe uma conta com esse e-mail. Toque em Voltar e use Entrar.';
@@ -510,10 +541,11 @@ const showMsg=t=>{const m=$('authMsg');m.textContent=t;m.classList.remove('hide'
 $('authForm').onsubmit=async e=>{e.preventDefault();
 const up=!$('nmBox').classList.contains('hide'),em=$('lem').value.trim(),pw=$('lpw').value,nm=$('lnm').value.trim();
 if(!em||!pw){showMsg('Informe e-mail e senha.');return}
-if(up&&pw.length<6){showMsg('A senha precisa ter pelo menos 6 caracteres.');return}
+if(up&&pw.length<8){showMsg('A senha precisa ter pelo menos 8 caracteres.');return}
 const b=$('authGo');b.disabled=true;showMsg(up?'Criando conta…':'Entrando…');
 try{const f=await fbLoad();initAuth(f);if(up)pendingName=nm;
-if(up){const r=await f.au.createUserWithEmailAndPassword(f.auth,em,pw);if(nm){try{await f.au.updateProfile(r.user,{displayName:nm})}catch(_){}}}
+if(up){const r=await f.au.createUserWithEmailAndPassword(f.auth,em,pw);if(nm){try{await f.au.updateProfile(r.user,{displayName:nm})}catch(_){}}
+try{await f.au.sendEmailVerification(r.user)}catch(_){}}
 else await f.au.signInWithEmailAndPassword(f.auth,em,pw);
 $('lpw').value='';$('authMsg').classList.add('hide')}
 catch(err){showMsg(authErr(err))}finally{b.disabled=false}};
@@ -528,9 +560,10 @@ $('ctOut').onclick=()=>$('logout').click();
 $('logout').onclick=async()=>{openMenu(false);
 if(!cl().uid){db.cfg.entered=false;save();showLogin();toast('Seus dados continuam salvos neste aparelho');return}
 if(!confirm('Sair da conta? Seus dados continuam salvos na nuvem e serão removidos deste aparelho. Para voltar a usá-los, entre de novo.'))return;
+if(!fb){try{await fbLoad()}catch(e){alert('Sem conexão para sair da conta com segurança. Conecte-se à internet e tente de novo.');return}}
 if(cl().dirty){if(user)await push();if(cl().dirty){alert('Há alterações que ainda não foram enviadas para a nuvem. Conecte-se à internet e tente de novo.');return}}
-try{if(fb)await fb.au.signOut(fb.auth)}catch(e){}
-user=null;db.alunos=[];db.aulas=[];db.skips=[];db.cfg.perfil={nome:'',logo:'',pix:'',cobrarRep:false};db.cfg.cloud=null;db.cfg.entered=false;syncMsg='';try{localStorage.removeItem(BK_KEY)}catch(e){}
+try{await fb.au.signOut(fb.auth)}catch(e){alert('Não foi possível sair da conta agora. Tente de novo.');return}
+user=null;db.alunos=[];db.aulas=[];db.skips=[];db.del=[];db.cfg.perfil={nome:'',logo:'',pix:'',cobrarRep:false};db.cfg.cloud=null;db.cfg.entered=false;syncMsg='';try{localStorage.removeItem(BK_KEY)}catch(e){}
 saveRaw();renderDHead();renderConta();showLogin();toast('Você saiu da conta')};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&user&&Date.now()-lastRec>30000)reconcile()});
 window.addEventListener('online',()=>{if(user)reconcile()});
@@ -538,11 +571,12 @@ window.addEventListener('online',()=>{if(user)reconcile()});
 // previstas (horários fixos)
 function previstas(d){const w=parse(d).getDay(),out=[];
 db.alunos.forEach(a=>(a.pre||[]).forEach(p=>{if(p.d!==w)return;
-const feita=db.aulas.some(x=>x.alunoId===a.id&&x.data===d&&mins(x.hora)===mins(p.h));
+if(a.ini&&d<a.ini)return;const ps=mins(p.h),pe=p.f&&mins(p.f)>ps?mins(p.f):ps+60;
+const feita=db.aulas.some(x=>x.alunoId===a.id&&x.data===d&&mins(x.hora)<pe&&ps<mins(x.hora)+durOf(x));
 const pulou=db.skips.some(k=>k.alunoId===a.id&&k.data===d&&k.hora===p.h);
 if(!feita&&!pulou)out.push({a,h:p.h,f:p.f,d})}));
 return out.sort((x,y)=>x.h.localeCompare(y.h))}
-const confirmar=v=>db.aulas.push(Object.assign({id:uid(),alunoId:v.a.id,data:v.d,hora:v.h,rep:calcRep(v.a.id,v.d)},v.f&&mins(v.f)>mins(v.h)?{dur:mins(v.f)-mins(v.h)}:{}));
+const confirmar=v=>db.aulas.push(Object.assign({id:uid(),alunoId:v.a.id,data:v.d,hora:v.h,rep:calcRep(v.a.id,v.d),v:valorDe(v.a.id)},v.f&&mins(v.f)>mins(v.h)?{dur:mins(v.f)-mins(v.h)}:{}));
 function bloco(box,tit,list){
 if(!list.length)return;const w=document.createElement('div');w.className='prev';w.innerHTML='<h3>'+tit+'</h3>';
 list.forEach(v=>{const it=document.createElement('div');it.className='item';
@@ -550,9 +584,9 @@ it.innerHTML=avatar(v.a.nome)+'<div class="grow"><b>'+esc(v.a.nome)+'</b><div cl
 const c=document.createElement('button');c.className='btn';c.textContent='✓ Confirmar';
 c.onclick=()=>{confirmar(v);save();toast('Registrado: '+v.a.nome+' '+v.h);renderDia()};
 const n=document.createElement('button');n.className='btn sec';n.textContent='Não teve';
-n.onclick=()=>{db.skips.push({alunoId:v.a.id,data:v.d,hora:v.h});save();renderDia()};
-it.appendChild(c);it.appendChild(n);w.appendChild(it)});
-if(list.length>1){const t=document.createElement('button');t.className='btn block';t.style.marginTop='6px';t.textContent='✓ Confirmar todas ('+list.length+')';
+n.onclick=()=>{db.skips.push({alunoId:v.a.id,data:v.d,hora:v.h,t:Date.now()});save();renderDia()};
+if(v.d<=iso(new Date())){it.appendChild(c);it.appendChild(n)}else{const m=document.createElement('span');m.className='mut';m.textContent='Aula futura';it.appendChild(m)}w.appendChild(it)});
+if(list.length>1&&list[0].d<=iso(new Date())){const t=document.createElement('button');t.className='btn block';t.style.marginTop='6px';t.textContent='✓ Confirmar todas ('+list.length+')';
 t.onclick=()=>{list.forEach(confirmar);save();toast(list.length+' aulas registradas');renderDia()};w.appendChild(t)}
 box.appendChild(w)}
 
@@ -567,6 +601,10 @@ const box=$('prevBox');box.innerHTML='';
 bloco(box,'Previstas para este dia',previstas(cur));
 let pend=[];for(let i=1;i<=14;i++){const x=new Date();x.setDate(x.getDate()-i);const k=iso(x);if(k!==cur)pend=pend.concat(previstas(k))}
 bloco(box,'Pendentes dos últimos 14 dias',pend);
+const sk=db.skips.filter(k=>k.data===cur&&alunoBy(k.alunoId));
+if(sk.length){const w=document.createElement('div');w.className='prev';w.innerHTML='<h3>Marcadas como “não teve”</h3>';
+sk.forEach(k=>{const it=document.createElement('div');it.className='item';it.innerHTML=avatar(nome(k.alunoId))+'<div class="grow"><b>'+esc(nome(k.alunoId))+'</b><div class="mut">'+k.hora+'</div></div>';
+const u=document.createElement('button');u.className='btn sec';u.textContent='Desfazer';u.onclick=()=>{db.skips=db.skips.filter(x=>x!==k);tomb(skKey(k));save();renderDia()};it.appendChild(u);w.appendChild(it)});box.appendChild(w)}
 const L=$('dia');L.innerHTML='';
 if(!dia.length){L.innerHTML='<div class="empty">Nenhuma aula registrada neste dia.<br>Toque no + para registrar.</div>';return}
 dia.forEach(a=>{const e=document.createElement('div');e.className='aula';e.tabIndex=0;
@@ -585,7 +623,7 @@ function autoRep(){$('dRep').checked=calcRep(selA,$('dD').value)}
 function drawTg(){const g=$('tg');g.innerHTML='';const off=db.cfg.off||0;
 $('seg').querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.o===off));
 const d=$('dD').value;
-for(let m=6*60+off;m<=21*60+off;m+=60){const h=hh(m);const e=document.createElement('button');
+for(let m=5*60+off;m<=23*60+off;m+=60){const h=hh(m);const e=document.createElement('button');
 const busy=db.aulas.some(x=>x.data===d&&m<mins(x.hora)+durOf(x)&&mins(x.hora)<m+60&&(!editing||x.id!==editing.id));
 e.className='pick'+(h===$('dH').value?' on':'')+(busy?' busy':'');e.textContent=h;
 e.onclick=()=>{$('dH').value=h;if(isNew)doSave();else{drawTg();upFim()}};g.appendChild(e)}}
@@ -598,7 +636,7 @@ editing=a;isNew=!a;
 selA=a?a.alunoId:(db.alunos.some(x=>x.id===db.cfg.last)?db.cfg.last:db.alunos[0].id);
 $('dtitle').textContent=a?'Editar aula':'Registrar aula';
 $('dD').value=a?a.data:cur;$('dH').value=a?a.hora:'';$('dRep').checked=a?isRep(a):calcRep(selA,cur);
-$('dDel').classList.toggle('hide',!a);$('dSave').classList.toggle('hide',isNew);
+$('dDel').classList.toggle('hide',!a);$('dSave').classList.remove('hide');
 drawAl();drawTg();upFim();$('dlg').showModal()}
 function doSave(){
 const d=$('dD').value,h=$('dH').value;if(!d||!h){alert('Informe data e horário.');return}
@@ -606,10 +644,13 @@ const dur=editing&&editing.dur>0?editing.dur:60,st=mins(h);
 const conf=db.aulas.some(x=>x.data===d&&(!editing||x.id!==editing.id)&&st<mins(x.hora)+durOf(x)&&mins(x.hora)<st+dur);
 if(conf&&!confirm('Já existe uma aula que coincide com esse horário. Registrar mesmo assim?'))return;
 const rp=$('dRep').checked;
-if(editing){editing.alunoId=selA;editing.data=d;editing.hora=h;editing.rep=rp}else db.aulas.push({id:uid(),alunoId:selA,data:d,hora:h,rep:rp});
+if((isNew||d!==editing.data)&&d>iso(new Date())&&!confirm('Esta data ainda não chegou. Registrar mesmo assim?'))return;
+if(editing){const oA=editing.alunoId,oD=editing.data,b0=previstas(oD).filter(v=>v.a.id===oA).map(v=>v.h);
+editing.alunoId=selA;editing.data=d;editing.hora=h;editing.rep=rp;if(oA!==selA)editing.v=valorDe(selA);
+previstas(oD).filter(v=>v.a.id===oA&&!b0.includes(v.h)).forEach(v=>db.skips.push({alunoId:oA,data:oD,hora:v.h,t:Date.now()}))}else db.aulas.push({id:uid(),alunoId:selA,data:d,hora:h,rep:rp,v:valorDe(selA)});
 db.cfg.last=selA;save();$('dlg').close();toast((isNew?'Registrado: ':'Salvo: ')+nome(selA)+' '+h);setDate(d)}
 $('dSave').onclick=doSave;$('dCancel').onclick=()=>$('dlg').close();
-$('dDel').onclick=()=>{if(!confirm('Excluir esta aula?'))return;db.aulas=db.aulas.filter(x=>x!==editing);save();$('dlg').close();renderDia()};
+$('dDel').onclick=()=>{if(!confirm('Excluir esta aula?'))return;tomb(editing.id);db.aulas=db.aulas.filter(x=>x!==editing);save();$('dlg').close();renderDia()};
 
 // alunos
 function dpre(){const L=$('pList');L.innerHTML='';tmpPre.sort((a,b)=>a.d-b.d||a.h.localeCompare(b.h));
@@ -617,19 +658,22 @@ tmpPre.forEach((p,i)=>{const c=document.createElement('span');c.className='chip'
 const x=document.createElement('button');x.textContent='×';x.setAttribute('aria-label','Remover');x.onclick=()=>{tmpPre.splice(i,1);dpre()};c.appendChild(x);L.appendChild(c)});
 if(!tmpPre.length)L.innerHTML='<span class="mut">Nenhum horário fixo.</span>'}
 function openAl(a){editA=a;$('aTitle').textContent=a?'Editar aluno':'Novo aluno';
-$('an').value=a?a.nome:'';$('at').value=(a&&a.tel)||'';$('ao').value=(a&&a.obs)||'';$('avl').value=a&&a.valor>0?String(a.valor).replace('.',','):'';
+$('ai').value=a?(a.ini||''):iso(new Date());$('an').value=a?a.nome:'';$('at').value=(a&&a.tel)||'';$('ao').value=(a&&a.obs)||'';$('avl').value=a&&a.valor>0?String(a.valor).replace('.',','):'';
 tmpPre=a&&a.pre?a.pre.map(x=>({d:x.d,h:x.h,f:x.f})):[];$('aDel').classList.toggle('hide',!a);dpre();$('dlA').showModal()}
 $('addAluno').onclick=()=>openAl(null);$('aClose').onclick=()=>$('dlA').close();
 $('pAdd').onclick=()=>{const h=$('ph').value,f=$('pf').value,d=+$('pd').value;if(!h){alert('Informe o horário de início.');return}
 if(f&&mins(f)<=mins(h)){alert('O término precisa ser depois do início.');return}
 if(!tmpPre.some(p=>p.d===d&&p.h===h))tmpPre.push(f?{d,h,f}:{d,h});$('pf').value='';dpre()};
 $('aSave').onclick=()=>{const n=$('an').value.trim();if(!n){alert('Informe o nome do aluno.');return}
-if(editA){editA.nome=n;editA.tel=$('at').value.trim();editA.obs=$('ao').value.trim();editA.valor=pnum($('avl').value);editA.pre=tmpPre}
-else db.alunos.push({id:uid(),nome:n,tel:$('at').value.trim(),obs:$('ao').value.trim(),valor:pnum($('avl').value),pre:tmpPre});
+const ini=$('ai').value||'';
+if(editA){const oldV=editA.valor>0?editA.valor:0,newV=pnum($('avl').value);
+if(oldV>0&&newV!==oldV)db.aulas.forEach(l=>{if(l.alunoId===editA.id&&typeof l.v!=='number')l.v=oldV});
+editA.nome=n;editA.tel=$('at').value.trim();editA.obs=$('ao').value.trim();editA.valor=newV;editA.pre=tmpPre;editA.ini=ini}
+else db.alunos.push({id:uid(),nome:n,tel:$('at').value.trim(),obs:$('ao').value.trim(),valor:pnum($('avl').value),pre:tmpPre,ini});
 save();$('dlA').close();renderAlunos();renderDia()};
 $('aDel').onclick=()=>{const a=editA,n=db.aulas.filter(x=>x.alunoId===a.id).length;
 if(!confirm('Excluir '+a.nome+(n?' e suas '+n+' aula(s)?':'?')))return;
-db.alunos=db.alunos.filter(x=>x!==a);db.aulas=db.aulas.filter(x=>x.alunoId!==a.id);save();$('dlA').close();renderAlunos();renderDia()};
+tomb(a.id);db.alunos=db.alunos.filter(x=>x!==a);db.aulas=db.aulas.filter(x=>x.alunoId!==a.id);db.skips=db.skips.filter(k=>k.alunoId!==a.id);save();$('dlA').close();renderAlunos();renderDia()};
 function renderAlunos(){const L=$('lista');
 if(!db.alunos.length){L.innerHTML='<div class="empty">Nenhum aluno cadastrado ainda.<br>Toque em “Novo aluno” para começar.</div>';return}
 L.innerHTML='';
@@ -642,15 +686,15 @@ const e=document.createElement('button');e.className='btn sec';e.textContent='Ed
 let relTipo='fech',relAluno='',msgAluno='';
 function lessonsOf(a,m){return db.aulas.filter(x=>x.alunoId===a.id&&x.data.slice(0,7)===m).sort((x,y)=>(x.data+x.hora).localeCompare(y.data+y.hora))}
 function dados(){const m=$('mes').value;if(!m)return[];const cr=!!db.cfg.perfil.cobrarRep;
-return db.alunos.map(a=>{const aulas=lessonsOf(a,m),rep=aulas.filter(isRep).length,v=a.valor>0?a.valor:0,
+return db.alunos.map(a=>{const aulas=lessonsOf(a,m),rep=aulas.filter(isRep).length,rs=[...new Set(aulas.map(rateL))].filter(x=>x>0),v=rs.length?rs[rs.length-1]:0,misto=rs.length>1,
 horas=aulas.reduce((s,l)=>s+durOf(l),0)/60,total=Math.round(aulas.filter(l=>cr||!isRep(l)).reduce((s,l)=>s+valorL(l),0)*100)/100;
-return{a,nome:a.nome,aulas,rep,valor:v,horas,total}}).filter(r=>r.aulas.length).sort((x,y)=>x.nome.localeCompare(y.nome))}
+return{a,nome:a.nome,aulas,rep,valor:v,misto,horas,total}}).filter(r=>r.aulas.length).sort((x,y)=>x.nome.localeCompare(y.nome))}
 const chipL=l=>'<span class="chip">'+DN[parse(l.data).getDay()]+' '+fmtD(l.data)+(isRep(l)?RIs:'')+' · '+l.hora+'–'+fimL(l)+'</span>';
 function fillSel(sel,cur,todos){const L=db.alunos.slice().sort((a,b)=>a.nome.localeCompare(b.nome));
 if(!(todos&&cur==='__all__')&&!L.some(x=>x.id===cur))cur=L.length?L[0].id:'';
 sel.innerHTML=(todos&&L.length?'<option value="__all__">Todos os alunos</option>':'')+L.map(x=>'<option value="'+x.id+'">'+esc(x.nome)+'</option>').join('');sel.value=cur;return cur}
 function relHead(tit,sub){const p=db.cfg.perfil;
-const top=(p.nome||p.logo)?'<div class="rh">'+(p.logo?'<img src="'+p.logo+'" alt="">':'')+'<div><b>'+esc(p.nome||'')+'</b></div></div>':'';
+const lg=safeLogo(p.logo),top=(p.nome||lg)?'<div class="rh">'+(lg?'<img src="'+lg+'" alt="">':'')+'<div><b>'+esc(p.nome||'')+'</b></div></div>':'';
 return top+'<h2>'+tit+'</h2><div class="mut">'+(sub?sub+' · ':'')+'Emitido em '+hojeBR()+'</div>'}
 function renderRel(){
 $('relTipoSel').value=relTipo;
@@ -671,7 +715,7 @@ const tot=r.reduce((s,x)=>s+x.aulas.length,0),totRep=r.reduce((s,x)=>s+x.rep,0),
 out.innerHTML=relHead('Relatório oficial · '+tit,'Profissional')+
 '<div class="sum"><div><b>'+tot+'</b>aulas</div><div><b>'+totRep+'</b>reposições</div><div><b>'+money(totV)+'</b>total do mês</div></div>'+
 '<h3 class="sub">Relação financeira</h3><table class="fin"><thead><tr><th>Aluno</th><th>Aulas</th><th>Horas</th><th>Valor/h</th><th>Total</th></tr></thead><tbody>'+
-r.map(x=>'<tr><td>'+esc(x.nome)+'</td><td>'+x.aulas.length+(x.rep?' <span class="mut">('+x.rep+' rep.)</span>':'')+'</td><td>'+fmtH(x.horas)+'</td><td>'+(x.valor?money(x.valor):'—')+'</td><td>'+(x.valor?money(x.total):'—')+'</td></tr>').join('')+
+r.map(x=>'<tr><td>'+esc(x.nome)+'</td><td>'+x.aulas.length+(x.rep?' <span class="mut">('+x.rep+' rep.)</span>':'')+'</td><td>'+fmtH(x.horas)+'</td><td>'+(x.valor?(x.misto?'variável':money(x.valor)):'—')+'</td><td>'+(x.valor?money(x.total):'—')+'</td></tr>').join('')+
 '</tbody><tfoot><tr><td>Total</td><td>'+tot+'</td><td>'+fmtH(totH)+'</td><td></td><td>'+money(totV)+'</td></tr></tfoot></table>'+
 (totRep&&!cr?'<div class="mut" style="margin-top:8px">Reposições (↻) são adicionais e não entram no valor. Para cobrá-las, ative em Meu perfil.</div>':'')+
 (sem.length?'<div class="msg noprint">Sem valor da hora-aula: '+sem.map(x=>esc(x.nome)).join(', ')+'. Defina em Alunos para entrarem no total.</div>':'')+
@@ -680,7 +724,7 @@ r.map(x=>'<div class="rep"><div class="row"><b class="grow">'+esc(x.nome)+'</b><
 (totRep?'<div class="mut" style="margin-top:10px">↻ = reposição (aula fora do dia fixo do aluno)</div>':'')}
 function textoPro(){const r=dados(),m=$('mes').value;if(!r.length)return'';
 let t='RELATÓRIO PROFISSIONAL - '+mesNome(m)+'\n\n';
-r.forEach(x=>{t+=x.nome+': '+x.aulas.length+' aula(s)'+(x.rep?' ('+x.rep+' reposição)':'')+(x.valor?' - '+fmtH(x.horas)+' h x '+money(x.valor)+' = '+money(x.total):'')+'\n  '+x.aulas.map(l=>fmtD(l.data)+' '+l.hora+(isRep(l)?'*':'')).join(', ')+'\n\n'});
+r.forEach(x=>{t+=x.nome+': '+x.aulas.length+' aula(s)'+(x.rep?' ('+x.rep+' reposição)':'')+(x.valor?(x.misto?' - '+fmtH(x.horas)+' h = ':' - '+fmtH(x.horas)+' h x '+money(x.valor)+' = ')+money(x.total):'')+'\n  '+x.aulas.map(l=>fmtD(l.data)+' '+l.hora+(isRep(l)?'*':'')).join(', ')+'\n\n'});
 t+='TOTAL: '+r.reduce((s,x)=>s+x.aulas.length,0)+' aula(s) - '+money(r.reduce((s,x)=>s+x.total,0));
 if(r.some(x=>x.rep))t+='\n* = reposição';return t}
 
@@ -696,7 +740,7 @@ return 'Relatório de aulas - '+mesNome(m)+'\nAluno: '+a.nome+'\nTotal: '+L.leng
 
 // 3) dias previstos (só depende do horário fixo: confirmar ou cancelar não muda nada)
 function prevDatas(a,m){const out=[],ult=new Date(+m.slice(0,4),+m.slice(5,7),0).getDate();
-for(let i=1;i<=ult;i++){const d=m+'-'+String(i).padStart(2,'0'),w=parse(d).getDay();(a.pre||[]).forEach(p=>{if(p.d===w)out.push({d,h:p.h,f:p.f})})}
+for(let i=1;i<=ult;i++){const d=m+'-'+String(i).padStart(2,'0'),w=parse(d).getDay();if(a.ini&&d<a.ini)continue;(a.pre||[]).forEach(p=>{if(p.d===w)out.push({d,h:p.h,f:p.f})})}
 return out.sort((x,y)=>(x.d+x.h).localeCompare(y.d+y.h))}
 function prevLista(){const todos=relAluno==='__all__';
 const L=todos?db.alunos.slice().sort((x,y)=>x.nome.localeCompare(y.nome)):[alunoBy(relAluno)];
@@ -712,7 +756,7 @@ return 'DIAS PREVISTOS DE AULA - '+mesNome(m)+'\n\n'+bl.map(b=>b.a.nome+': '+b.L
 
 // 4) fechamento do mês (texto de cobrança ao aluno)
 function fechTexto(a,m){const L=lessonsOf(a,m);if(!L.length)return'';
-const p=db.cfg.perfil,cr=!!p.cobrarRep,reg=L.filter(l=>!isRep(l)),ext=L.filter(isRep),v=a.valor>0?a.valor:0;
+const p=db.cfg.perfil,cr=!!p.cobrarRep,reg=L.filter(l=>!isRep(l)),ext=L.filter(isRep),v=L.some(l=>rateL(l)>0)?1:0;
 const tot=Math.round((cr?L:reg).reduce((s,l)=>s+valorL(l),0)*100)/100;
 let t=saud()+'\nO valor referente às aulas do mês de '+mesSo(m)+' ficou da seguinte forma:\n\n• '+a.nome+(v?': '+money(tot):'');
 if(reg.length)t+=' ('+reg.map(l=>l.data.slice(8)).join(', ')+')';
@@ -724,7 +768,7 @@ function relFech(out,m,tit,a){const L=lessonsOf(a,m);
 const head=relHead('Fechamento do mês · '+tit,'Aluno: '+esc(a.nome));
 if(!L.length){out.innerHTML=head+'<div class="empty">Nenhuma aula de '+esc(a.nome)+' em '+tit+'.</div>';return}
 out.innerHTML=head+
-(a.valor>0?'':'<div class="msg noprint">Defina o valor da hora-aula de '+esc(a.nome)+' em Alunos para o valor entrar no texto.</div>')+
+(L.some(l=>rateL(l)>0)?'':'<div class="msg noprint">Defina o valor da hora-aula de '+esc(a.nome)+' em Alunos para o valor entrar no texto.</div>')+
 (db.cfg.perfil.pix?'':'<div class="mut noprint" style="margin-top:8px">Dica: cadastre sua chave Pix em Meu perfil para ela entrar no texto.</div>')+
 '<div class="mut noprint" style="margin:10px 0 4px">Texto para enviar (você pode editar):</div>'+
 '<textarea id="fTxt" class="noprintarea" rows="13">'+esc(fechTexto(a,m))+'</textarea><div class="printonly" id="fPrint"></div>';
@@ -752,10 +796,10 @@ $('nOk').onclick=()=>{const n=$('nNome').value.trim();if(!n){alert('Informe seu 
 db.cfg.perfil.nome=n;save();renderDHead();$('dlN').close();const f=nCb;nCb=null;if(f)f()};
 $('nCancel').onclick=()=>{nCb=null;$('dlN').close()};
 function renderDHead(){const p=db.cfg.perfil,L=$('dLogo');if(!SVG0)SVG0=L.innerHTML;
-if(p.logo){L.innerHTML='<img src="'+p.logo+'" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:12px">';L.style.background='transparent'}else{L.innerHTML=SVG0;L.style.background=''}
+if(safeLogo(p.logo)){L.innerHTML='<img src="'+safeLogo(p.logo)+'" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:12px">';L.style.background='transparent'}else{L.innerHTML=SVG0;L.style.background=''}
 $('dSub').textContent=p.nome||(user&&user.email)||'Modo sem cadastro';
 const cb=document.querySelector('#menu button[data-v=conta]');if(cb)cb.textContent=(user||cl().uid)?'Conta e nuvem':'Entrar / criar conta'}
-function drawLogo(){const p=db.cfg.perfil;$('pfLogo').innerHTML=p.logo?'<img src="'+p.logo+'" alt="Logo">':'sem logo';$('pfDel').classList.toggle('hide',!p.logo)}
+function drawLogo(){const p=db.cfg.perfil;$('pfLogo').innerHTML=safeLogo(p.logo)?'<img src="'+safeLogo(p.logo)+'" alt="Logo">':'sem logo';$('pfDel').classList.toggle('hide',!p.logo)}
 function renderPerfil(){const p=db.cfg.perfil;$('pfNome').value=p.nome||'';$('pfPix').value=p.pix||'';$('pfRep').checked=!!p.cobrarRep;drawLogo()}
 $('pfSave').onclick=()=>{const p=db.cfg.perfil;p.nome=$('pfNome').value.trim();p.pix=$('pfPix').value.trim();p.cobrarRep=$('pfRep').checked;save();renderDHead();toast('Perfil salvo')};
 $('pfFile').onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;
@@ -791,11 +835,12 @@ $('bkCopy').onclick=()=>copy(JSON.stringify(bkObj()),()=>toast('Backup copiado')
 $('bkFileDl').onclick=()=>{dlFile(bkObj(),bkName());toast('Arquivo de backup gerado')};
 $('sFile').onclick=()=>{dlFile(bkObj(),bkName());toast('Arquivo de backup gerado')};
 function restoreObj(o,why){if(!o||!Array.isArray(o.alunos)||!Array.isArray(o.aulas)){alert('Backup inválido.');return}
-if(!confirm('Isto substitui todos os dados atuais por '+o.alunos.length+' aluno(s) e '+o.aulas.length+' aula(s). Uma cópia automática dos dados atuais será guardada antes. Continuar?'))return;
+const cd=clean(o);if(!cd.alunos.length&&!cd.aulas.length&&(o.alunos.length||o.aulas.length)){alert('Backup inválido: nenhum registro reconhecido.');return}
+if(!confirm('Isto substitui todos os dados atuais por '+cd.alunos.length+' aluno(s) e '+cd.aulas.length+' aula(s)'+(cd.bad?' ('+cd.bad+' registro(s) inválido(s) serão ignorados)':'')+'. Uma cópia automática dos dados atuais será guardada antes. Continuar?'))return;
 snapshot(why);
 const keep=db.cfg,cf=Object.assign({},CFG0,o.cfg||{},{theme:keep.theme,entered:keep.entered,cloud:keep.cloud});
 cf.perfil=Object.assign({nome:'',logo:'',pix:'',cobrarRep:false},keep.perfil,(o.cfg&&o.cfg.perfil)||o.perfil||{},{logo:keep.perfil.logo});
-db={alunos:o.alunos,aulas:o.aulas,skips:Array.isArray(o.skips)?o.skips:[],cfg:cf};renderDHead();
+const ids=new Set(cd.alunos.concat(cd.aulas).map(x=>x.id));db={alunos:cd.alunos,aulas:cd.aulas,skips:cd.skips,del:(db.del||[]).filter(x=>!ids.has(x.id)),cfg:cf};renderDHead();
 save();renderBkAuto();toast('Backup restaurado')}
 $('bkRest').onclick=()=>{const t=prompt('Cole aqui o backup copiado:');if(!t)return;let o;try{o=JSON.parse(t)}catch(e){alert('Backup inválido.');return}restoreObj(o,'Antes de restaurar um backup')};
 $('bkFileUp').onclick=()=>$('bkFile').click();
@@ -811,6 +856,7 @@ bt.onclick=()=>{const keepL=bkList()[i];restoreObj(Object.assign({cfg:{perfil:ke
 const dl=document.createElement('button');dl.className='btn sec';dl.textContent='Baixar';dl.onclick=()=>dlFile(x.data,'controle-de-aulas-copia-'+new Date(x.at).toISOString().slice(0,10)+'.json');
 it.appendChild(bt);it.appendChild(dl);b.appendChild(it)})}
 
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
 load();applyTheme(db.cfg.theme);renderDHead();
 const hoje=iso(new Date());$('mes').value=hoje.slice(0,7);$('mM').value=hoje.slice(0,7);cur=hoje;$('dt').value=hoje;
 if(db.cfg.entered)showApp();else showLogin();
