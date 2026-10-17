@@ -279,8 +279,13 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 
 <section id="v-backup" class="hide">
 <div class="card"><h2>Backup dos dados</h2>
-<div class="mut">Os dados ficam só neste aparelho. Copie um backup de vez em quando e guarde nas suas notas ou mande no WhatsApp para você mesmo.</div>
-<div class="row" style="margin-top:12px"><button class="btn sec" id="bkCopy">Copiar backup</button><button class="btn sec" id="bkRest">Restaurar backup</button></div></div>
+<div class="mut">Guarde uma cópia de vez em quando. Você pode copiar o texto (para notas ou WhatsApp) ou baixar um arquivo.</div>
+<div class="row" style="margin-top:12px;flex-wrap:wrap"><button class="btn" id="bkFileDl">Baixar arquivo de backup</button><button class="btn sec" id="bkCopy">Copiar backup</button></div>
+<div class="row" style="margin-top:8px;flex-wrap:wrap"><button class="btn sec" id="bkRest">Restaurar colando o texto</button><button class="btn sec" id="bkFileUp">Restaurar de arquivo</button></div>
+<input type="file" id="bkFile" accept=".json,application/json" class="hide"></div>
+<div class="card"><h2>Cópias automáticas deste aparelho</h2>
+<div class="mut">O app guarda sozinho uma cópia antes de entrar numa conta, juntar com a nuvem ou restaurar um backup. Ficam as 3 mais recentes. Ao sair da conta, elas são apagadas deste aparelho.</div>
+<div id="bkAuto"></div></div>
 </section>
 
 <section id="v-tema" class="hide">
@@ -304,7 +309,8 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 <button class="btn sec" id="sLocal">Enviar os deste aparelho</button>
 <button class="btn del" id="sCancel">Cancelar e sair da conta</button>
 </div>
-<div class="mut" style="margin-top:10px">“Usar a nuvem” e “Enviar os deste aparelho” substituem os dados do outro lado.</div>
+<div class="mut" style="margin-top:10px">“Usar a nuvem” e “Enviar os deste aparelho” substituem os dados do outro lado. Uma cópia automática dos dados deste aparelho já foi guardada.</div>
+<button class="btn sec" id="sFile" style="margin-top:10px;width:100%">Baixar cópia deste aparelho (arquivo)</button>
 </dialog>
 <dialog id="dlN">
 <h2>Seu nome nos relatórios</h2>
@@ -352,6 +358,13 @@ let db={alunos:[],aulas:[],skips:[],cfg:Object.assign({perfil:{nome:'',logo:'',p
 const $=i=>document.getElementById(i);
 function load(){try{const r=localStorage.getItem(KEY);if(r)db=Object.assign(db,JSON.parse(r))}catch(e){}
 db.alunos=db.alunos||[];db.aulas=db.aulas||[];db.skips=db.skips||[];db.cfg=Object.assign({},CFG0,db.cfg||{});db.cfg.perfil=Object.assign({nome:'',logo:'',pix:'',cobrarRep:false},db.cfg.perfil||{})}
+const BK_KEY='agenda_personal_bk_v1';
+function bkList(){try{return JSON.parse(localStorage.getItem(BK_KEY)||'[]')}catch(e){return[]}}
+function snapshot(why,p){const o=JSON.parse(JSON.stringify(p||{alunos:db.alunos,aulas:db.aulas,skips:db.skips,perfil:db.cfg.perfil}));
+if(o.perfil)delete o.perfil.logo;
+if(!(o.alunos&&o.alunos.length)&&!(o.aulas&&o.aulas.length))return;
+const L=bkList();L.unshift({at:Date.now(),why,na:(o.alunos||[]).length,nl:(o.aulas||[]).length,data:o});while(L.length>3)L.pop();
+try{localStorage.setItem(BK_KEY,JSON.stringify(L))}catch(e){L.length=1;try{localStorage.setItem(BK_KEY,JSON.stringify(L))}catch(_){}}}
 function saveRaw(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
 function save(){if(db.cfg&&db.cfg.cloud&&db.cfg.cloud.uid){db.cfg.cloud.dirty=true;rev++;schedulePush()}saveRaw()}
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -411,7 +424,7 @@ function go(v){view=v;openMenu(false);
 ['dia','alunos','rel','msg','perfil','conta','backup','tema'].forEach(x=>$('v-'+x).classList.toggle('hide',x!==v));
 document.querySelectorAll('#menu button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
 $('vtitle').textContent=TITLES[v];$('fab').classList.toggle('hide',v!=='dia');
-if(v==='dia')renderDia();if(v==='alunos')renderAlunos();if(v==='rel')renderRel();if(v==='msg')renderMsg();if(v==='perfil')renderPerfil();if(v==='tema')renderThemes();
+if(v==='dia')renderDia();if(v==='alunos')renderAlunos();if(v==='rel')renderRel();if(v==='msg')renderMsg();if(v==='perfil')renderPerfil();if(v==='backup')renderBkAuto();if(v==='tema')renderThemes();
 window.scrollTo(0,0)}
 
 // login
@@ -462,6 +475,7 @@ $('sMerge').onclick=()=>done('merge');$('sCloud').onclick=()=>done('cloud');$('s
 $('dlS').oncancel=e=>{e.preventDefault();done('cancel')};$('dlS').showModal()})}
 async function reconcile(){if(!user||recBusy)return;recBusy=true;lastRec=Date.now();
 try{const f=await fbLoad(),snap=await f.fs.getDoc(f.fs.doc(f.db,'users',user.uid)),c=cl();
+if(c.uid!==user.uid&&hasData())snapshot('Antes de entrar na conta '+(user.email||''));
 if(!snap.exists()){if(pendingName&&!db.cfg.perfil.nome)db.cfg.perfil.nome=pendingName;pendingName='';c.uid=user.uid;c.dirty=true;saveRaw();await push();renderDHead();return}
 pendingName='';
 const d=snap.data();let cP;try{cP=JSON.parse(d.payload)}catch(e){setStatus('Os dados da nuvem estão ilegíveis.');return}
@@ -471,6 +485,7 @@ if(c.uid!==user.uid&&!hasData()){applyCloud(cP);c.uid=user.uid;c.at=d.updatedAt;
 const ch=await askSync(cP);
 if(ch==='cancel'){try{await f.au.signOut(f.auth)}catch(e){}return}
 if(ch==='cloud'){applyCloud(cP);c.uid=user.uid;c.at=d.updatedAt;c.dirty=false;saveRaw();renderDHead();refreshViews();setStatus('Dados da nuvem carregados às '+hora()+'.');return}
+if(ch==='local')snapshot('Dados da nuvem antes de serem substituídos',cP);
 if(ch==='merge')applyCloud(mergeP(cP));
 c.uid=user.uid;c.dirty=true;saveRaw();renderDHead();refreshViews();await push()}
 catch(e){setStatus(cloudErr(e))}finally{recBusy=false}}
@@ -515,7 +530,7 @@ if(!cl().uid){db.cfg.entered=false;save();showLogin();toast('Seus dados continua
 if(!confirm('Sair da conta? Seus dados continuam salvos na nuvem e serão removidos deste aparelho. Para voltar a usá-los, entre de novo.'))return;
 if(cl().dirty){if(user)await push();if(cl().dirty){alert('Há alterações que ainda não foram enviadas para a nuvem. Conecte-se à internet e tente de novo.');return}}
 try{if(fb)await fb.au.signOut(fb.auth)}catch(e){}
-user=null;db.alunos=[];db.aulas=[];db.skips=[];db.cfg.perfil={nome:'',logo:'',pix:'',cobrarRep:false};db.cfg.cloud=null;db.cfg.entered=false;syncMsg='';
+user=null;db.alunos=[];db.aulas=[];db.skips=[];db.cfg.perfil={nome:'',logo:'',pix:'',cobrarRep:false};db.cfg.cloud=null;db.cfg.entered=false;syncMsg='';try{localStorage.removeItem(BK_KEY)}catch(e){}
 saveRaw();renderDHead();renderConta();showLogin();toast('Você saiu da conta')};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&user&&Date.now()-lastRec>30000)reconcile()});
 window.addEventListener('online',()=>{if(user)reconcile()});
@@ -769,14 +784,32 @@ $('mWa').onclick=()=>{const t=$('mTxt').value.trim();if(!t)return;waOpen(t,(alun
 $('mCopy').onclick=()=>{copy($('mTxt').value,()=>toast('Mensagem copiada'),()=>alert('Não foi possível copiar.'))};
 
 // backup
-$('bkCopy').onclick=()=>copy((()=>{const o=JSON.parse(JSON.stringify(db));if(o.cfg&&o.cfg.perfil)delete o.cfg.perfil.logo;if(o.cfg)delete o.cfg.cloud;return JSON.stringify(o)})(),()=>toast('Backup copiado'),()=>alert('Não foi possível copiar.'));
-$('bkRest').onclick=()=>{const t=prompt('Cole aqui o backup copiado:');if(!t)return;
-try{const o=JSON.parse(t);if(!Array.isArray(o.alunos)||!Array.isArray(o.aulas))throw 0;
-if(!confirm('Isto substitui todos os dados atuais por '+o.alunos.length+' aluno(s) e '+o.aulas.length+' aula(s). Continuar?'))return;
+const bkObj=()=>{const o=JSON.parse(JSON.stringify(db));if(o.cfg&&o.cfg.perfil)delete o.cfg.perfil.logo;if(o.cfg)delete o.cfg.cloud;return o};
+function dlFile(obj,name){const b=new Blob([JSON.stringify(obj)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}
+const bkName=()=>'controle-de-aulas-backup-'+iso(new Date())+'.json';
+$('bkCopy').onclick=()=>copy(JSON.stringify(bkObj()),()=>toast('Backup copiado'),()=>alert('Não foi possível copiar.'));
+$('bkFileDl').onclick=()=>{dlFile(bkObj(),bkName());toast('Arquivo de backup gerado')};
+$('sFile').onclick=()=>{dlFile(bkObj(),bkName());toast('Arquivo de backup gerado')};
+function restoreObj(o,why){if(!o||!Array.isArray(o.alunos)||!Array.isArray(o.aulas)){alert('Backup inválido.');return}
+if(!confirm('Isto substitui todos os dados atuais por '+o.alunos.length+' aluno(s) e '+o.aulas.length+' aula(s). Uma cópia automática dos dados atuais será guardada antes. Continuar?'))return;
+snapshot(why);
 const keep=db.cfg,cf=Object.assign({},CFG0,o.cfg||{},{theme:keep.theme,entered:keep.entered,cloud:keep.cloud});
-cf.perfil=Object.assign({nome:'',logo:'',pix:'',cobrarRep:false},keep.perfil,(o.cfg&&o.cfg.perfil)||{},{logo:keep.perfil.logo});
+cf.perfil=Object.assign({nome:'',logo:'',pix:'',cobrarRep:false},keep.perfil,(o.cfg&&o.cfg.perfil)||o.perfil||{},{logo:keep.perfil.logo});
 db={alunos:o.alunos,aulas:o.aulas,skips:Array.isArray(o.skips)?o.skips:[],cfg:cf};renderDHead();
-save();toast('Backup restaurado')}catch(e){alert('Backup inválido.')}};
+save();renderBkAuto();toast('Backup restaurado')}
+$('bkRest').onclick=()=>{const t=prompt('Cole aqui o backup copiado:');if(!t)return;let o;try{o=JSON.parse(t)}catch(e){alert('Backup inválido.');return}restoreObj(o,'Antes de restaurar um backup')};
+$('bkFileUp').onclick=()=>$('bkFile').click();
+$('bkFile').onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const rd=new FileReader();
+rd.onload=()=>{let o;try{o=JSON.parse(rd.result)}catch(err){alert('Esse arquivo não é um backup válido.');return}restoreObj(o,'Antes de restaurar um arquivo de backup')};rd.readAsText(f);e.target.value=''};
+function renderBkAuto(){const L=bkList(),b=$('bkAuto');
+if(!L.length){b.innerHTML='<div class="empty">Nenhuma cópia automática ainda.</div>';return}
+b.innerHTML='';L.forEach((x,i)=>{const it=document.createElement('div');it.className='item';
+const dt=new Date(x.at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+it.innerHTML='<div class="grow"><b>'+dt+'</b><div class="mut">'+esc(x.why)+' · '+x.na+' aluno(s), '+x.nl+' aula(s)</div></div>';
+const bt=document.createElement('button');bt.className='btn sec';bt.textContent='Restaurar';
+bt.onclick=()=>{const keepL=bkList()[i];restoreObj(Object.assign({cfg:{perfil:keepL.data.perfil}},keepL.data),'Antes de restaurar uma cópia automática')};
+const dl=document.createElement('button');dl.className='btn sec';dl.textContent='Baixar';dl.onclick=()=>dlFile(x.data,'controle-de-aulas-copia-'+new Date(x.at).toISOString().slice(0,10)+'.json');
+it.appendChild(bt);it.appendChild(dl);b.appendChild(it)})}
 
 load();applyTheme(db.cfg.theme);renderDHead();
 const hoje=iso(new Date());$('mes').value=hoje.slice(0,7);$('mM').value=hoje.slice(0,7);cur=hoje;$('dt').value=hoje;
