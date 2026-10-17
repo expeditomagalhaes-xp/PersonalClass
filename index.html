@@ -236,7 +236,7 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 <div class="mut" id="mHint"></div>
 <div id="mList"></div></div>
 <div class="card"><label for="mTxt" style="margin-top:0">Mensagem (você pode editar o texto)</label>
-<textarea id="mTxt" rows="9"></textarea>
+<textarea id="mTxt" rows="13"></textarea>
 <div class="row" style="margin-top:12px"><button class="btn" id="mWa">Enviar no WhatsApp</button><button class="btn sec" id="mCopy">Copiar mensagem</button></div>
 <div class="mut" id="mTel" style="margin-top:8px"></div></div>
 </div>
@@ -627,9 +627,7 @@ $('pfDel').onclick=()=>{db.cfg.perfil.logo='';save();drawLogo();renderDHead()};
 // mensagem ao aluno (dias previstos pelo horário fixo, independente de confirmação)
 function msgTexto(a,m,L){if(!L.length)return'';
 const first=a.nome.trim().split(/\s+/)[0];
-const it=L.map(x=>fmtD(x.d)+' ('+DN[parse(x.d).getDay()].toLowerCase()+') '+msgHr(x));
-const lista=it.length>1?it.slice(0,-1).join(', ')+' e '+it[it.length-1]:it[0];
-return 'Querido(a) '+first+', neste mês de '+mesSo(m)+' nossas aulas ficaram organizadas para os dias: '+lista+'.\n\nQualquer ajuste é só me avisar!'}
+return 'Querido(a) '+first+', neste mês de '+mesSo(m)+' nossas aulas ficaram organizadas para os dias:\n\n'+L.map(x=>fmtD(x.d)+' - '+x.h+(x.f?' às '+x.f:'')).join('\n')+'\n\nQualquer ajuste é só me avisar!'}
 function renderMsg(){
 const has=db.alunos.length>0;$('mEmpty').classList.toggle('hide',has);$('mBox').classList.toggle('hide',!has);
 if(!has)return;
