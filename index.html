@@ -140,6 +140,8 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 .rh img{width:56px;height:56px;object-fit:contain;border-radius:10px}
 .rh b{font-size:19px;display:block}
 .printonly{display:none}
+.menu button.subtle{padding:8px 12px 8px 48px;font-size:14px;font-weight:500;color:var(--mut)}
+.menu button.subtle.on{color:var(--ac)}
 .logoPrev{width:72px;height:72px;border:1px dashed var(--line);border-radius:14px;display:flex;align-items:center;justify-content:center;flex:none;overflow:hidden;color:var(--mut);font-size:12px;text-align:center}
 .logoPrev img{width:100%;height:100%;object-fit:contain}
 @media print{:root,:root[data-theme]{--bg:#fff;--card:#fff;--ink:#000;--mut:#444;--line:#999;--ac:#000;--acs:#eee;--ok:#000;--okb:#eee}.drawer,.scrim,.topbar,.fab,.noprint,#toast{display:none!important}.main{margin:0}body{background:#fff;color:#000}.wrap{padding:0;max-width:none}.card{border:0;padding:0;box-shadow:none}.chip,.ri{background:none;color:#000;border:1px solid #999}.sum div{background:#fff}.printonly{display:block!important;white-space:pre-wrap;font-size:15px;line-height:1.55}.noprintarea{display:none!important}.rh{border-bottom:2px solid #000}}
@@ -189,6 +191,7 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 <button data-v="msg"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.2A8 8 0 1 1 21 12z"/></svg>Mensagem ao aluno</button>
 <hr>
 <button data-v="perfil"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>Meu perfil</button>
+<button data-v="conta" class="subtle">Entrar / criar conta</button>
 <button data-v="backup"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Backup dos dados</button>
 <button data-v="tema"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg>Aparência</button>
 </nav>
@@ -256,6 +259,15 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 </div>
 </section>
 
+<section id="v-conta" class="hide">
+<div class="card"><h2>Conta</h2>
+<div class="msg" style="margin-top:0"><b>Modo sem cadastro.</b> Seus dados ficam salvos só neste aparelho.</div>
+<div class="mut">Com uma conta, seus alunos e aulas poderão ficar guardados na nuvem e acompanhar você em outro aparelho. Essa etapa ainda não está ativa: o cadastro será ligado assim que o banco de dados online for configurado.</div>
+<div class="row" style="margin-top:14px"><button class="btn" id="ctIn">Entrar</button><button class="btn sec" id="ctUp">Criar conta</button></div>
+<div class="mut" style="margin-top:10px">Enquanto isso, use Backup dos dados para guardar uma cópia.</div>
+</div>
+</section>
+
 <section id="v-backup" class="hide">
 <div class="card"><h2>Backup dos dados</h2>
 <div class="mut">Os dados ficam só neste aparelho. Copie um backup de vez em quando e guarde nas suas notas ou mande no WhatsApp para você mesmo.</div>
@@ -309,7 +321,7 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 (function(){
 const KEY='agenda_personal_v1',DN=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const CFG0={off:0,last:'',theme:'petroleo',entered:false};
-const TITLES={dia:'Aulas do dia',alunos:'Alunos',rel:'Relatório do mês',msg:'Mensagem ao aluno',perfil:'Meu perfil',backup:'Backup dos dados',tema:'Aparência'};
+const TITLES={dia:'Aulas do dia',alunos:'Alunos',rel:'Relatório do mês',msg:'Mensagem ao aluno',perfil:'Meu perfil',conta:'Conta',backup:'Backup dos dados',tema:'Aparência'};
 const THEMES=[
 {id:'petroleo',nome:'Petróleo',desc:'Azul-petróleo, o visual original refinado',cores:['#0e7a8a','#eef2f4','#ffffff']},
 {id:'claro',nome:'Claro',desc:'Fundo branco, limpo e profissional',cores:['#2563eb','#f6f7f9','#ffffff']},
@@ -374,7 +386,7 @@ $('scrim').onclick=()=>openMenu(false);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')openMenu(false)});
 document.querySelectorAll('#menu button').forEach(b=>b.onclick=()=>go(b.dataset.v));
 function go(v){view=v;openMenu(false);
-['dia','alunos','rel','msg','perfil','backup','tema'].forEach(x=>$('v-'+x).classList.toggle('hide',x!==v));
+['dia','alunos','rel','msg','perfil','conta','backup','tema'].forEach(x=>$('v-'+x).classList.toggle('hide',x!==v));
 document.querySelectorAll('#menu button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
 $('vtitle').textContent=TITLES[v];$('fab').classList.toggle('hide',v!=='dia');
 if(v==='dia')renderDia();if(v==='alunos')renderAlunos();if(v==='rel')renderRel();if(v==='msg')renderMsg();if(v==='perfil')renderPerfil();if(v==='tema')renderThemes();
@@ -387,6 +399,7 @@ function authHome(){$('authHome').classList.remove('hide');$('authForm').classLi
 function authForm(up){$('authHome').classList.add('hide');$('authForm').classList.remove('hide');
 $('authTitle').textContent=up?'Criar conta':'Entrar';$('authGo').textContent=up?'Criar conta':'Entrar';
 $('nmBox').classList.toggle('hide',!up);$('lpw').autocomplete=up?'new-password':'current-password';$('authMsg').classList.add('hide');$('authGuest').style.display='none'}
+$('ctIn').onclick=()=>{showLogin();authForm(false)};$('ctUp').onclick=()=>{showLogin();authForm(true)};
 $('goIn').onclick=()=>authForm(false);$('goUp').onclick=()=>authForm(true);$('authBack').onclick=authHome;
 $('authForm').onsubmit=e=>{e.preventDefault();const m=$('authMsg');
 m.textContent='As contas na nuvem ainda não estão ativas: essa etapa vem a seguir. Por enquanto, use “Entrar sem cadastro”. Seus dados ficam salvos neste aparelho e nada do que você digitou aqui foi guardado.';
