@@ -144,7 +144,7 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 .menu button.subtle.on{color:var(--ac)}
 .logoPrev{width:72px;height:72px;border:1px dashed var(--line);border-radius:14px;display:flex;align-items:center;justify-content:center;flex:none;overflow:hidden;color:var(--mut);font-size:12px;text-align:center}
 .logoPrev img{width:100%;height:100%;object-fit:contain}
-@media print{:root,:root[data-theme]{--bg:#fff;--card:#fff;--ink:#000;--mut:#444;--line:#999;--ac:#000;--acs:#eee;--ok:#000;--okb:#eee}.drawer,.scrim,.topbar,.fab,.noprint,#toast{display:none!important}.main{margin:0}body{background:#fff;color:#000}.wrap{padding:0;max-width:none}.card{border:0;padding:0;box-shadow:none}.chip,.ri{background:none;color:#000;border:1px solid #999}.sum div{background:#fff}.printonly{display:block!important;white-space:pre-wrap;font-size:15px;line-height:1.55}.noprintarea{display:none!important}.rh{border-bottom:2px solid #000}}
+@media print{:root,:root[data-theme]{--bg:#fff;--card:#fff;--ink:#000;--mut:#444;--line:#999;--ac:#000;--acs:#eee;--ok:#000;--okb:#eee}.drawer,.scrim,.topbar,.fab,.noprint,#toast{display:none!important}.main{margin:0}body{background:#fff;color:#000}.wrap{padding:0;max-width:none}.card{border:0;padding:0;box-shadow:none}.chip,.ri{background:none;color:#000;border:1px solid #999}.sum div{background:#fff}.printonly{display:block!important;white-space:pre-wrap;font-size:15px;line-height:1.55}.noprintarea{display:none!important}.rh{border-bottom:2px solid #000;break-inside:avoid;display:flex!important}.rh img{display:block!important;width:56px!important;height:56px!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style>
 </head>
 <body>
@@ -713,7 +713,8 @@ if(!(todos&&cur==='__all__')&&!L.some(x=>x.id===cur))cur=L.length?L[0].id:'';
 sel.innerHTML=(todos&&L.length?'<option value="__all__">Todos os alunos</option>':'')+L.map(x=>'<option value="'+x.id+'">'+esc(x.nome)+'</option>').join('');sel.value=cur;return cur}
 function relHead(tit,sub){const p=db.cfg.perfil;
 const lg=safeLogo(p.logo),top=(p.nome||lg)?'<div class="rh">'+(lg?'<img src="'+lg+'" alt="">':'')+'<div><b>'+esc(p.nome||'')+'</b></div></div>':'';
-return top+'<h2>'+tit+'</h2><div class="mut">'+(sub?sub+' · ':'')+'Emitido em '+hojeBR()+'</div>'}
+const dica=(p.nome||lg)?'':'<div class="msg noprint" style="margin:0 0 10px">Seu nome e sua logo ainda não foram cadastrados, então o cabeçalho do relatório está vazio. Cadastre em <b>Meu perfil</b>.</div>';
+return dica+top+'<h2>'+tit+'</h2><div class="mut">'+(sub?sub+' · ':'')+'Emitido em '+hojeBR()+'</div>'}
 function renderRel(){
 $('relTipoSel').value=relTipo;
 const needAl=relTipo!=='pro';$('cliBox').classList.toggle('hide',!needAl);
@@ -797,11 +798,12 @@ function textoAtual(){if(relTipo==='fech')return $('fTxt')?$('fTxt').value:'';if
 $('relTipoSel').onchange=()=>{relTipo=$('relTipoSel').value;renderRel()};
 $('relAl').onchange=()=>{relAluno=$('relAl').value;renderRel()};
 $('mes').onchange=renderRel;
-$('print').onclick=()=>ensureNome(()=>{
+$('print').onclick=()=>ensureNome(async()=>{
 const keep=relTipo==='fech'&&$('fTxt')?$('fTxt').value:null;renderRel();
 if(keep!==null&&$('fTxt')){$('fTxt').value=keep;$('fPrint').textContent=keep}
 const old=document.title,a=alunoBy(relAluno),base={fech:'Fechamento',previstos:'Dias previstos',cli:'Relatório',pro:'Relatório profissional'}[relTipo];
 document.title=base+(relTipo!=='pro'&&a&&relAluno!=='__all__'?' '+a.nome:'')+' '+$('mes').value;
+try{await Promise.all([...$('relOut').querySelectorAll('img')].map(i=>i.decode?i.decode().catch(()=>{}):0))}catch(e){}
 window.print();setTimeout(()=>{document.title=old},3000)});
 $('copy').onclick=()=>{const t=textoAtual();if(!t){$('copied').textContent='Não há dados neste mês.';return}
 copy(t,()=>$('copied').textContent='Texto copiado.',()=>$('copied').textContent='Não foi possível copiar.')};
