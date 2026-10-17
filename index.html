@@ -171,6 +171,7 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 <label for="lpw">Senha</label><input id="lpw" type="password" autocomplete="current-password">
 <button class="btn block" type="submit" style="margin-top:16px" id="authGo">Entrar</button>
 <div class="msg hide" id="authMsg"></div>
+<button class="btn sec block" type="button" id="authForgot" style="margin-top:6px">Esqueci minha senha</button>
 <button class="btn sec block" type="button" id="authBack" style="margin-top:6px">Voltar</button>
 <button class="btn block" type="button" id="authGuest" style="margin-top:6px;display:none">Entrar sem cadastro</button>
 </form>
@@ -261,10 +262,18 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 
 <section id="v-conta" class="hide">
 <div class="card"><h2>Conta</h2>
+<div id="ctOff">
 <div class="msg" style="margin-top:0"><b>Modo sem cadastro.</b> Seus dados ficam salvos só neste aparelho.</div>
-<div class="mut">Com uma conta, seus alunos e aulas poderão ficar guardados na nuvem e acompanhar você em outro aparelho. Essa etapa ainda não está ativa: o cadastro será ligado assim que o banco de dados online for configurado.</div>
+<div class="mut">Crie uma conta para guardar seus alunos e aulas na nuvem e usar o app em outro aparelho. Os dados que já estão aqui podem ser enviados na primeira vez que você entrar.</div>
 <div class="row" style="margin-top:14px"><button class="btn" id="ctIn">Entrar</button><button class="btn sec" id="ctUp">Criar conta</button></div>
-<div class="mut" style="margin-top:10px">Enquanto isso, use Backup dos dados para guardar uma cópia.</div>
+<div class="mut" style="margin-top:10px">Use também o Backup dos dados para guardar uma cópia.</div>
+</div>
+<div id="ctOn" class="hide">
+<div class="msg" style="margin-top:0">Conectado como <b id="ctMail"></b></div>
+<div class="mut" id="ctStatus"></div>
+<div class="row" style="margin-top:14px"><button class="btn" id="ctSync">Sincronizar agora</button><button class="btn del" id="ctOut">Sair da conta</button></div>
+<div class="mut" style="margin-top:10px">Ao sair, seus dados continuam na nuvem e são removidos deste aparelho. Para voltar a usá-los, entre de novo.</div>
+</div>
 </div>
 </section>
 
@@ -285,6 +294,18 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 
 <div id="toast" role="status"></div>
 
+<dialog id="dlS">
+<h2>Esta conta já tem dados</h2>
+<div class="mut" id="sMsg"></div>
+<div class="mut" style="margin-top:8px">O que você quer fazer?</div>
+<div style="display:grid;gap:8px;margin-top:12px">
+<button class="btn" id="sMerge">Juntar os dois (recomendado)</button>
+<button class="btn sec" id="sCloud">Usar os dados da nuvem</button>
+<button class="btn sec" id="sLocal">Enviar os deste aparelho</button>
+<button class="btn del" id="sCancel">Cancelar e sair da conta</button>
+</div>
+<div class="mut" style="margin-top:10px">“Usar a nuvem” e “Enviar os deste aparelho” substituem os dados do outro lado.</div>
+</dialog>
 <dialog id="dlN">
 <h2>Seu nome nos relatórios</h2>
 <div class="mut">Ele aparece no cabeçalho dos PDFs. Você confirma só desta vez e pode mudar depois em Meu perfil.</div>
@@ -331,7 +352,8 @@ let db={alunos:[],aulas:[],skips:[],cfg:Object.assign({perfil:{nome:'',logo:'',p
 const $=i=>document.getElementById(i);
 function load(){try{const r=localStorage.getItem(KEY);if(r)db=Object.assign(db,JSON.parse(r))}catch(e){}
 db.alunos=db.alunos||[];db.aulas=db.aulas||[];db.skips=db.skips||[];db.cfg=Object.assign({},CFG0,db.cfg||{});db.cfg.perfil=Object.assign({nome:'',logo:'',pix:'',cobrarRep:false},db.cfg.perfil||{})}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
+function saveRaw(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
+function save(){if(db.cfg&&db.cfg.cloud&&db.cfg.cloud.uid){db.cfg.cloud.dirty=true;rev++;schedulePush()}saveRaw()}
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const parse=s=>{const p=s.split('-');return new Date(+p[0],+p[1]-1,+p[2])};
@@ -398,15 +420,105 @@ function showApp(){$('login').classList.add('hide');$('app').classList.remove('h
 function authHome(){$('authHome').classList.remove('hide');$('authForm').classList.add('hide');$('authMsg').classList.add('hide')}
 function authForm(up){$('authHome').classList.add('hide');$('authForm').classList.remove('hide');
 $('authTitle').textContent=up?'Criar conta':'Entrar';$('authGo').textContent=up?'Criar conta':'Entrar';
-$('nmBox').classList.toggle('hide',!up);$('lpw').autocomplete=up?'new-password':'current-password';$('authMsg').classList.add('hide');$('authGuest').style.display='none'}
+$('nmBox').classList.toggle('hide',!up);$('authForgot').classList.toggle('hide',up);$('lpw').autocomplete=up?'new-password':'current-password';$('authMsg').classList.add('hide');$('authGuest').style.display='none'}
 $('ctIn').onclick=()=>{showLogin();authForm(false)};$('ctUp').onclick=()=>{showLogin();authForm(true)};
 $('goIn').onclick=()=>authForm(false);$('goUp').onclick=()=>authForm(true);$('authBack').onclick=authHome;
-$('authForm').onsubmit=e=>{e.preventDefault();const m=$('authMsg');
-m.textContent='As contas na nuvem ainda não estão ativas: essa etapa vem a seguir. Por enquanto, use “Entrar sem cadastro”. Seus dados ficam salvos neste aparelho e nada do que você digitou aqui foi guardado.';
-m.classList.remove('hide');$('authGuest').style.display='block'};
+// ===== nuvem (Firebase): login e sincronização =====
+const FB_CFG={apiKey:"AIzaSyCQ5lgV0AS0sci-f5Ye91tzPLMXxLUy6xU",authDomain:"controle-aulas-f2b47.firebaseapp.com",projectId:"controle-aulas-f2b47",storageBucket:"controle-aulas-f2b47.firebasestorage.app",messagingSenderId:"678753486841",appId:"1:678753486841:web:5b7a8877b98d90c0ce5f28"};
+const FB_URL='https://www.gstatic.com/firebasejs/13.0.0/';
+let fb=null,fbP=null,user=null,rev=0,pushT=null,syncing=false,recBusy=false,lastRec=0,authOn=false,pendingName='',syncMsg='';
+const cl=()=>db.cfg.cloud||(db.cfg.cloud={uid:'',at:0,dirty:false});
+function fbLoad(){if(fbP)return fbP;
+fbP=(async()=>{const [a,au,fs]=await Promise.all([import(FB_URL+'firebase-app.js'),import(FB_URL+'firebase-auth.js'),import(FB_URL+'firebase-firestore.js')]);
+const app=a.initializeApp(FB_CFG);fb={au,fs,auth:au.getAuth(app),db:fs.getFirestore(app)};return fb})().catch(e=>{fbP=null;throw e});return fbP}
+function initAuth(f){if(authOn)return;authOn=true;f.au.onAuthStateChanged(f.auth,onUser)}
+const hasData=()=>db.alunos.length>0||db.aulas.length>0;
+const payload=()=>({alunos:db.alunos,aulas:db.aulas,skips:db.skips,perfil:db.cfg.perfil});
+function applyCloud(p){db.alunos=Array.isArray(p.alunos)?p.alunos:[];db.aulas=Array.isArray(p.aulas)?p.aulas:[];db.skips=Array.isArray(p.skips)?p.skips:[];
+db.cfg.perfil=Object.assign({nome:'',logo:'',pix:'',cobrarRep:false},p.perfil||{})}
+function mergeP(c){const un=(a,b)=>{const m=new Map();(b||[]).forEach(x=>m.set(x.id,x));(a||[]).forEach(x=>{if(!m.has(x.id))m.set(x.id,x)});return[...m.values()]};
+const sk=new Map();(c.skips||[]).concat(db.skips).forEach(k=>sk.set(k.alunoId+'|'+k.data+'|'+k.hora,k));
+const pf=Object.assign({},db.cfg.perfil,c.perfil&&c.perfil.nome?c.perfil:{});
+return{alunos:un(db.alunos,c.alunos),aulas:un(db.aulas,c.aulas),skips:[...sk.values()],perfil:pf}}
+function refreshViews(){if($('app').classList.contains('hide'))return;
+({dia:renderDia,alunos:renderAlunos,rel:renderRel,msg:renderMsg,perfil:renderPerfil,conta:renderConta})[view]?.()}
+function setStatus(t){syncMsg=t;if($('ctStatus'))$('ctStatus').textContent=t}
+function cloudErr(e){const c=e&&e.code||'';
+if(c.includes('permission-denied'))return'A nuvem recusou o acesso. Confira se as regras do Firestore foram publicadas.';
+if(c.includes('unavailable')||c.includes('network')||c==='')return'Sem conexão. As alterações ficam salvas aqui e serão enviadas quando voltar a internet.';
+return'Não foi possível sincronizar ('+c+').'}
+function hora(){return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
+function schedulePush(){clearTimeout(pushT);pushT=setTimeout(()=>{if(user)push()},1500)}
+async function push(){if(!user||syncing)return;syncing=true;const r0=rev;
+try{const f=await fbLoad(),at=Date.now(),str=JSON.stringify(payload());
+if(str.length>900000){setStatus('Os dados ficaram grandes demais para a nuvem (limite de 1 MB). Faça um backup e fale comigo.');return}
+await f.fs.setDoc(f.fs.doc(f.db,'users',user.uid),{payload:str,updatedAt:at,v:1});
+const c=cl();c.uid=user.uid;c.at=at;c.dirty=(rev!==r0);saveRaw();setStatus('Sincronizado às '+hora()+'.');if(c.dirty)schedulePush()}
+catch(e){setStatus(cloudErr(e))}finally{syncing=false}}
+function askSync(cP){return new Promise(res=>{
+$('sMsg').textContent='Na nuvem: '+(cP.alunos||[]).length+' aluno(s) e '+(cP.aulas||[]).length+' aula(s). Neste aparelho: '+db.alunos.length+' aluno(s) e '+db.aulas.length+' aula(s).';
+const done=v=>{$('dlS').close();res(v)};
+$('sMerge').onclick=()=>done('merge');$('sCloud').onclick=()=>done('cloud');$('sLocal').onclick=()=>done('local');$('sCancel').onclick=()=>done('cancel');
+$('dlS').oncancel=e=>{e.preventDefault();done('cancel')};$('dlS').showModal()})}
+async function reconcile(){if(!user||recBusy)return;recBusy=true;lastRec=Date.now();
+try{const f=await fbLoad(),snap=await f.fs.getDoc(f.fs.doc(f.db,'users',user.uid)),c=cl();
+if(!snap.exists()){if(pendingName&&!db.cfg.perfil.nome)db.cfg.perfil.nome=pendingName;pendingName='';c.uid=user.uid;c.dirty=true;saveRaw();await push();renderDHead();return}
+pendingName='';
+const d=snap.data();let cP;try{cP=JSON.parse(d.payload)}catch(e){setStatus('Os dados da nuvem estão ilegíveis.');return}
+if(c.uid===user.uid&&d.updatedAt===c.at){if(c.dirty)await push();else setStatus('Sincronizado às '+hora()+'.');return}
+if(c.uid===user.uid&&!c.dirty){applyCloud(cP);c.at=d.updatedAt;saveRaw();renderDHead();refreshViews();setStatus('Atualizado com os dados da nuvem às '+hora()+'.');return}
+if(c.uid!==user.uid&&!hasData()){applyCloud(cP);c.uid=user.uid;c.at=d.updatedAt;c.dirty=false;saveRaw();renderDHead();refreshViews();setStatus('Dados da nuvem carregados às '+hora()+'.');toast('Dados da nuvem carregados');return}
+const ch=await askSync(cP);
+if(ch==='cancel'){try{await f.au.signOut(f.auth)}catch(e){}return}
+if(ch==='cloud'){applyCloud(cP);c.uid=user.uid;c.at=d.updatedAt;c.dirty=false;saveRaw();renderDHead();refreshViews();setStatus('Dados da nuvem carregados às '+hora()+'.');return}
+if(ch==='merge')applyCloud(mergeP(cP));
+c.uid=user.uid;c.dirty=true;saveRaw();renderDHead();refreshViews();await push()}
+catch(e){setStatus(cloudErr(e))}finally{recBusy=false}}
+async function onUser(u){user=u;renderDHead();renderConta();if(!u)return;
+await reconcile();
+if(!$('login').classList.contains('hide')){db.cfg.entered=true;saveRaw();showApp()}
+renderDHead();renderConta()}
+function renderConta(){const on=!!user;$('ctOff').classList.toggle('hide',on);$('ctOn').classList.toggle('hide',!on);
+if(on){$('ctMail').textContent=user.email||'';$('ctStatus').textContent=syncMsg}}
+const authErr=e=>{const c=(e&&e.code)||'';
+if(c==='auth/invalid-credential'||c==='auth/wrong-password'||c==='auth/user-not-found')return'E-mail ou senha incorretos.';
+if(c==='auth/email-already-in-use')return'Já existe uma conta com esse e-mail. Toque em Voltar e use Entrar.';
+if(c==='auth/weak-password')return'A senha precisa ter pelo menos 6 caracteres.';
+if(c==='auth/invalid-email')return'Esse e-mail não parece válido.';
+if(c==='auth/missing-password')return'Informe a senha.';
+if(c==='auth/too-many-requests')return'Muitas tentativas. Espere alguns minutos e tente de novo.';
+if(c==='auth/network-request-failed')return'Sem conexão com a internet.';
+if(c==='auth/operation-not-allowed')return'O login por e-mail e senha ainda não foi ativado no Firebase.';
+if(c==='auth/unauthorized-domain')return'Este endereço ainda não está autorizado no Firebase (Authentication > Configurações > Domínios autorizados).';
+return'Não foi possível concluir ('+(c||'sem conexão')+'). Verifique a internet e tente de novo.'};
+const showMsg=t=>{const m=$('authMsg');m.textContent=t;m.classList.remove('hide')};
+$('authForm').onsubmit=async e=>{e.preventDefault();
+const up=!$('nmBox').classList.contains('hide'),em=$('lem').value.trim(),pw=$('lpw').value,nm=$('lnm').value.trim();
+if(!em||!pw){showMsg('Informe e-mail e senha.');return}
+if(up&&pw.length<6){showMsg('A senha precisa ter pelo menos 6 caracteres.');return}
+const b=$('authGo');b.disabled=true;showMsg(up?'Criando conta…':'Entrando…');
+try{const f=await fbLoad();initAuth(f);if(up)pendingName=nm;
+if(up){const r=await f.au.createUserWithEmailAndPassword(f.auth,em,pw);if(nm){try{await f.au.updateProfile(r.user,{displayName:nm})}catch(_){}}}
+else await f.au.signInWithEmailAndPassword(f.auth,em,pw);
+$('lpw').value='';$('authMsg').classList.add('hide')}
+catch(err){showMsg(authErr(err))}finally{b.disabled=false}};
+$('authForgot').onclick=async()=>{const em=$('lem').value.trim();
+if(!em){showMsg('Digite seu e-mail no campo acima e toque de novo em “Esqueci minha senha”.');return}
+try{const f=await fbLoad();await f.au.sendPasswordResetEmail(f.auth,em);showMsg('Enviamos um e-mail para redefinir a senha. Veja também a caixa de spam.')}catch(err){showMsg(authErr(err))}};
 function guest(){db.cfg.entered=true;save();showApp()}
 $('guest').onclick=guest;$('authGuest').onclick=guest;
-$('logout').onclick=()=>{db.cfg.entered=false;save();openMenu(false);showLogin();toast('Seus dados continuam salvos neste aparelho')};
+$('ctSync').onclick=async()=>{if(!user){toast('Sem conexão com a conta');return}
+if(cl().dirty)await push();else await reconcile();toast(syncMsg||'Sincronizado')};
+$('ctOut').onclick=()=>$('logout').click();
+$('logout').onclick=async()=>{openMenu(false);
+if(!cl().uid){db.cfg.entered=false;save();showLogin();toast('Seus dados continuam salvos neste aparelho');return}
+if(!confirm('Sair da conta? Seus dados continuam salvos na nuvem e serão removidos deste aparelho. Para voltar a usá-los, entre de novo.'))return;
+if(cl().dirty){if(user)await push();if(cl().dirty){alert('Há alterações que ainda não foram enviadas para a nuvem. Conecte-se à internet e tente de novo.');return}}
+try{if(fb)await fb.au.signOut(fb.auth)}catch(e){}
+user=null;db.alunos=[];db.aulas=[];db.skips=[];db.cfg.perfil={nome:'',logo:'',pix:'',cobrarRep:false};db.cfg.cloud=null;db.cfg.entered=false;syncMsg='';
+saveRaw();renderDHead();renderConta();showLogin();toast('Você saiu da conta')};
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&user&&Date.now()-lastRec>30000)reconcile()});
+window.addEventListener('online',()=>{if(user)reconcile()});
 
 // previstas (horários fixos)
 function previstas(d){const w=parse(d).getDay(),out=[];
@@ -626,7 +738,8 @@ db.cfg.perfil.nome=n;save();renderDHead();$('dlN').close();const f=nCb;nCb=null;
 $('nCancel').onclick=()=>{nCb=null;$('dlN').close()};
 function renderDHead(){const p=db.cfg.perfil,L=$('dLogo');if(!SVG0)SVG0=L.innerHTML;
 if(p.logo){L.innerHTML='<img src="'+p.logo+'" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:12px">';L.style.background='transparent'}else{L.innerHTML=SVG0;L.style.background=''}
-$('dSub').textContent=p.nome||'Modo sem cadastro'}
+$('dSub').textContent=p.nome||(user&&user.email)||'Modo sem cadastro';
+const cb=document.querySelector('#menu button[data-v=conta]');if(cb)cb.textContent=(user||cl().uid)?'Conta e nuvem':'Entrar / criar conta'}
 function drawLogo(){const p=db.cfg.perfil;$('pfLogo').innerHTML=p.logo?'<img src="'+p.logo+'" alt="Logo">':'sem logo';$('pfDel').classList.toggle('hide',!p.logo)}
 function renderPerfil(){const p=db.cfg.perfil;$('pfNome').value=p.nome||'';$('pfPix').value=p.pix||'';$('pfRep').checked=!!p.cobrarRep;drawLogo()}
 $('pfSave').onclick=()=>{const p=db.cfg.perfil;p.nome=$('pfNome').value.trim();p.pix=$('pfPix').value.trim();p.cobrarRep=$('pfRep').checked;save();renderDHead();toast('Perfil salvo')};
@@ -656,11 +769,11 @@ $('mWa').onclick=()=>{const t=$('mTxt').value.trim();if(!t)return;waOpen(t,(alun
 $('mCopy').onclick=()=>{copy($('mTxt').value,()=>toast('Mensagem copiada'),()=>alert('Não foi possível copiar.'))};
 
 // backup
-$('bkCopy').onclick=()=>copy((()=>{const o=JSON.parse(JSON.stringify(db));if(o.cfg&&o.cfg.perfil)delete o.cfg.perfil.logo;return JSON.stringify(o)})(),()=>toast('Backup copiado'),()=>alert('Não foi possível copiar.'));
+$('bkCopy').onclick=()=>copy((()=>{const o=JSON.parse(JSON.stringify(db));if(o.cfg&&o.cfg.perfil)delete o.cfg.perfil.logo;if(o.cfg)delete o.cfg.cloud;return JSON.stringify(o)})(),()=>toast('Backup copiado'),()=>alert('Não foi possível copiar.'));
 $('bkRest').onclick=()=>{const t=prompt('Cole aqui o backup copiado:');if(!t)return;
 try{const o=JSON.parse(t);if(!Array.isArray(o.alunos)||!Array.isArray(o.aulas))throw 0;
 if(!confirm('Isto substitui todos os dados atuais por '+o.alunos.length+' aluno(s) e '+o.aulas.length+' aula(s). Continuar?'))return;
-const keep=db.cfg,cf=Object.assign({},CFG0,o.cfg||{},{theme:keep.theme,entered:keep.entered});
+const keep=db.cfg,cf=Object.assign({},CFG0,o.cfg||{},{theme:keep.theme,entered:keep.entered,cloud:keep.cloud});
 cf.perfil=Object.assign({nome:'',logo:'',pix:'',cobrarRep:false},keep.perfil,(o.cfg&&o.cfg.perfil)||{},{logo:keep.perfil.logo});
 db={alunos:o.alunos,aulas:o.aulas,skips:Array.isArray(o.skips)?o.skips:[],cfg:cf};renderDHead();
 save();toast('Backup restaurado')}catch(e){alert('Backup inválido.')}};
@@ -668,6 +781,7 @@ save();toast('Backup restaurado')}catch(e){alert('Backup inválido.')}};
 load();applyTheme(db.cfg.theme);renderDHead();
 const hoje=iso(new Date());$('mes').value=hoje.slice(0,7);$('mM').value=hoje.slice(0,7);cur=hoje;$('dt').value=hoje;
 if(db.cfg.entered)showApp();else showLogin();
+if(cl().uid)fbLoad().then(initAuth).catch(()=>{});
 try{if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
 })();
 </script>
