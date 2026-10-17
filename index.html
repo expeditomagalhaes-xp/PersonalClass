@@ -136,7 +136,13 @@ table.fin th,table.fin td{padding:8px 6px;border-bottom:1px solid var(--line);te
 table.fin th:first-child,table.fin td:first-child{text-align:left}
 table.fin th{font-size:13px;color:var(--mut);font-weight:600}
 table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom:0}
-@media print{:root,:root[data-theme]{--bg:#fff;--card:#fff;--ink:#000;--mut:#444;--line:#999;--ac:#000;--acs:#eee;--ok:#000;--okb:#eee}.drawer,.scrim,.topbar,.fab,.noprint,#toast{display:none!important}.main{margin:0}body{background:#fff;color:#000}.wrap{padding:0;max-width:none}.card{border:0;padding:0;box-shadow:none}.chip,.ri{background:none;color:#000;border:1px solid #999}.sum div{background:#fff}}
+.rh{display:flex;align-items:center;gap:12px;padding-bottom:10px;border-bottom:2px solid var(--line);margin-bottom:12px}
+.rh img{width:56px;height:56px;object-fit:contain;border-radius:10px}
+.rh b{font-size:19px;display:block}
+.printonly{display:none}
+.logoPrev{width:72px;height:72px;border:1px dashed var(--line);border-radius:14px;display:flex;align-items:center;justify-content:center;flex:none;overflow:hidden;color:var(--mut);font-size:12px;text-align:center}
+.logoPrev img{width:100%;height:100%;object-fit:contain}
+@media print{:root,:root[data-theme]{--bg:#fff;--card:#fff;--ink:#000;--mut:#444;--line:#999;--ac:#000;--acs:#eee;--ok:#000;--okb:#eee}.drawer,.scrim,.topbar,.fab,.noprint,#toast{display:none!important}.main{margin:0}body{background:#fff;color:#000}.wrap{padding:0;max-width:none}.card{border:0;padding:0;box-shadow:none}.chip,.ri{background:none;color:#000;border:1px solid #999}.sum div{background:#fff}.printonly{display:block!important;white-space:pre-wrap;font-size:15px;line-height:1.55}.noprintarea{display:none!important}.rh{border-bottom:2px solid #000}}
 </style>
 </head>
 <body>
@@ -173,8 +179,8 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 <div id="app" class="hide">
 <aside class="drawer" id="drawer" aria-label="Menu">
 <div class="dhead">
-<div class="logo" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg></div>
-<div><b>Controle de Aulas</b><span class="mut">Modo sem cadastro</span></div>
+<div class="logo" id="dLogo" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg></div>
+<div><b>Controle de Aulas</b><span class="mut" id="dSub">Modo sem cadastro</span></div>
 </div>
 <nav class="menu" id="menu">
 <button data-v="dia"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Aulas do dia</button>
@@ -182,6 +188,7 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 <button data-v="rel"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Relatório do mês</button>
 <button data-v="msg"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.2A8 8 0 1 1 21 12z"/></svg>Mensagem ao aluno</button>
 <hr>
+<button data-v="perfil"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>Meu perfil</button>
 <button data-v="backup"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Backup dos dados</button>
 <button data-v="tema"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg>Aparência</button>
 </nav>
@@ -209,7 +216,8 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 
 <section id="v-rel" class="hide">
 <div class="card noprint">
-<div class="seg" id="relSeg" style="margin-top:0"><button data-t="pro">Profissional (oficial)</button><button data-t="cli">Cliente (individual)</button></div>
+<label for="relTipoSel" style="margin-top:0">Tipo de relatório</label>
+<select id="relTipoSel"><option value="fech">Fechamento do mês (cobrança ao aluno)</option><option value="previstos">Dias previstos de aula</option><option value="cli">Aulas realizadas do aluno</option><option value="pro">Oficial do profissional (financeiro)</option></select>
 <label for="mes">Mês de referência</label><input type="month" id="mes">
 <div id="cliBox" class="hide"><label for="relAl">Aluno</label><select id="relAl"></select></div>
 <div class="row" style="margin-top:12px;flex-wrap:wrap"><button class="btn" id="print">Imprimir / PDF</button><button class="btn sec" id="copy">Copiar texto</button><button class="btn sec hide" id="relWa">WhatsApp</button></div>
@@ -234,6 +242,20 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 </div>
 </section>
 
+<section id="v-perfil" class="hide">
+<div class="card"><h2>Meu perfil</h2>
+<div class="mut">Seu nome e sua logo aparecem no cabeçalho dos relatórios e PDFs.</div>
+<label for="pfNome">Nome do profissional</label><input id="pfNome" autocomplete="name" placeholder="Seu nome">
+<label>Logo (opcional)</label>
+<div class="row" style="flex-wrap:nowrap;align-items:center"><div class="logoPrev" id="pfLogo">sem logo</div>
+<div class="grow"><input type="file" id="pfFile" accept="image/*"><button class="btn del hide" id="pfDel" style="margin-top:8px">Remover logo</button></div></div>
+<label for="pfPix">Chave Pix (entra no fechamento do mês)</label><input id="pfPix" placeholder="Ex.: CPF: 000.000.000-00">
+<label class="chk"><input type="checkbox" id="pfRep"><span>Cobrar as reposições no valor do mês <span class="mut">(desligado: aparecem como “Adicionais” e não somam)</span></span></label>
+<button class="btn block" id="pfSave" style="margin-top:16px">Salvar perfil</button>
+<div class="mut" style="margin-top:8px">Esses dados ficam só neste aparelho. A logo não entra no backup por copiar e colar.</div>
+</div>
+</section>
+
 <section id="v-backup" class="hide">
 <div class="card"><h2>Backup dos dados</h2>
 <div class="mut">Os dados ficam só neste aparelho. Copie um backup de vez em quando e guarde nas suas notas ou mande no WhatsApp para você mesmo.</div>
@@ -251,6 +273,12 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 
 <div id="toast" role="status"></div>
 
+<dialog id="dlN">
+<h2>Seu nome nos relatórios</h2>
+<div class="mut">Ele aparece no cabeçalho dos PDFs. Você confirma só desta vez e pode mudar depois em Meu perfil.</div>
+<label for="nNome">Nome do profissional</label><input id="nNome" autocomplete="name" placeholder="Seu nome">
+<div class="row" style="margin-top:14px"><button class="btn" id="nOk">Confirmar e continuar</button><button class="btn sec" id="nCancel">Cancelar</button></div>
+</dialog>
 <dialog id="dlg">
 <h2 id="dtitle">Registrar aula</h2>
 <label style="margin-top:0">Aluno</label><div class="chips" id="dAl"></div>
@@ -268,9 +296,11 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 <label for="at">Telefone (opcional)</label><input id="at" inputmode="tel">
 <label for="ao">Observações (opcional)</label><input id="ao">
 <label for="avl">Valor da hora-aula em R$ (opcional)</label><input id="avl" inputmode="decimal" placeholder="Ex.: 80,00">
-<div class="mut" style="margin-top:4px">Aparece só no relatório do profissional e no valor do dia. Nunca vai para o aluno.</div>
+<div class="mut" style="margin-top:4px">Usado no valor do dia, no relatório do profissional e no texto de fechamento do mês. Não aparece na mensagem de dias previstos nem no relatório de aulas realizadas.</div>
 <label>Horários fixos na semana</label>
-<div class="row"><select id="pd"><option value="0">Domingo</option><option value="1">Segunda</option><option value="2">Terça</option><option value="3">Quarta</option><option value="4">Quinta</option><option value="5">Sexta</option><option value="6">Sábado</option></select><input type="time" id="ph"><button class="btn sec" id="pAdd" style="flex:none">Adicionar</button></div>
+<div class="row"><div><label for="pd" style="margin-top:0">Dia</label><select id="pd"><option value="0">Domingo</option><option value="1">Segunda</option><option value="2">Terça</option><option value="3">Quarta</option><option value="4">Quinta</option><option value="5">Sexta</option><option value="6">Sábado</option></select></div><div><label for="ph" style="margin-top:0">Início</label><input type="time" id="ph"></div></div>
+<div class="row" style="align-items:flex-end;margin-top:8px"><div><label for="pf" style="margin-top:0">Término (opcional)</label><input type="time" id="pf"></div><button class="btn sec" id="pAdd" style="flex:none">Adicionar</button></div>
+<div class="mut" style="margin:6px 0">Aula de 1 hora: informe só o início. Serviço fixo de várias horas (ex.: segunda das 07:00 às 12:00): informe também o término.</div>
 <div class="chips" id="pList"></div>
 <div class="row" style="margin-top:14px"><button class="btn" id="aSave">Salvar</button><button class="btn del hide" id="aDel">Excluir</button><button class="btn sec" id="aClose">Fechar</button></div>
 </dialog>
@@ -279,16 +309,16 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 (function(){
 const KEY='agenda_personal_v1',DN=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const CFG0={off:0,last:'',theme:'petroleo',entered:false};
-const TITLES={dia:'Aulas do dia',alunos:'Alunos',rel:'Relatório do mês',msg:'Mensagem ao aluno',backup:'Backup dos dados',tema:'Aparência'};
+const TITLES={dia:'Aulas do dia',alunos:'Alunos',rel:'Relatório do mês',msg:'Mensagem ao aluno',perfil:'Meu perfil',backup:'Backup dos dados',tema:'Aparência'};
 const THEMES=[
 {id:'petroleo',nome:'Petróleo',desc:'Azul-petróleo, o visual original refinado',cores:['#0e7a8a','#eef2f4','#ffffff']},
 {id:'claro',nome:'Claro',desc:'Fundo branco, limpo e profissional',cores:['#2563eb','#f6f7f9','#ffffff']},
 {id:'escuro',nome:'Escuro',desc:'Fundo escuro com destaque verde, estilo fitness',cores:['#34d399','#0b1115','#151e25']}];
 const BAR={petroleo:'#0e7a8a',claro:'#ffffff',escuro:'#151e25'};
-let db={alunos:[],aulas:[],skips:[],cfg:Object.assign({},CFG0)},cur='',view='dia',editing=null,isNew=true,selA='',editA=null,tmpPre=[];
+let db={alunos:[],aulas:[],skips:[],cfg:Object.assign({perfil:{nome:'',logo:'',pix:'',cobrarRep:false}},CFG0)},cur='',view='dia',editing=null,isNew=true,selA='',editA=null,tmpPre=[];
 const $=i=>document.getElementById(i);
 function load(){try{const r=localStorage.getItem(KEY);if(r)db=Object.assign(db,JSON.parse(r))}catch(e){}
-db.alunos=db.alunos||[];db.aulas=db.aulas||[];db.skips=db.skips||[];db.cfg=Object.assign({},CFG0,db.cfg||{})}
+db.alunos=db.alunos||[];db.aulas=db.aulas||[];db.skips=db.skips||[];db.cfg=Object.assign({},CFG0,db.cfg||{});db.cfg.perfil=Object.assign({nome:'',logo:'',pix:'',cobrarRep:false},db.cfg.perfil||{})}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -310,6 +340,14 @@ const alunoBy=id=>db.alunos.find(x=>x.id===id);
 function calcRep(alunoId,data){const a=alunoBy(alunoId);if(!a||!(a.pre&&a.pre.length)||!data)return false;const w=parse(data).getDay();return !a.pre.some(p=>p.d===w)}
 const isRep=l=>typeof l.rep==='boolean'?l.rep:calcRep(l.alunoId,l.data);
 const valorDe=id=>{const a=alunoBy(id);return a&&a.valor>0?a.valor:0};
+const durOf=l=>l.dur>0?l.dur:60;
+const fimL=l=>hh(mins(l.hora)+durOf(l));
+const fimP=x=>x.f||fim(x.h);
+const fmtDur=m=>m===60?'1 hora':(m%60===0?(m/60)+' horas':String(Math.round(m/6)/10).replace('.',',')+' h');
+const fmtH=h=>String(Math.round(h*10)/10).replace('.',',');
+const valorL=l=>Math.round(valorDe(l.alunoId)*durOf(l)/60*100)/100;
+const saud=()=>{const h=new Date().getHours();return h<12?'Bom dia!':h<18?'Boa tarde!':'Boa noite!'};
+const msgHr=x=>x.f?'das '+fh(x.h)+' às '+fh(x.f):'às '+fh(x.h);
 const mesNome=m=>parse(m+'-01').toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
 const mesSo=m=>parse(m+'-01').toLocaleDateString('pt-BR',{month:'long'});
 const hojeBR=()=>new Date().toLocaleDateString('pt-BR');
@@ -336,10 +374,10 @@ $('scrim').onclick=()=>openMenu(false);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')openMenu(false)});
 document.querySelectorAll('#menu button').forEach(b=>b.onclick=()=>go(b.dataset.v));
 function go(v){view=v;openMenu(false);
-['dia','alunos','rel','msg','backup','tema'].forEach(x=>$('v-'+x).classList.toggle('hide',x!==v));
+['dia','alunos','rel','msg','perfil','backup','tema'].forEach(x=>$('v-'+x).classList.toggle('hide',x!==v));
 document.querySelectorAll('#menu button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
 $('vtitle').textContent=TITLES[v];$('fab').classList.toggle('hide',v!=='dia');
-if(v==='dia')renderDia();if(v==='alunos')renderAlunos();if(v==='rel')renderRel();if(v==='msg')renderMsg();if(v==='tema')renderThemes();
+if(v==='dia')renderDia();if(v==='alunos')renderAlunos();if(v==='rel')renderRel();if(v==='msg')renderMsg();if(v==='perfil')renderPerfil();if(v==='tema')renderThemes();
 window.scrollTo(0,0)}
 
 // login
@@ -362,13 +400,13 @@ function previstas(d){const w=parse(d).getDay(),out=[];
 db.alunos.forEach(a=>(a.pre||[]).forEach(p=>{if(p.d!==w)return;
 const feita=db.aulas.some(x=>x.alunoId===a.id&&x.data===d&&mins(x.hora)===mins(p.h));
 const pulou=db.skips.some(k=>k.alunoId===a.id&&k.data===d&&k.hora===p.h);
-if(!feita&&!pulou)out.push({a,h:p.h,d})}));
+if(!feita&&!pulou)out.push({a,h:p.h,f:p.f,d})}));
 return out.sort((x,y)=>x.h.localeCompare(y.h))}
-const confirmar=v=>db.aulas.push({id:uid(),alunoId:v.a.id,data:v.d,hora:v.h,rep:calcRep(v.a.id,v.d)});
+const confirmar=v=>db.aulas.push(Object.assign({id:uid(),alunoId:v.a.id,data:v.d,hora:v.h,rep:calcRep(v.a.id,v.d)},v.f&&mins(v.f)>mins(v.h)?{dur:mins(v.f)-mins(v.h)}:{}));
 function bloco(box,tit,list){
 if(!list.length)return;const w=document.createElement('div');w.className='prev';w.innerHTML='<h3>'+tit+'</h3>';
 list.forEach(v=>{const it=document.createElement('div');it.className='item';
-it.innerHTML=avatar(v.a.nome)+'<div class="grow"><b>'+esc(v.a.nome)+'</b><div class="mut">'+DN[parse(v.d).getDay()]+' '+fmtD(v.d)+' · '+v.h+'–'+fim(v.h)+'</div></div>';
+it.innerHTML=avatar(v.a.nome)+'<div class="grow"><b>'+esc(v.a.nome)+'</b><div class="mut">'+DN[parse(v.d).getDay()]+' '+fmtD(v.d)+' · '+v.h+'–'+fimP(v)+'</div></div>';
 const c=document.createElement('button');c.className='btn';c.textContent='✓ Confirmar';
 c.onclick=()=>{confirmar(v);save();toast('Registrado: '+v.a.nome+' '+v.h);renderDia()};
 const n=document.createElement('button');n.className='btn sec';n.textContent='Não teve';
@@ -382,7 +420,7 @@ box.appendChild(w)}
 function renderDia(){
 if(!cur)return;
 const dia=db.aulas.filter(a=>a.data===cur).sort((a,b)=>a.hora.localeCompare(b.hora));
-const vd=dia.reduce((s,a)=>s+valorDe(a.alunoId),0);
+const vd=Math.round(dia.reduce((s,a)=>s+valorL(a),0)*100)/100;
 $('dmoney').innerHTML=vd>0?'<span class="money" title="Valor das aulas confirmadas neste dia"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.2c-.5-.8-1.4-1.2-2.5-1.2-1.5 0-2.5.8-2.5 2 0 3 5 1.6 5 4.2 0 1.2-1.1 2-2.5 2-1.1 0-2.1-.5-2.6-1.3M12 6.5V8M12 16v1.5"/></svg>'+money(vd)+'</span>':'';
 $('dname').textContent=parse(cur).toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})+(dia.length?' · '+dia.length+' aula'+(dia.length>1?'s':''):'');
 const box=$('prevBox');box.innerHTML='';
@@ -392,7 +430,7 @@ bloco(box,'Pendentes dos últimos 14 dias',pend);
 const L=$('dia');L.innerHTML='';
 if(!dia.length){L.innerHTML='<div class="empty">Nenhuma aula registrada neste dia.<br>Toque no + para registrar.</div>';return}
 dia.forEach(a=>{const e=document.createElement('div');e.className='aula';e.tabIndex=0;
-e.innerHTML=avatar(nome(a.alunoId))+'<div class="grow"><b>'+esc(nome(a.alunoId))+'</b><span class="t">'+a.hora+'–'+fim(a.hora)+'</span>'+(isRep(a)?RI:'')+'</div><span class="mut">editar</span>';
+e.innerHTML=avatar(nome(a.alunoId))+'<div class="grow"><b>'+esc(nome(a.alunoId))+'</b><span class="t">'+a.hora+'–'+fimL(a)+'</span>'+(isRep(a)?RI:'')+'</div><span class="mut">editar</span>';
 e.onclick=()=>openDlg(a);e.onkeydown=ev=>{if(ev.key==='Enter')openDlg(a)};L.appendChild(e)})}
 function setDate(d){cur=d;$('dt').value=d;renderDia()}
 function shift(n){const d=parse(cur);d.setDate(d.getDate()+n);setDate(iso(d))}
@@ -408,10 +446,10 @@ function drawTg(){const g=$('tg');g.innerHTML='';const off=db.cfg.off||0;
 $('seg').querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.o===off));
 const d=$('dD').value;
 for(let m=6*60+off;m<=21*60+off;m+=60){const h=hh(m);const e=document.createElement('button');
-const busy=db.aulas.some(x=>x.data===d&&mins(x.hora)===m&&(!editing||x.id!==editing.id));
+const busy=db.aulas.some(x=>x.data===d&&m<mins(x.hora)+durOf(x)&&mins(x.hora)<m+60&&(!editing||x.id!==editing.id));
 e.className='pick'+(h===$('dH').value?' on':'')+(busy?' busy':'');e.textContent=h;
 e.onclick=()=>{$('dH').value=h;if(isNew)doSave();else{drawTg();upFim()}};g.appendChild(e)}}
-function upFim(){$('dFim').textContent=$('dH').value?'Das '+$('dH').value+' às '+fim($('dH').value)+' (1 hora)':''}
+function upFim(){const dur=editing&&editing.dur>0?editing.dur:60,h=$('dH').value;$('dFim').textContent=h?'Das '+h+' às '+hh(mins(h)+dur)+' ('+fmtDur(dur)+')':''}
 $('seg').querySelectorAll('button').forEach(b=>b.onclick=()=>{db.cfg.off=+b.dataset.o;save();drawTg()});
 $('dD').onchange=()=>{autoRep();drawTg()};$('dH').oninput=()=>{drawTg();upFim()};
 function openDlg(a){
@@ -424,7 +462,8 @@ $('dDel').classList.toggle('hide',!a);$('dSave').classList.toggle('hide',isNew);
 drawAl();drawTg();upFim();$('dlg').showModal()}
 function doSave(){
 const d=$('dD').value,h=$('dH').value;if(!d||!h){alert('Informe data e horário.');return}
-const conf=db.aulas.some(x=>x.data===d&&Math.abs(mins(x.hora)-mins(h))<60&&(!editing||x.id!==editing.id));
+const dur=editing&&editing.dur>0?editing.dur:60,st=mins(h);
+const conf=db.aulas.some(x=>x.data===d&&(!editing||x.id!==editing.id)&&st<mins(x.hora)+durOf(x)&&mins(x.hora)<st+dur);
 if(conf&&!confirm('Já existe uma aula que coincide com esse horário. Registrar mesmo assim?'))return;
 const rp=$('dRep').checked;
 if(editing){editing.alunoId=selA;editing.data=d;editing.hora=h;editing.rep=rp}else db.aulas.push({id:uid(),alunoId:selA,data:d,hora:h,rep:rp});
@@ -434,15 +473,16 @@ $('dDel').onclick=()=>{if(!confirm('Excluir esta aula?'))return;db.aulas=db.aula
 
 // alunos
 function dpre(){const L=$('pList');L.innerHTML='';tmpPre.sort((a,b)=>a.d-b.d||a.h.localeCompare(b.h));
-tmpPre.forEach((p,i)=>{const c=document.createElement('span');c.className='chip';c.textContent=DN[p.d]+' '+p.h;
+tmpPre.forEach((p,i)=>{const c=document.createElement('span');c.className='chip';c.textContent=DN[p.d]+' '+p.h+(p.f?'–'+p.f:'');
 const x=document.createElement('button');x.textContent='×';x.setAttribute('aria-label','Remover');x.onclick=()=>{tmpPre.splice(i,1);dpre()};c.appendChild(x);L.appendChild(c)});
 if(!tmpPre.length)L.innerHTML='<span class="mut">Nenhum horário fixo.</span>'}
 function openAl(a){editA=a;$('aTitle').textContent=a?'Editar aluno':'Novo aluno';
 $('an').value=a?a.nome:'';$('at').value=(a&&a.tel)||'';$('ao').value=(a&&a.obs)||'';$('avl').value=a&&a.valor>0?String(a.valor).replace('.',','):'';
-tmpPre=a&&a.pre?a.pre.map(x=>({d:x.d,h:x.h})):[];$('aDel').classList.toggle('hide',!a);dpre();$('dlA').showModal()}
+tmpPre=a&&a.pre?a.pre.map(x=>({d:x.d,h:x.h,f:x.f})):[];$('aDel').classList.toggle('hide',!a);dpre();$('dlA').showModal()}
 $('addAluno').onclick=()=>openAl(null);$('aClose').onclick=()=>$('dlA').close();
-$('pAdd').onclick=()=>{const h=$('ph').value,d=+$('pd').value;if(!h){alert('Informe o horário.');return}
-if(!tmpPre.some(p=>p.d===d&&p.h===h))tmpPre.push({d,h});dpre()};
+$('pAdd').onclick=()=>{const h=$('ph').value,f=$('pf').value,d=+$('pd').value;if(!h){alert('Informe o horário de início.');return}
+if(f&&mins(f)<=mins(h)){alert('O término precisa ser depois do início.');return}
+if(!tmpPre.some(p=>p.d===d&&p.h===h))tmpPre.push(f?{d,h,f}:{d,h});$('pf').value='';dpre()};
 $('aSave').onclick=()=>{const n=$('an').value.trim();if(!n){alert('Informe o nome do aluno.');return}
 if(editA){editA.nome=n;editA.tel=$('at').value.trim();editA.obs=$('ao').value.trim();editA.valor=pnum($('avl').value);editA.pre=tmpPre}
 else db.alunos.push({id:uid(),nome:n,tel:$('at').value.trim(),obs:$('ao').value.trim(),valor:pnum($('avl').value),pre:tmpPre});
@@ -454,81 +494,150 @@ function renderAlunos(){const L=$('lista');
 if(!db.alunos.length){L.innerHTML='<div class="empty">Nenhum aluno cadastrado ainda.<br>Toque em “Novo aluno” para começar.</div>';return}
 L.innerHTML='';
 db.alunos.slice().sort((a,b)=>a.nome.localeCompare(b.nome)).forEach(a=>{const r=document.createElement('div');r.className='item';
-const fx=(a.pre||[]).slice().sort((x,y)=>x.d-y.d||x.h.localeCompare(y.h)).map(p=>DN[p.d]+' '+p.h).join(', ');
+const fx=(a.pre||[]).slice().sort((x,y)=>x.d-y.d||x.h.localeCompare(y.h)).map(p=>DN[p.d]+' '+p.h+(p.f?'–'+p.f:'')).join(', ');
 r.innerHTML=avatar(a.nome)+'<div class="grow"><b>'+esc(a.nome)+'</b><div class="mut">'+esc(fx||'Sem horário fixo')+(a.tel?' • '+esc(a.tel):'')+(a.obs?' • '+esc(a.obs):'')+(a.valor>0?' • '+money(a.valor)+'/h':'')+'</div></div>';
 const e=document.createElement('button');e.className='btn sec';e.textContent='Editar';e.onclick=()=>openAl(a);r.appendChild(e);L.appendChild(r)})}
 
 // relatório
-let relTipo='pro',relAluno='',msgAluno='';
+let relTipo='fech',relAluno='',msgAluno='';
 function lessonsOf(a,m){return db.aulas.filter(x=>x.alunoId===a.id&&x.data.slice(0,7)===m).sort((x,y)=>(x.data+x.hora).localeCompare(y.data+y.hora))}
-function dados(){const m=$('mes').value;if(!m)return[];
-return db.alunos.map(a=>{const aulas=lessonsOf(a,m),rep=aulas.filter(isRep).length,v=a.valor>0?a.valor:0;
-return{a,nome:a.nome,aulas,rep,valor:v,total:aulas.length*v}}).filter(r=>r.aulas.length).sort((x,y)=>x.nome.localeCompare(y.nome))}
-const chipL=l=>'<span class="chip">'+DN[parse(l.data).getDay()]+' '+fmtD(l.data)+(isRep(l)?RIs:'')+' · '+l.hora+'–'+fim(l.hora)+'</span>';
-function fillSel(sel,cur){const L=db.alunos.slice().sort((a,b)=>a.nome.localeCompare(b.nome));
-if(!L.some(x=>x.id===cur))cur=L.length?L[0].id:'';
-sel.innerHTML=L.map(x=>'<option value="'+x.id+'">'+esc(x.nome)+'</option>').join('');sel.value=cur;return cur}
+function dados(){const m=$('mes').value;if(!m)return[];const cr=!!db.cfg.perfil.cobrarRep;
+return db.alunos.map(a=>{const aulas=lessonsOf(a,m),rep=aulas.filter(isRep).length,v=a.valor>0?a.valor:0,
+horas=aulas.reduce((s,l)=>s+durOf(l),0)/60,total=Math.round(aulas.filter(l=>cr||!isRep(l)).reduce((s,l)=>s+valorL(l),0)*100)/100;
+return{a,nome:a.nome,aulas,rep,valor:v,horas,total}}).filter(r=>r.aulas.length).sort((x,y)=>x.nome.localeCompare(y.nome))}
+const chipL=l=>'<span class="chip">'+DN[parse(l.data).getDay()]+' '+fmtD(l.data)+(isRep(l)?RIs:'')+' · '+l.hora+'–'+fimL(l)+'</span>';
+function fillSel(sel,cur,todos){const L=db.alunos.slice().sort((a,b)=>a.nome.localeCompare(b.nome));
+if(!(todos&&cur==='__all__')&&!L.some(x=>x.id===cur))cur=L.length?L[0].id:'';
+sel.innerHTML=(todos&&L.length?'<option value="__all__">Todos os alunos</option>':'')+L.map(x=>'<option value="'+x.id+'">'+esc(x.nome)+'</option>').join('');sel.value=cur;return cur}
+function relHead(tit,sub){const p=db.cfg.perfil;
+const top=(p.nome||p.logo)?'<div class="rh">'+(p.logo?'<img src="'+p.logo+'" alt="">':'')+'<div><b>'+esc(p.nome||'')+'</b></div></div>':'';
+return top+'<h2>'+tit+'</h2><div class="mut">'+(sub?sub+' · ':'')+'Emitido em '+hojeBR()+'</div>'}
 function renderRel(){
-$('relSeg').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.t===relTipo));
-$('cliBox').classList.toggle('hide',relTipo!=='cli');$('relWa').classList.toggle('hide',relTipo!=='cli');
-const m=$('mes').value,out=$('relOut');$('copied').textContent='';if(!m){out.innerHTML='';return}
-const tit=mesNome(m);
-if(relTipo==='cli'){relAluno=fillSel($('relAl'),relAluno);const a=alunoBy(relAluno);
-if(!a){out.innerHTML='<div class="empty">Cadastre um aluno para gerar o relatório.</div>';return}
-const aulas=lessonsOf(a,m),rep=aulas.filter(isRep).length;
-if(!aulas.length){out.innerHTML='<div class="empty">Nenhuma aula de '+esc(a.nome)+' em '+tit+'.</div>';return}
-out.innerHTML='<h2>Relatório de aulas · '+tit+'</h2><div class="mut">Aluno: <b style="color:var(--ink)">'+esc(a.nome)+'</b></div>'+
-'<div class="sum" style="grid-template-columns:repeat(2,1fr)"><div><b>'+aulas.length+'</b>aulas no mês</div><div><b>'+rep+'</b>reposições</div></div>'+
-aulas.map(l=>'<div class="item"><b class="grow">'+DN[parse(l.data).getDay()]+' '+fmtD(l.data)+'</b><span>'+l.hora+'–'+fim(l.hora)+(isRep(l)?RIs:'')+'</span></div>').join('')+
-'<div class="mut" style="margin-top:10px">'+(rep?'↻ = reposição · ':'')+'Emitido em '+hojeBR()+'</div>';return}
-const r=dados();
-if(!r.length){out.innerHTML='<div class="empty">Nenhuma aula em '+tit+'.</div>';return}
-const tot=r.reduce((s,x)=>s+x.aulas.length,0),totRep=r.reduce((s,x)=>s+x.rep,0),totV=r.reduce((s,x)=>s+x.total,0),sem=r.filter(x=>!x.valor);
-out.innerHTML='<h2>Relatório oficial · '+tit+'</h2><div class="mut">Profissional · emitido em '+hojeBR()+'</div>'+
+$('relTipoSel').value=relTipo;
+const needAl=relTipo!=='pro';$('cliBox').classList.toggle('hide',!needAl);
+if(needAl)relAluno=fillSel($('relAl'),relAluno,relTipo==='previstos');
+$('relWa').classList.toggle('hide',!(needAl&&relAluno&&relAluno!=='__all__'));
+const m=$('mes').value,out=$('relOut');$('copied').textContent='';
+if(!m){out.innerHTML='';return}
+const tit=mesNome(m),a=alunoBy(relAluno);
+if(relTipo==='pro'){relPro(out,m,tit);return}
+if(!db.alunos.length){out.innerHTML='<div class="empty">Cadastre um aluno para gerar o relatório.</div>';return}
+if(relTipo==='previstos')relPrev(out,m,tit,a);else if(relTipo==='cli')relCli(out,m,tit,a);else relFech(out,m,tit,a)}
+
+// 1) oficial do profissional
+function relPro(out,m,tit){const r=dados(),cr=!!db.cfg.perfil.cobrarRep;
+if(!r.length){out.innerHTML=relHead('Relatório oficial · '+tit,'Profissional')+'<div class="empty">Nenhuma aula neste mês.</div>';return}
+const tot=r.reduce((s,x)=>s+x.aulas.length,0),totRep=r.reduce((s,x)=>s+x.rep,0),totH=r.reduce((s,x)=>s+x.horas,0),totV=Math.round(r.reduce((s,x)=>s+x.total,0)*100)/100,sem=r.filter(x=>!x.valor);
+out.innerHTML=relHead('Relatório oficial · '+tit,'Profissional')+
 '<div class="sum"><div><b>'+tot+'</b>aulas</div><div><b>'+totRep+'</b>reposições</div><div><b>'+money(totV)+'</b>total do mês</div></div>'+
-'<h3 class="sub">Relação financeira</h3><table class="fin"><thead><tr><th>Aluno</th><th>Aulas</th><th>Valor/h</th><th>Total</th></tr></thead><tbody>'+
-r.map(x=>'<tr><td>'+esc(x.nome)+'</td><td>'+x.aulas.length+(x.rep?' <span class="mut">('+x.rep+' rep.)</span>':'')+'</td><td>'+(x.valor?money(x.valor):'—')+'</td><td>'+(x.valor?money(x.total):'—')+'</td></tr>').join('')+
-'</tbody><tfoot><tr><td>Total</td><td>'+tot+'</td><td></td><td>'+money(totV)+'</td></tr></tfoot></table>'+
+'<h3 class="sub">Relação financeira</h3><table class="fin"><thead><tr><th>Aluno</th><th>Aulas</th><th>Horas</th><th>Valor/h</th><th>Total</th></tr></thead><tbody>'+
+r.map(x=>'<tr><td>'+esc(x.nome)+'</td><td>'+x.aulas.length+(x.rep?' <span class="mut">('+x.rep+' rep.)</span>':'')+'</td><td>'+fmtH(x.horas)+'</td><td>'+(x.valor?money(x.valor):'—')+'</td><td>'+(x.valor?money(x.total):'—')+'</td></tr>').join('')+
+'</tbody><tfoot><tr><td>Total</td><td>'+tot+'</td><td>'+fmtH(totH)+'</td><td></td><td>'+money(totV)+'</td></tr></tfoot></table>'+
+(totRep&&!cr?'<div class="mut" style="margin-top:8px">Reposições (↻) são adicionais e não entram no valor. Para cobrá-las, ative em Meu perfil.</div>':'')+
 (sem.length?'<div class="msg noprint">Sem valor da hora-aula: '+sem.map(x=>esc(x.nome)).join(', ')+'. Defina em Alunos para entrarem no total.</div>':'')+
 '<h3 class="sub">Aulas por aluno</h3>'+
 r.map(x=>'<div class="rep"><div class="row"><b class="grow">'+esc(x.nome)+'</b><span class="num" style="flex:none">'+x.aulas.length+'</span></div><div class="chips">'+x.aulas.map(chipL).join('')+'</div></div>').join('')+
 (totRep?'<div class="mut" style="margin-top:10px">↻ = reposição (aula fora do dia fixo do aluno)</div>':'')}
 function textoPro(){const r=dados(),m=$('mes').value;if(!r.length)return'';
 let t='RELATÓRIO PROFISSIONAL - '+mesNome(m)+'\n\n';
-r.forEach(x=>{t+=x.nome+': '+x.aulas.length+' aula(s)'+(x.rep?' ('+x.rep+' reposição)':'')+(x.valor?' x '+money(x.valor)+' = '+money(x.total):'')+'\n  '+x.aulas.map(l=>fmtD(l.data)+' '+l.hora+(isRep(l)?'*':'')).join(', ')+'\n\n'});
+r.forEach(x=>{t+=x.nome+': '+x.aulas.length+' aula(s)'+(x.rep?' ('+x.rep+' reposição)':'')+(x.valor?' - '+fmtH(x.horas)+' h x '+money(x.valor)+' = '+money(x.total):'')+'\n  '+x.aulas.map(l=>fmtD(l.data)+' '+l.hora+(isRep(l)?'*':'')).join(', ')+'\n\n'});
 t+='TOTAL: '+r.reduce((s,x)=>s+x.aulas.length,0)+' aula(s) - '+money(r.reduce((s,x)=>s+x.total,0));
 if(r.some(x=>x.rep))t+='\n* = reposição';return t}
+
+// 2) aulas realizadas do aluno
+function relCli(out,m,tit,a){const aulas=lessonsOf(a,m),rep=aulas.filter(isRep).length;
+if(!aulas.length){out.innerHTML=relHead('Relatório de aulas · '+tit,'Aluno: '+esc(a.nome))+'<div class="empty">Nenhuma aula de '+esc(a.nome)+' em '+tit+'.</div>';return}
+out.innerHTML=relHead('Relatório de aulas · '+tit,'Aluno: '+esc(a.nome))+
+'<div class="sum" style="grid-template-columns:repeat(2,1fr)"><div><b>'+aulas.length+'</b>aulas no mês</div><div><b>'+rep+'</b>reposições</div></div>'+
+aulas.map(l=>'<div class="item"><b class="grow">'+DN[parse(l.data).getDay()]+' '+fmtD(l.data)+'</b><span>'+l.hora+'–'+fimL(l)+(isRep(l)?RIs:'')+'</span></div>').join('')+
+(rep?'<div class="mut" style="margin-top:10px">↻ = reposição</div>':'')}
 function textoCli(){const a=alunoBy(relAluno),m=$('mes').value;if(!a)return'';const L=lessonsOf(a,m);if(!L.length)return'';
-return 'Relatório de aulas - '+mesNome(m)+'\nAluno: '+a.nome+'\nTotal: '+L.length+' aula(s)\n\n'+L.map(l=>fmtD(l.data)+' ('+DN[parse(l.data).getDay()].toLowerCase()+') '+fh(l.hora)+' às '+fh(fim(l.hora))+(isRep(l)?' - reposição':'')).join('\n')}
-$('relSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{relTipo=b.dataset.t;renderRel()});
+return 'Relatório de aulas - '+mesNome(m)+'\nAluno: '+a.nome+'\nTotal: '+L.length+' aula(s)\n\n'+L.map(l=>fmtD(l.data)+' ('+DN[parse(l.data).getDay()].toLowerCase()+') '+fh(l.hora)+' às '+fh(fimL(l))+(isRep(l)?' - reposição':'')).join('\n')}
+
+// 3) dias previstos (só depende do horário fixo: confirmar ou cancelar não muda nada)
+function prevDatas(a,m){const out=[],ult=new Date(+m.slice(0,4),+m.slice(5,7),0).getDate();
+for(let i=1;i<=ult;i++){const d=m+'-'+String(i).padStart(2,'0'),w=parse(d).getDay();(a.pre||[]).forEach(p=>{if(p.d===w)out.push({d,h:p.h,f:p.f})})}
+return out.sort((x,y)=>(x.d+x.h).localeCompare(y.d+y.h))}
+function prevLista(){const todos=relAluno==='__all__';
+const L=todos?db.alunos.slice().sort((x,y)=>x.nome.localeCompare(y.nome)):[alunoBy(relAluno)];
+return L.filter(Boolean).map(a=>({a,L:prevDatas(a,$('mes').value)})).filter(b=>b.L.length)}
+function relPrev(out,m,tit,a){const bl=prevLista(),todos=relAluno==='__all__';
+const head=relHead('Dias previstos de aula · '+tit,todos?'Todos os alunos':'Aluno: '+esc(a.nome));
+if(!bl.length){out.innerHTML=head+'<div class="empty">'+(todos?'Nenhum aluno com horário fixo cadastrado.':esc(a.nome)+' não tem horário fixo cadastrado.<br>Defina em Alunos &gt; Editar.')+'</div>';return}
+out.innerHTML=head+bl.map(b=>'<div class="rep"><div class="row"><b class="grow">'+esc(b.a.nome)+'</b><span class="num" style="flex:none">'+b.L.length+'</span></div><div class="chips">'+
+b.L.map(x=>'<span class="chip">'+DN[parse(x.d).getDay()]+' '+fmtD(x.d)+' · '+x.h+'–'+fimP(x)+'</span>').join('')+'</div></div>').join('')+
+'<div class="mut" style="margin-top:10px">Calculado pelo horário fixo cadastrado. Não muda se a aula foi confirmada ou cancelada.</div>'}
+function textoPrev(){const bl=prevLista(),m=$('mes').value;if(!bl.length)return'';
+return 'DIAS PREVISTOS DE AULA - '+mesNome(m)+'\n\n'+bl.map(b=>b.a.nome+': '+b.L.length+' aula(s)\n'+b.L.map(x=>'  '+fmtD(x.d)+' ('+DN[parse(x.d).getDay()].toLowerCase()+') '+fh(x.h)+' às '+fh(fimP(x))).join('\n')).join('\n\n')}
+
+// 4) fechamento do mês (texto de cobrança ao aluno)
+function fechTexto(a,m){const L=lessonsOf(a,m);if(!L.length)return'';
+const p=db.cfg.perfil,cr=!!p.cobrarRep,reg=L.filter(l=>!isRep(l)),ext=L.filter(isRep),v=a.valor>0?a.valor:0;
+const tot=Math.round((cr?L:reg).reduce((s,l)=>s+valorL(l),0)*100)/100;
+let t=saud()+'\nO valor referente às aulas do mês de '+mesSo(m)+' ficou da seguinte forma:\n\n• '+a.nome+(v?': '+money(tot):'');
+if(reg.length)t+=' ('+reg.map(l=>l.data.slice(8)).join(', ')+')';
+if(ext.length)t+='\nAdicionais - ('+ext.map(l=>fmtD(l.data)).join(', ')+')'+(cr?', incluídos no valor.':'.');
+if(v)t+='\n\nTotal: '+money(tot)+', correspondente às aulas realizadas.';
+t+='\n\nQualquer dúvida, fico à disposição.';
+if(p.pix)t+='\n\nPix - '+p.pix;return t}
+function relFech(out,m,tit,a){const L=lessonsOf(a,m);
+const head=relHead('Fechamento do mês · '+tit,'Aluno: '+esc(a.nome));
+if(!L.length){out.innerHTML=head+'<div class="empty">Nenhuma aula de '+esc(a.nome)+' em '+tit+'.</div>';return}
+out.innerHTML=head+
+(a.valor>0?'':'<div class="msg noprint">Defina o valor da hora-aula de '+esc(a.nome)+' em Alunos para o valor entrar no texto.</div>')+
+(db.cfg.perfil.pix?'':'<div class="mut noprint" style="margin-top:8px">Dica: cadastre sua chave Pix em Meu perfil para ela entrar no texto.</div>')+
+'<div class="mut noprint" style="margin:10px 0 4px">Texto para enviar (você pode editar):</div>'+
+'<textarea id="fTxt" class="noprintarea" rows="13">'+esc(fechTexto(a,m))+'</textarea><div class="printonly" id="fPrint"></div>';
+$('fPrint').textContent=$('fTxt').value;$('fTxt').oninput=()=>{$('fPrint').textContent=$('fTxt').value}}
+
+// ações do relatório
+function textoAtual(){if(relTipo==='fech')return $('fTxt')?$('fTxt').value:'';if(relTipo==='previstos')return textoPrev();if(relTipo==='cli')return textoCli();return textoPro()}
+$('relTipoSel').onchange=()=>{relTipo=$('relTipoSel').value;renderRel()};
 $('relAl').onchange=()=>{relAluno=$('relAl').value;renderRel()};
 $('mes').onchange=renderRel;
-$('print').onclick=()=>{const old=document.title,a=alunoBy(relAluno);
-document.title=(relTipo==='cli'&&a?'Relatório '+a.nome:'Relatório profissional')+' '+$('mes').value;window.print();setTimeout(()=>{document.title=old},3000)};
-$('copy').onclick=()=>{const t=relTipo==='cli'?textoCli():textoPro();if(!t){$('copied').textContent='Não há aulas neste mês.';return}
+$('print').onclick=()=>ensureNome(()=>{
+const keep=relTipo==='fech'&&$('fTxt')?$('fTxt').value:null;renderRel();
+if(keep!==null&&$('fTxt')){$('fTxt').value=keep;$('fPrint').textContent=keep}
+const old=document.title,a=alunoBy(relAluno),base={fech:'Fechamento',previstos:'Dias previstos',cli:'Relatório',pro:'Relatório profissional'}[relTipo];
+document.title=base+(relTipo!=='pro'&&a&&relAluno!=='__all__'?' '+a.nome:'')+' '+$('mes').value;
+window.print();setTimeout(()=>{document.title=old},3000)});
+$('copy').onclick=()=>{const t=textoAtual();if(!t){$('copied').textContent='Não há dados neste mês.';return}
 copy(t,()=>$('copied').textContent='Texto copiado.',()=>$('copied').textContent='Não foi possível copiar.')};
-$('relWa').onclick=()=>{const t=textoCli();if(!t){$('copied').textContent='Não há aulas deste aluno neste mês.';return}waOpen(t,(alunoBy(relAluno)||{}).tel)};
+$('relWa').onclick=()=>{const t=textoAtual();if(!t){$('copied').textContent='Não há dados neste mês.';return}waOpen(t,(alunoBy(relAluno)||{}).tel)};
 
-// mensagem ao aluno (aulas previstas pelo horário fixo)
-function planejadas(a,m){const out=[],ult=new Date(+m.slice(0,4),+m.slice(5,7),0).getDate();
-const reg=lessonsOf(a,m),dias={};
-reg.forEach(l=>{dias[l.data]=1;out.push({d:l.data,h:l.hora,rep:isRep(l),done:true})});
-for(let i=1;i<=ult;i++){const d=m+'-'+String(i).padStart(2,'0');if(dias[d])continue;const w=parse(d).getDay();
-(a.pre||[]).forEach(p=>{if(p.d!==w)return;if(db.skips.some(k=>k.alunoId===a.id&&k.data===d&&k.hora===p.h))return;out.push({d,h:p.h,rep:false,done:false})})}
-return out.sort((x,y)=>(x.d+x.h).localeCompare(y.d+y.h))}
+// perfil (nome, logo, pix) e pedido do nome na primeira vez
+let nCb=null,SVG0='';
+function ensureNome(cb){if(db.cfg.perfil.nome){cb();return}nCb=cb;$('nNome').value='';$('dlN').showModal()}
+$('nOk').onclick=()=>{const n=$('nNome').value.trim();if(!n){alert('Informe seu nome.');return}
+db.cfg.perfil.nome=n;save();renderDHead();$('dlN').close();const f=nCb;nCb=null;if(f)f()};
+$('nCancel').onclick=()=>{nCb=null;$('dlN').close()};
+function renderDHead(){const p=db.cfg.perfil,L=$('dLogo');if(!SVG0)SVG0=L.innerHTML;
+if(p.logo){L.innerHTML='<img src="'+p.logo+'" alt="" style="width:100%;height:100%;object-fit:contain;border-radius:12px">';L.style.background='transparent'}else{L.innerHTML=SVG0;L.style.background=''}
+$('dSub').textContent=p.nome||'Modo sem cadastro'}
+function drawLogo(){const p=db.cfg.perfil;$('pfLogo').innerHTML=p.logo?'<img src="'+p.logo+'" alt="Logo">':'sem logo';$('pfDel').classList.toggle('hide',!p.logo)}
+function renderPerfil(){const p=db.cfg.perfil;$('pfNome').value=p.nome||'';$('pfPix').value=p.pix||'';$('pfRep').checked=!!p.cobrarRep;drawLogo()}
+$('pfSave').onclick=()=>{const p=db.cfg.perfil;p.nome=$('pfNome').value.trim();p.pix=$('pfPix').value.trim();p.cobrarRep=$('pfRep').checked;save();renderDHead();toast('Perfil salvo')};
+$('pfFile').onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;
+const rd=new FileReader();rd.onload=()=>{const im=new Image();
+im.onload=()=>{try{const k=Math.min(1,256/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));
+c.getContext('2d').drawImage(im,0,0,c.width,c.height);db.cfg.perfil.logo=c.toDataURL('image/png');save();drawLogo();renderDHead();toast('Logo salva')}catch(err){alert('Não foi possível usar essa imagem.')}};
+im.onerror=()=>alert('Não foi possível ler essa imagem.');im.src=rd.result};rd.readAsDataURL(f);e.target.value=''};
+$('pfDel').onclick=()=>{db.cfg.perfil.logo='';save();drawLogo();renderDHead()};
+
+// mensagem ao aluno (dias previstos pelo horário fixo, independente de confirmação)
 function msgTexto(a,m,L){if(!L.length)return'';
 const first=a.nome.trim().split(/\s+/)[0];
-const it=L.map(x=>fmtD(x.d)+' ('+DN[parse(x.d).getDay()].toLowerCase()+') às '+fh(x.h)+(x.rep?' (reposição)':''));
+const it=L.map(x=>fmtD(x.d)+' ('+DN[parse(x.d).getDay()].toLowerCase()+') '+msgHr(x));
 const lista=it.length>1?it.slice(0,-1).join(', ')+' e '+it[it.length-1]:it[0];
 return 'Querido(a) '+first+', neste mês de '+mesSo(m)+' nossas aulas ficaram organizadas para os dias: '+lista+'.\n\nQualquer ajuste é só me avisar!'}
 function renderMsg(){
 const has=db.alunos.length>0;$('mEmpty').classList.toggle('hide',has);$('mBox').classList.toggle('hide',!has);
 if(!has)return;
 msgAluno=fillSel($('mAl'),msgAluno);const a=alunoBy(msgAluno),m=$('mM').value;if(!a||!m)return;
-const L=planejadas(a,m),fx=(a.pre||[]).slice().sort((x,y)=>x.d-y.d||x.h.localeCompare(y.h)).map(p=>DN[p.d]+' '+p.h).join(', ');
+const L=prevDatas(a,m),fx=(a.pre||[]).slice().sort((x,y)=>x.d-y.d||x.h.localeCompare(y.h)).map(p=>DN[p.d]+' '+p.h+(p.f?'–'+p.f:'')).join(', ');
 $('mCount').textContent=L.length?L.length+' aula'+(L.length>1?'s':''):'';
-$('mHint').textContent=fx?'Horário fixo: '+fx+'. Dias marcados como “Não teve” ficam de fora; aulas já registradas entram na lista.':'Este aluno não tem horário fixo. Defina em Alunos > Editar.';
-$('mList').innerHTML=L.length?L.map(x=>'<div class="item"><b class="grow">'+DN[parse(x.d).getDay()]+' '+fmtD(x.d)+'</b><span>'+x.h+'–'+fim(x.h)+'</span>'+(x.rep?RIs:'')+(x.done?'<span class="mut">✓ registrada</span>':'')+'</div>').join(''):'<div class="empty">Nenhuma aula prevista em '+mesNome(m)+'.</div>';
+$('mHint').textContent=fx?'Horário fixo: '+fx+'. Mostra todos os dias previstos do mês, mesmo os já realizados ou cancelados.':'Este aluno não tem horário fixo. Defina em Alunos > Editar.';
+$('mList').innerHTML=L.length?L.map(x=>'<div class="item"><b class="grow">'+DN[parse(x.d).getDay()]+' '+fmtD(x.d)+'</b><span>'+x.h+'–'+fimP(x)+'</span></div>').join(''):'<div class="empty">Nenhuma aula prevista em '+mesNome(m)+'.</div>';
 $('mTxt').value=msgTexto(a,m,L);$('mWa').disabled=$('mCopy').disabled=!L.length;
 $('mTel').textContent=a.tel?'O WhatsApp abre já na conversa com '+a.tel+'.':'Sem telefone cadastrado: ao tocar em WhatsApp, você escolhe o contato.'}
 $('mAl').onchange=()=>{msgAluno=$('mAl').value;renderMsg()};$('mM').onchange=renderMsg;
@@ -536,14 +645,16 @@ $('mWa').onclick=()=>{const t=$('mTxt').value.trim();if(!t)return;waOpen(t,(alun
 $('mCopy').onclick=()=>{copy($('mTxt').value,()=>toast('Mensagem copiada'),()=>alert('Não foi possível copiar.'))};
 
 // backup
-$('bkCopy').onclick=()=>copy(JSON.stringify(db),()=>toast('Backup copiado'),()=>alert('Não foi possível copiar.'));
+$('bkCopy').onclick=()=>copy((()=>{const o=JSON.parse(JSON.stringify(db));if(o.cfg&&o.cfg.perfil)delete o.cfg.perfil.logo;return JSON.stringify(o)})(),()=>toast('Backup copiado'),()=>alert('Não foi possível copiar.'));
 $('bkRest').onclick=()=>{const t=prompt('Cole aqui o backup copiado:');if(!t)return;
 try{const o=JSON.parse(t);if(!Array.isArray(o.alunos)||!Array.isArray(o.aulas))throw 0;
 if(!confirm('Isto substitui todos os dados atuais por '+o.alunos.length+' aluno(s) e '+o.aulas.length+' aula(s). Continuar?'))return;
-const keep=db.cfg;db={alunos:o.alunos,aulas:o.aulas,skips:Array.isArray(o.skips)?o.skips:[],cfg:Object.assign({},CFG0,o.cfg||{},{theme:keep.theme,entered:keep.entered})};
+const keep=db.cfg,cf=Object.assign({},CFG0,o.cfg||{},{theme:keep.theme,entered:keep.entered});
+cf.perfil=Object.assign({nome:'',logo:'',pix:'',cobrarRep:false},keep.perfil,(o.cfg&&o.cfg.perfil)||{},{logo:keep.perfil.logo});
+db={alunos:o.alunos,aulas:o.aulas,skips:Array.isArray(o.skips)?o.skips:[],cfg:cf};renderDHead();
 save();toast('Backup restaurado')}catch(e){alert('Backup inválido.')}};
 
-load();applyTheme(db.cfg.theme);
+load();applyTheme(db.cfg.theme);renderDHead();
 const hoje=iso(new Date());$('mes').value=hoje.slice(0,7);$('mM').value=hoje.slice(0,7);cur=hoje;$('dt').value=hoje;
 if(db.cfg.entered)showApp();else showLogin();
 try{if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
