@@ -11,71 +11,175 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
+<script>try{var __t=(JSON.parse(localStorage.getItem('agenda_personal_v1')||'{}').cfg||{}).theme;if(__t)document.documentElement.setAttribute('data-theme',__t)}catch(e){}</script>
 <style>
-:root{--bg:#eef2f4;--card:#fff;--ink:#14212b;--mut:#5d6d78;--line:#d5dde2;--ac:#0e7a8a;--acs:#d9eff2;--bad:#b4402f;--ok:#2e7d4f;--okb:#dff1e6;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f171d;--card:#17222a;--ink:#e8eef1;--mut:#9aabb5;--line:#2b3a44;--ac:#4cc3d3;--acs:#16363c;--bad:#e8806f;--ok:#6fcf97;--okb:#173325}}
-:root[data-theme="dark"]{--bg:#0f171d;--card:#17222a;--ink:#e8eef1;--mut:#9aabb5;--line:#2b3a44;--ac:#4cc3d3;--acs:#16363c;--bad:#e8806f;--ok:#6fcf97;--okb:#173325}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+/* Tema padrão: Petróleo */
+:root{--bg:#eef2f4;--card:#fff;--ink:#14212b;--mut:#5d6d78;--line:#d5dde2;--ac:#0e7a8a;--onac:#fff;--acs:#d9eff2;--bad:#b4402f;--ok:#2e7d4f;--okb:#dff1e6;--bar:#0e7a8a;--onbar:#fff;--shadow:0 2px 8px rgba(20,33,43,.12)}
+:root[data-theme="claro"]{--bg:#f6f7f9;--card:#fff;--ink:#111827;--mut:#6b7280;--line:#e5e7eb;--ac:#2563eb;--onac:#fff;--acs:#e3ebff;--bad:#c0392b;--ok:#15803d;--okb:#e8f6ec;--bar:#fff;--onbar:#111827;--shadow:0 2px 8px rgba(17,24,39,.08)}
+:root[data-theme="escuro"]{--bg:#0b1115;--card:#151e25;--ink:#e8eef1;--mut:#93a4af;--line:#25333d;--ac:#34d399;--onac:#04231a;--acs:#12332a;--bad:#f87171;--ok:#34d399;--okb:#12332a;--bar:#151e25;--onbar:#e8eef1;--shadow:0 2px 10px rgba(0,0,0,.5)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{color-scheme:light}
+:root[data-theme="escuro"]{color-scheme:dark}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-.wrap{max-width:640px;margin:0 auto;padding:12px 14px 170px}
 h2{font-size:20px;margin:0 0 8px}
 input,select,button{font:inherit;color:var(--ink)}
-input,select{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
-label{display:block;font-size:14px;color:var(--mut);margin:10px 0 4px}
-.btn{padding:11px 16px;border-radius:10px;border:1px solid var(--ac);background:var(--ac);color:#fff;font-weight:600;cursor:pointer}
+input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+label{display:block;font-size:14px;color:var(--mut);margin:12px 0 4px}
+.btn{padding:12px 18px;border-radius:12px;border:1px solid var(--ac);background:var(--ac);color:var(--onac);font-weight:600;cursor:pointer}
 .btn.sec{background:transparent;color:var(--ac)}
 .btn.del{background:transparent;color:var(--bad);border-color:var(--bad)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.btn.block{width:100%}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
 .row{display:flex;gap:8px;align-items:center}
 .row>*{flex:1}
 .grow{flex:1;min-width:0}
-.date-bar{display:flex;gap:6px}
-.date-bar input{flex:1}
-.ib{width:48px;font-size:22px;border:1px solid var(--line);background:var(--card);border-radius:10px;cursor:pointer}
-.date-bar .btn{flex:none}
-.dname{color:var(--mut);margin:8px 2px 12px;text-transform:capitalize}
-.aula{display:flex;align-items:center;gap:12px;padding:14px;background:var(--okb);border:1px solid var(--ok);border-radius:12px;margin-bottom:8px;cursor:pointer}
-.aula .h{font-weight:700;font-size:18px;width:112px;flex:none}
-.prev{background:var(--acs);border-radius:12px;padding:10px 12px;margin-bottom:12px}
-.prev h3{font-size:16px;margin:2px 0 6px}
-.item{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--line);flex-wrap:wrap}
-.item:first-of-type{border-top:0}
-.prev .btn{padding:9px 14px}
 .mut{color:var(--mut);font-size:14px}
-.empty{color:var(--mut);text-align:center;padding:22px 0}
-.fab{position:fixed;right:18px;bottom:calc(76px + env(safe-area-inset-bottom,0px));width:62px;height:62px;border-radius:50%;border:0;background:var(--ac);color:#fff;font-size:34px;line-height:1;box-shadow:0 4px 14px rgba(0,0,0,.3);cursor:pointer;z-index:6}
-.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
-.tabs button{flex:1;padding:16px 4px;border:0;background:none;font-weight:600;color:var(--mut);cursor:pointer}
-.tabs button.on{color:var(--ac);box-shadow:inset 0 3px 0 var(--ac)}
+.empty{color:var(--mut);text-align:center;padding:26px 0}
+.hide{display:none!important}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+
+/* Login */
+#login{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px;padding-top:max(24px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom))}
+.lbox{width:100%;max-width:380px;text-align:center}
+.logo{width:84px;height:84px;border-radius:22px;background:var(--ac);color:var(--onac);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:var(--shadow)}
+.lbox h1{font-size:28px;margin:0 0 4px}
+.lbox p{margin:0 0 24px;color:var(--mut)}
+.lbox .btn{margin-bottom:10px;padding:14px 18px;font-size:17px}
+.or{display:flex;align-items:center;gap:10px;color:var(--mut);font-size:14px;margin:14px 0}
+.or:before,.or:after{content:"";flex:1;height:1px;background:var(--line)}
+#authForm{text-align:left}
+.msg{background:var(--acs);color:var(--ink);border-radius:12px;padding:12px;margin:12px 0;font-size:15px}
+.lnote{margin-top:18px;font-size:13px;color:var(--mut)}
+
+/* App: menu lateral */
+.drawer{position:fixed;top:0;bottom:0;left:0;width:290px;max-width:84vw;background:var(--card);border-right:1px solid var(--line);transform:translateX(-102%);transition:transform .22s ease;z-index:30;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+.drawer.open{transform:none;box-shadow:var(--shadow)}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .2s;z-index:25}
+.scrim.open{opacity:1;pointer-events:auto}
+.dhead{display:flex;align-items:center;gap:12px;padding:18px 16px;border-bottom:1px solid var(--line)}
+.dhead .logo{width:44px;height:44px;border-radius:12px;margin:0;box-shadow:none;flex:none}
+.dhead b{display:block;font-size:17px}
+.menu{padding:10px;flex:1;overflow:auto}
+.menu button{display:flex;align-items:center;gap:14px;width:100%;padding:14px 12px;border:0;border-radius:12px;background:none;font-weight:600;font-size:16px;cursor:pointer;text-align:left;color:var(--ink)}
+.menu button svg{flex:none;color:var(--mut)}
+.menu button.on{background:var(--acs);color:var(--ac)}
+.menu button.on svg{color:var(--ac)}
+.menu hr{border:0;border-top:1px solid var(--line);margin:8px 6px}
+.dfoot{padding:10px;border-top:1px solid var(--line)}
+.dfoot button{display:flex;align-items:center;gap:14px;width:100%;padding:14px 12px;border:0;border-radius:12px;background:none;font-weight:600;font-size:16px;cursor:pointer;color:var(--bad)}
+.main{min-height:100vh}
+.topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:6px;background:var(--bar);color:var(--onbar);padding:8px 10px;padding-top:max(8px,env(safe-area-inset-top));border-bottom:1px solid var(--line)}
+.topbar h1{font-size:19px;margin:0;flex:1}
+.iconbtn{width:46px;height:46px;border:0;border-radius:12px;background:none;color:inherit;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.iconbtn:active{background:rgba(127,127,127,.2)}
+.wrap{max-width:660px;margin:0 auto;padding:14px 14px 120px}
+@media(min-width:900px){.drawer{transform:none;box-shadow:none}.scrim{display:none}#menuBtn{display:none}.main{margin-left:290px}}
+
+/* Aulas */
+.datebar{display:flex;gap:6px;align-items:center}
+.datebar input{flex:1;font-weight:600;text-align:center}
+.datebar .ib{width:48px;height:48px;flex:none;font-size:24px;border:1px solid var(--line);background:var(--card);border-radius:12px;cursor:pointer;color:var(--ink)}
+.datebar .btn{flex:none;padding:12px 14px}
+.dname{margin:10px 2px 14px;color:var(--mut);text-transform:capitalize}
+.aula{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--ok);border-radius:14px;margin-bottom:8px;cursor:pointer;box-shadow:var(--shadow)}
+.aula .t{font-weight:700;font-size:15px;color:var(--mut)}
+.aula b{display:block;font-size:17px}
+.av{width:42px;height:42px;border-radius:50%;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none;font-size:15px}
+.prev{background:var(--acs);border-radius:14px;padding:10px 12px;margin-bottom:12px}
+.prev h3{font-size:16px;margin:2px 0 6px}
+.item{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line);flex-wrap:wrap}
+.item:first-child{border-top:0}
+.prev .item:first-of-type{border-top:0}
+.prev .btn{padding:10px 14px}
+.fab{position:fixed;right:18px;bottom:calc(20px + env(safe-area-inset-bottom,0px));width:64px;height:64px;border-radius:50%;border:0;background:var(--ac);color:var(--onac);font-size:36px;line-height:1;box-shadow:0 4px 16px rgba(0,0,0,.35);cursor:pointer;z-index:8}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .chip{background:var(--acs);color:var(--ac);border-radius:8px;padding:3px 9px;font-size:14px;font-weight:500}
 .chip button{border:0;background:none;color:inherit;font-size:16px;padding:0 0 0 5px;cursor:pointer}
-.pick{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-weight:600;cursor:pointer}
-.pick.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.pick{padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-weight:600;cursor:pointer}
+.pick.on{background:var(--ac);border-color:var(--ac);color:var(--onac)}
 .pick.busy{opacity:.45;text-decoration:line-through}
 .tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}
-.tgrid .pick{padding:12px 0;text-align:center}
-.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:10px 0 0}
-.seg button{flex:1;padding:9px;border:0;background:var(--card);cursor:pointer;font-weight:600}
+.tgrid .pick{padding:13px 0;text-align:center}
+.seg{display:flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:10px 0 0}
+.seg button{flex:1;padding:10px;border:0;background:var(--card);cursor:pointer;font-weight:600}
 .seg button.on{background:var(--acs);color:var(--ac)}
 .rep{border-top:1px solid var(--line);padding:12px 0}
 .rep:first-of-type{border-top:0}
 .num{font-size:26px;font-weight:700;color:var(--ac)}
-dialog{border:1px solid var(--line);border-radius:14px;padding:16px;width:min(94vw,440px);max-height:92vh;background:var(--card);color:var(--ink)}
+
+/* Aparência */
+.themes{display:grid;gap:10px}
+.theme{display:flex;align-items:center;gap:14px;padding:14px;border:2px solid var(--line);border-radius:14px;background:var(--card);cursor:pointer;text-align:left;width:100%}
+.theme.on{border-color:var(--ac)}
+.sw{display:flex;border-radius:10px;overflow:hidden;border:1px solid var(--line);flex:none}
+.sw i{display:block;width:26px;height:44px}
+.theme b{display:block;font-size:17px}
+
+dialog{border:1px solid var(--line);border-radius:16px;padding:16px;width:min(94vw,440px);max-height:92vh;background:var(--card);color:var(--ink)}
 dialog::backdrop{background:rgba(0,0,0,.5)}
-#toast{position:fixed;left:50%;bottom:calc(150px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+#toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:40;max-width:90vw}
 #toast.on{opacity:1}
-.hide{display:none}
-@media print{.tabs,.fab,.noprint{display:none!important}body{background:#fff;color:#000}.wrap{padding:0}.chip{background:none;color:#000;border:1px solid #999}}
-:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+@media print{.drawer,.scrim,.topbar,.fab,.noprint{display:none!important}.main{margin:0}body{background:#fff;color:#000}.wrap{padding:0}.card{border:0}.chip{background:none;color:#000;border:1px solid #999}}
 </style>
 </head>
 <body>
+
+<!-- Tela inicial -->
+<section id="login" class="hide">
+<div class="lbox">
+<div class="logo" aria-hidden="true"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg></div>
+<h1>Controle de Aulas</h1>
+<p>Organize suas aulas e alunos e feche o mês em segundos.</p>
+
+<div id="authHome">
+<button class="btn block" id="goIn">Entrar</button>
+<button class="btn sec block" id="goUp">Criar conta</button>
+<div class="or">ou</div>
+<button class="btn sec block" id="guest">Entrar sem cadastro</button>
+<div class="lnote">Sem cadastro, seus dados ficam salvos só neste aparelho. Use o backup do menu para guardar uma cópia.</div>
+</div>
+
+<form id="authForm" class="hide" novalidate>
+<h2 id="authTitle" style="text-align:center">Entrar</h2>
+<div id="nmBox"><label for="lnm">Nome</label><input id="lnm" autocomplete="name"></div>
+<label for="lem">E-mail</label><input id="lem" type="email" autocomplete="email" inputmode="email">
+<label for="lpw">Senha</label><input id="lpw" type="password" autocomplete="current-password">
+<button class="btn block" type="submit" style="margin-top:16px" id="authGo">Entrar</button>
+<div class="msg hide" id="authMsg"></div>
+<button class="btn sec block" type="button" id="authBack" style="margin-top:6px">Voltar</button>
+<button class="btn block" type="button" id="authGuest" style="margin-top:6px;display:none">Entrar sem cadastro</button>
+</form>
+</div>
+</section>
+
+<!-- App -->
+<div id="app" class="hide">
+<aside class="drawer" id="drawer" aria-label="Menu">
+<div class="dhead">
+<div class="logo" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg></div>
+<div><b>Controle de Aulas</b><span class="mut">Modo sem cadastro</span></div>
+</div>
+<nav class="menu" id="menu">
+<button data-v="dia"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Aulas do dia</button>
+<button data-v="alunos"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7M17 4a4 4 0 0 1 0 8M22 21c0-3-2-5.5-5-6.5"/></svg>Alunos</button>
+<button data-v="rel"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Relatório do mês</button>
+<hr>
+<button data-v="backup"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Backup dos dados</button>
+<button data-v="tema"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/></svg>Aparência</button>
+</nav>
+<div class="dfoot"><button id="logout"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Sair</button></div>
+</aside>
+<div class="scrim" id="scrim"></div>
+
+<div class="main">
+<header class="topbar">
+<button class="iconbtn" id="menuBtn" aria-label="Abrir menu" aria-expanded="false"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+<h1 id="vtitle">Aulas do dia</h1>
+</header>
 <main class="wrap">
+
 <section id="v-dia">
-<div class="date-bar"><button class="ib" id="prev" aria-label="Dia anterior">‹</button><input type="date" id="dt"><button class="ib" id="next" aria-label="Próximo dia">›</button><button class="btn sec" id="hoje">Hoje</button></div>
+<div class="datebar"><button class="ib" id="prev" aria-label="Dia anterior">‹</button><input type="date" id="dt" aria-label="Data"><button class="ib" id="next" aria-label="Próximo dia">›</button><button class="btn sec" id="hoje">Hoje</button></div>
 <div class="dname" id="dname"></div>
 <div id="prevBox"></div>
 <div id="dia"></div>
@@ -90,14 +194,24 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 <div class="row noprint" style="margin-top:10px"><button class="btn" id="copy">Copiar relatório</button><button class="btn sec" id="print">Imprimir / PDF</button></div>
 <div class="mut noprint" id="copied" style="margin-top:6px"></div></div>
 <div class="card" id="relOut"></div>
-<div class="card noprint"><h2>Backup dos dados</h2><div class="mut">Os dados ficam só neste aparelho. Copie um backup de vez em quando e guarde nas suas notas ou mande no WhatsApp para você mesmo.</div>
-<div class="row" style="margin-top:10px"><button class="btn sec" id="bkCopy">Copiar backup</button><button class="btn sec" id="bkRest">Restaurar backup</button></div></div>
 </section>
-</main>
 
-<button class="fab" id="fab" aria-label="Registrar aula">+</button>
-<nav class="tabs"><button data-t="dia" class="on">Aulas</button><button data-t="alunos">Alunos</button><button data-t="rel">Relatório</button></nav>
-<div id="toast"></div>
+<section id="v-backup" class="hide">
+<div class="card"><h2>Backup dos dados</h2>
+<div class="mut">Os dados ficam só neste aparelho. Copie um backup de vez em quando e guarde nas suas notas ou mande no WhatsApp para você mesmo.</div>
+<div class="row" style="margin-top:12px"><button class="btn sec" id="bkCopy">Copiar backup</button><button class="btn sec" id="bkRest">Restaurar backup</button></div></div>
+</section>
+
+<section id="v-tema" class="hide">
+<div class="card"><h2>Aparência</h2><div class="themes" id="themes"></div></div>
+</section>
+
+</main>
+</div>
+<button class="fab hide" id="fab" aria-label="Registrar aula">+</button>
+</div>
+
+<div id="toast" role="status"></div>
 
 <dialog id="dlg">
 <h2 id="dtitle">Registrar aula</h2>
@@ -123,9 +237,17 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 <script>
 (function(){
 const KEY='agenda_personal_v1',DN=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-let db={alunos:[],aulas:[],skips:[],cfg:{off:0,last:''}},cur='',editing=null,isNew=true,selA='',editA=null,tmpPre=[];
+const CFG0={off:0,last:'',theme:'petroleo',entered:false};
+const TITLES={dia:'Aulas do dia',alunos:'Alunos',rel:'Relatório do mês',backup:'Backup dos dados',tema:'Aparência'};
+const THEMES=[
+{id:'petroleo',nome:'Petróleo',desc:'Azul-petróleo, o visual original refinado',cores:['#0e7a8a','#eef2f4','#ffffff']},
+{id:'claro',nome:'Claro',desc:'Fundo branco, limpo e profissional',cores:['#2563eb','#f6f7f9','#ffffff']},
+{id:'escuro',nome:'Escuro',desc:'Fundo escuro com destaque verde, estilo fitness',cores:['#34d399','#0b1115','#151e25']}];
+const BAR={petroleo:'#0e7a8a',claro:'#ffffff',escuro:'#151e25'};
+let db={alunos:[],aulas:[],skips:[],cfg:Object.assign({},CFG0)},cur='',view='dia',editing=null,isNew=true,selA='',editA=null,tmpPre=[];
 const $=i=>document.getElementById(i);
-function load(){try{const r=localStorage.getItem(KEY);if(r)db=Object.assign(db,JSON.parse(r))}catch(e){}db.skips=db.skips||[];db.cfg=db.cfg||{off:0,last:''}}
+function load(){try{const r=localStorage.getItem(KEY);if(r)db=Object.assign(db,JSON.parse(r))}catch(e){}
+db.alunos=db.alunos||[];db.aulas=db.aulas||[];db.skips=db.skips||[];db.cfg=Object.assign({},CFG0,db.cfg||{})}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -136,16 +258,49 @@ const fim=h=>hh(mins(h)+60);
 const fmtD=s=>{const p=s.split('-');return p[2]+'/'+p[1]};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const nome=id=>{const a=db.alunos.find(x=>x.id===id);return a?a.nome:'(aluno removido)'};
+function ini(n){const p=String(n).trim().split(/\s+/);return ((p[0]||'?')[0]+(p.length>1?p[p.length-1][0]:'')).toUpperCase()}
+function hue(n){let h=0;for(const c of String(n))h=(h*31+c.charCodeAt(0))%360;return h}
+function avatar(n){return '<span class="av" style="background:hsl('+hue(n)+',50%,40%)">'+esc(ini(n))+'</span>'}
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1800)}
 function copy(t,ok,fail){const fb=()=>{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok()}catch(e){fail()}ta.remove()};
 if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,fb);else fb()}
 
-// abas
-document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
-document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));
-['dia','alunos','rel'].forEach(t=>$('v-'+t).classList.toggle('hide',t!==b.dataset.t));
-$('fab').classList.toggle('hide',b.dataset.t!=='dia');
-if(b.dataset.t==='rel')renderRel();if(b.dataset.t==='alunos')renderAlunos();if(b.dataset.t==='dia')renderDia()});
+// tema
+function applyTheme(t){if(!BAR[t])t='petroleo';db.cfg.theme=t;
+if(t==='petroleo')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',t);
+const m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content',BAR[t])}
+function renderThemes(){const b=$('themes');b.innerHTML='';
+THEMES.forEach(t=>{const e=document.createElement('button');e.className='theme'+(db.cfg.theme===t.id?' on':'');
+e.innerHTML='<span class="sw">'+t.cores.map(c=>'<i style="background:'+c+'"></i>').join('')+'</span><span class="grow"><b>'+t.nome+'</b><span class="mut">'+t.desc+'</span></span>'+(db.cfg.theme===t.id?'<span style="color:var(--ac);font-size:22px">✓</span>':'');
+e.onclick=()=>{applyTheme(t.id);save();renderThemes()};b.appendChild(e)})}
+
+// menu lateral
+function openMenu(o){$('drawer').classList.toggle('open',o);$('scrim').classList.toggle('open',o);$('menuBtn').setAttribute('aria-expanded',o?'true':'false')}
+$('menuBtn').onclick=()=>openMenu(!$('drawer').classList.contains('open'));
+$('scrim').onclick=()=>openMenu(false);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')openMenu(false)});
+document.querySelectorAll('#menu button').forEach(b=>b.onclick=()=>go(b.dataset.v));
+function go(v){view=v;openMenu(false);
+['dia','alunos','rel','backup','tema'].forEach(x=>$('v-'+x).classList.toggle('hide',x!==v));
+document.querySelectorAll('#menu button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+$('vtitle').textContent=TITLES[v];$('fab').classList.toggle('hide',v!=='dia');
+if(v==='dia')renderDia();if(v==='alunos')renderAlunos();if(v==='rel')renderRel();if(v==='tema')renderThemes();
+window.scrollTo(0,0)}
+
+// login
+function showLogin(){$('app').classList.add('hide');$('login').classList.remove('hide');authHome()}
+function showApp(){$('login').classList.add('hide');$('app').classList.remove('hide');go(view||'dia')}
+function authHome(){$('authHome').classList.remove('hide');$('authForm').classList.add('hide');$('authMsg').classList.add('hide')}
+function authForm(up){$('authHome').classList.add('hide');$('authForm').classList.remove('hide');
+$('authTitle').textContent=up?'Criar conta':'Entrar';$('authGo').textContent=up?'Criar conta':'Entrar';
+$('nmBox').classList.toggle('hide',!up);$('lpw').autocomplete=up?'new-password':'current-password';$('authMsg').classList.add('hide');$('authGuest').style.display='none'}
+$('goIn').onclick=()=>authForm(false);$('goUp').onclick=()=>authForm(true);$('authBack').onclick=authHome;
+$('authForm').onsubmit=e=>{e.preventDefault();const m=$('authMsg');
+m.textContent='As contas na nuvem ainda não estão ativas: essa etapa vem a seguir. Por enquanto, use “Entrar sem cadastro”. Seus dados ficam salvos neste aparelho e nada do que você digitou aqui foi guardado.';
+m.classList.remove('hide');$('authGuest').style.display='block'};
+function guest(){db.cfg.entered=true;save();showApp()}
+$('guest').onclick=guest;$('authGuest').onclick=guest;
+$('logout').onclick=()=>{db.cfg.entered=false;save();openMenu(false);showLogin();toast('Seus dados continuam salvos neste aparelho')};
 
 // previstas (horários fixos)
 function previstas(d){const w=parse(d).getDay(),out=[];
@@ -158,13 +313,13 @@ const confirmar=v=>db.aulas.push({id:uid(),alunoId:v.a.id,data:v.d,hora:v.h});
 function bloco(box,tit,list){
 if(!list.length)return;const w=document.createElement('div');w.className='prev';w.innerHTML='<h3>'+tit+'</h3>';
 list.forEach(v=>{const it=document.createElement('div');it.className='item';
-it.innerHTML='<div class="grow"><b>'+esc(v.a.nome)+'</b><div class="mut">'+DN[parse(v.d).getDay()]+' '+fmtD(v.d)+' · '+v.h+'–'+fim(v.h)+'</div></div>';
+it.innerHTML=avatar(v.a.nome)+'<div class="grow"><b>'+esc(v.a.nome)+'</b><div class="mut">'+DN[parse(v.d).getDay()]+' '+fmtD(v.d)+' · '+v.h+'–'+fim(v.h)+'</div></div>';
 const c=document.createElement('button');c.className='btn';c.textContent='✓ Confirmar';
 c.onclick=()=>{confirmar(v);save();toast('Registrado: '+v.a.nome+' '+v.h);renderDia()};
 const n=document.createElement('button');n.className='btn sec';n.textContent='Não teve';
 n.onclick=()=>{db.skips.push({alunoId:v.a.id,data:v.d,hora:v.h});save();renderDia()};
 it.appendChild(c);it.appendChild(n);w.appendChild(it)});
-if(list.length>1){const t=document.createElement('button');t.className='btn';t.style.cssText='width:100%;margin-top:6px';t.textContent='✓ Confirmar todas ('+list.length+')';
+if(list.length>1){const t=document.createElement('button');t.className='btn block';t.style.marginTop='6px';t.textContent='✓ Confirmar todas ('+list.length+')';
 t.onclick=()=>{list.forEach(confirmar);save();toast(list.length+' aulas registradas');renderDia()};w.appendChild(t)}
 box.appendChild(w)}
 
@@ -180,8 +335,8 @@ bloco(box,'Pendentes dos últimos 14 dias',pend);
 const L=$('dia');L.innerHTML='';
 if(!dia.length){L.innerHTML='<div class="empty">Nenhuma aula registrada neste dia.<br>Toque no + para registrar.</div>';return}
 dia.forEach(a=>{const e=document.createElement('div');e.className='aula';e.tabIndex=0;
-e.innerHTML='<span class="h">'+a.hora+'–'+fim(a.hora)+'</span><b class="grow">'+esc(nome(a.alunoId))+'</b><span class="mut">editar</span>';
-e.onclick=()=>openDlg(a);L.appendChild(e)})}
+e.innerHTML=avatar(nome(a.alunoId))+'<div class="grow"><b>'+esc(nome(a.alunoId))+'</b><span class="t">'+a.hora+'–'+fim(a.hora)+'</span></div><span class="mut">editar</span>';
+e.onclick=()=>openDlg(a);e.onkeydown=ev=>{if(ev.key==='Enter')openDlg(a)};L.appendChild(e)})}
 function setDate(d){cur=d;$('dt').value=d;renderDia()}
 function shift(n){const d=parse(cur);d.setDate(d.getDate()+n);setDate(iso(d))}
 $('prev').onclick=()=>shift(-1);$('next').onclick=()=>shift(1);$('hoje').onclick=()=>setDate(iso(new Date()));
@@ -202,7 +357,7 @@ function upFim(){$('dFim').textContent=$('dH').value?'Das '+$('dH').value+' às 
 $('seg').querySelectorAll('button').forEach(b=>b.onclick=()=>{db.cfg.off=+b.dataset.o;save();drawTg()});
 $('dD').onchange=drawTg;$('dH').oninput=()=>{drawTg();upFim()};
 function openDlg(a){
-if(!db.alunos.length){alert('Cadastre um aluno primeiro (aba Alunos).');return}
+if(!db.alunos.length){alert('Cadastre um aluno primeiro (menu Alunos).');return}
 editing=a;isNew=!a;
 selA=a?a.alunoId:(db.alunos.some(x=>x.id===db.cfg.last)?db.cfg.last:db.alunos[0].id);
 $('dtitle').textContent=a?'Editar aula':'Registrar aula';
@@ -237,11 +392,11 @@ $('aDel').onclick=()=>{const a=editA,n=db.aulas.filter(x=>x.alunoId===a.id).leng
 if(!confirm('Excluir '+a.nome+(n?' e suas '+n+' aula(s)?':'?')))return;
 db.alunos=db.alunos.filter(x=>x!==a);db.aulas=db.aulas.filter(x=>x.alunoId!==a.id);save();$('dlA').close();renderAlunos();renderDia()};
 function renderAlunos(){const L=$('lista');
-if(!db.alunos.length){L.innerHTML='<div class="empty">Nenhum aluno cadastrado ainda.</div>';return}
+if(!db.alunos.length){L.innerHTML='<div class="empty">Nenhum aluno cadastrado ainda.<br>Toque em “Novo aluno” para começar.</div>';return}
 L.innerHTML='';
 db.alunos.slice().sort((a,b)=>a.nome.localeCompare(b.nome)).forEach(a=>{const r=document.createElement('div');r.className='item';
 const fx=(a.pre||[]).slice().sort((x,y)=>x.d-y.d||x.h.localeCompare(y.h)).map(p=>DN[p.d]+' '+p.h).join(', ');
-r.innerHTML='<div class="grow"><b>'+esc(a.nome)+'</b><div class="mut">'+esc(fx||'Sem horário fixo')+(a.tel?' • '+esc(a.tel):'')+(a.obs?' • '+esc(a.obs):'')+'</div></div>';
+r.innerHTML=avatar(a.nome)+'<div class="grow"><b>'+esc(a.nome)+'</b><div class="mut">'+esc(fx||'Sem horário fixo')+(a.tel?' • '+esc(a.tel):'')+(a.obs?' • '+esc(a.obs):'')+'</div></div>';
 const e=document.createElement('button');e.className='btn sec';e.textContent='Editar';e.onclick=()=>openAl(a);r.appendChild(e);L.appendChild(r)})}
 
 // relatório
@@ -261,13 +416,18 @@ r.forEach(x=>{t+=x.nome+': '+x.aulas.length+' aula(s)\n  '+x.aulas.map(a=>fmtD(a
 $('mes').onchange=renderRel;$('print').onclick=()=>window.print();
 $('copy').onclick=()=>{const t=texto();if(!t){$('copied').textContent='Não há aulas neste mês.';return}
 copy(t,()=>$('copied').textContent='Relatório copiado.',()=>$('copied').textContent='Não foi possível copiar.')};
+
+// backup
 $('bkCopy').onclick=()=>copy(JSON.stringify(db),()=>toast('Backup copiado'),()=>alert('Não foi possível copiar.'));
 $('bkRest').onclick=()=>{const t=prompt('Cole aqui o backup copiado:');if(!t)return;
 try{const o=JSON.parse(t);if(!Array.isArray(o.alunos)||!Array.isArray(o.aulas))throw 0;
 if(!confirm('Isto substitui todos os dados atuais por '+o.alunos.length+' aluno(s) e '+o.aulas.length+' aula(s). Continuar?'))return;
-db=Object.assign({alunos:[],aulas:[],skips:[],cfg:{off:0,last:''}},o);save();renderDia();renderAlunos();toast('Backup restaurado')}catch(e){alert('Backup inválido.')}};
+const keep=db.cfg;db={alunos:o.alunos,aulas:o.aulas,skips:Array.isArray(o.skips)?o.skips:[],cfg:Object.assign({},CFG0,o.cfg||{},{theme:keep.theme,entered:keep.entered})};
+save();toast('Backup restaurado')}catch(e){alert('Backup inválido.')}};
 
-load();const hoje=iso(new Date());$('mes').value=hoje.slice(0,7);setDate(hoje);
+load();applyTheme(db.cfg.theme);
+const hoje=iso(new Date());$('mes').value=hoje.slice(0,7);cur=hoje;$('dt').value=hoje;
+if(db.cfg.entered)showApp();else showLogin();
 try{if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
 })();
 </script>
