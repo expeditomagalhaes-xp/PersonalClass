@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#0e7a8a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Aulas">
+<meta name="apple-mobile-web-app-title" content="Personal Class">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -80,7 +80,8 @@ label{display:block;font-size:14px;color:var(--mut);margin:12px 0 4px}
 .datebar input{flex:1;font-weight:600;text-align:center}
 .datebar .ib{width:48px;height:48px;flex:none;font-size:24px;border:1px solid var(--line);background:var(--card);border-radius:12px;cursor:pointer;color:var(--ink)}
 .datebar .btn{flex:none;padding:12px 14px}
-.dname{margin:10px 2px 14px;color:var(--mut);text-transform:capitalize}
+.dname{margin:10px 2px 14px;color:var(--mut)}
+.dname::first-letter{text-transform:uppercase}
 .aula{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--ok);border-radius:14px;margin-bottom:8px;cursor:pointer;box-shadow:var(--shadow)}
 .aula .t{font-weight:700;font-size:15px;color:var(--mut)}
 .aula b{display:block;font-size:17px}
@@ -258,13 +259,13 @@ input,select,textarea{font-size:16px!important}
 <aside class="drawer" id="drawer" aria-label="Menu">
 <div class="dhead">
 <div class="logo" id="dLogo" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg></div>
-<div><b>Agenda de Aulas</b><span class="mut" id="dSub">Modo sem cadastro</span></div>
+<div><b>Personal Class</b><span class="mut" id="dSub">Modo sem cadastro</span></div>
 </div>
 <nav class="menu" id="menu">
 <button data-v="dia" class="navmain"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Aulas do dia</button>
 <button data-v="alunos" class="navmain"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7M17 4a4 4 0 0 1 0 8M22 21c0-3-2-5.5-5-6.5"/></svg>Alunos</button>
 <button data-v="rel" class="navmain"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Relatório do mês</button>
-<button data-v="msg"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.2A8 8 0 1 1 21 12z"/></svg>Mensagem ao aluno</button>
+
 <hr>
 <button data-v="perfil"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>Meu perfil</button>
 <button data-v="conta" class="subtle">Entrar / criar conta</button>
@@ -295,7 +296,7 @@ input,select,textarea{font-size:16px!important}
 </section>
 
 <section id="v-alunos" class="hide">
-<div class="ahead"><div><h2>Alunos</h2><span class="mut" id="aCount"></span></div><button class="btn" id="addAluno" type="button">+ Novo aluno</button></div>
+<div class="ahead"><span class="mut" id="aCount" style="font-size:16px"></span><button class="btn" id="addAluno" type="button">+ Novo aluno</button></div>
 <input id="aBusca" type="search" placeholder="Buscar aluno" class="hide" aria-label="Buscar aluno" autocomplete="off">
 <div class="seg" id="aFil"><button type="button" data-f="todos">Todos</button><button type="button" data-f="mensal">Mensal</button><button type="button" data-f="pacote">Pacotes</button></div>
 <div id="lista"></div>
@@ -306,34 +307,16 @@ input,select,textarea{font-size:16px!important}
 <div class="mstep noprint"><button class="ib" type="button" id="mPrev" aria-label="Mês anterior">‹</button><input type="month" id="mes" aria-label="Mês de referência"><button class="ib" type="button" id="mNext" aria-label="Próximo mês">›</button></div>
 <div id="cliBox" class="noprint">
 <div class="pills" id="relChips"></div><select id="relAl" class="hide" aria-hidden="true" tabindex="-1"></select>
-<div class="opts" id="relOpts"><button type="button" data-t="fech"><i></i><div><b>Fechamento do mês</b><span>Valor total para cobrar</span></div></button><button type="button" data-t="cli"><i></i><div><b>Aulas realizadas</b><span>Lista com data e hora</span></div></button><button type="button" data-t="previstos"><i></i><div><b>Dias previstos</b><span>Agenda do mês com feriados</span></div></button></div>
+<div class="opts" id="relOpts"><button type="button" data-t="fech"><i></i><div><b>Fechamento do mês</b><span>Valor total para cobrar</span></div></button><button type="button" data-t="previstos"><i></i><div><b>Dias previstos</b><span>Agenda do mês com feriados</span></div></button></div>
 </div>
-<select id="relTipoSel" class="hide" aria-hidden="true" tabindex="-1"><option value="fech">fech</option><option value="previstos">previstos</option><option value="cli">cli</option><option value="pro">pro</option></select>
 <div class="mut noprint" id="copied" style="margin:0 0 8px"></div>
 <div class="card" id="relOut"></div>
 
 </section>
 
-<section id="v-msg" class="hide">
-<div id="mEmpty" class="card hide"><div class="empty">Cadastre um aluno primeiro (menu Alunos).</div></div>
-<div id="mBox">
-<div class="card">
-<label for="mAl" style="margin-top:0">Aluno</label><select id="mAl"></select>
-<label for="mM">Mês</label><input type="month" id="mM">
-</div>
-<div class="card"><div class="row" style="margin-bottom:4px"><h2 class="grow" style="margin:0">Datas previstas</h2><span class="mut" id="mCount" style="flex:none"></span></div>
-<div class="mut" id="mHint"></div>
-<div id="mList"></div></div>
-<div class="card"><label for="mTxt" style="margin-top:0">Mensagem (você pode editar o texto)</label>
-<textarea id="mTxt" rows="13"></textarea>
-<div class="row" style="margin-top:12px"><button class="btn" id="mWa">Enviar no WhatsApp</button><button class="btn sec" id="mCopy">Copiar mensagem</button></div>
-<div class="mut" id="mTel" style="margin-top:8px"></div></div>
-</div>
-</section>
 
 <section id="v-perfil" class="hide">
-<div class="card"><h2>Meu perfil</h2>
-<div class="mut">Seu nome e sua logo aparecem no cabeçalho dos relatórios e PDFs.</div>
+<div class="card"><div class="mut">Seu nome e sua logo aparecem no cabeçalho dos relatórios e PDFs.</div>
 <label for="pfNome">Nome do profissional</label><input id="pfNome" autocomplete="name" placeholder="Seu nome">
 <label>Logo (opcional)</label>
 <div class="row" style="flex-wrap:nowrap;align-items:center"><div class="logoPrev" id="pfLogo">sem logo</div>
@@ -345,17 +328,16 @@ input,select,textarea{font-size:16px!important}
 <div class="mut">Os feriados nacionais já aparecem sozinhos. Adicione aqui feriados da sua cidade ou datas que você não atende.</div>
 <div class="row" style="align-items:flex-end;margin-top:8px"><div><label for="pfFd" style="margin-top:0">Data</label><input type="date" id="pfFd"></div><div><label for="pfFn" style="margin-top:0">Nome</label><input id="pfFn" placeholder="Ex.: Aniversário da cidade"></div><button class="btn sec" id="pfFa" style="flex:none">Adicionar</button></div>
 <div class="chips" id="pfFl" style="margin-top:8px"></div>
-<div class="mut" style="margin-top:8px">Esses dados ficam só neste aparelho. A logo não entra no backup por copiar e colar.</div>
+<div class="mut" style="margin-top:8px">Com uma conta, nome, logo, Pix e feriados também ficam salvos na nuvem.</div>
 </div>
 </section>
 
 <section id="v-conta" class="hide">
-<div class="card"><h2>Conta</h2>
+<div class="card">
 <div id="ctOff">
 <div class="msg" style="margin-top:0"><b>Modo sem cadastro.</b> Seus dados ficam salvos só neste aparelho.</div>
-<div class="mut">Crie uma conta para guardar seus alunos e aulas na nuvem e usar o app em outro aparelho. Os dados que já estão aqui podem ser enviados na primeira vez que você entrar.</div>
+<div class="mut">Crie uma conta para guardar alunos e aulas na nuvem e usar em outro aparelho. Os dados deste aparelho podem ser enviados na primeira vez que você entrar.</div>
 <div class="row" style="margin-top:14px"><button class="btn" id="ctIn">Entrar</button><button class="btn sec" id="ctUp">Criar conta</button></div>
-<div class="mut" style="margin-top:10px">Use também o Backup dos dados para guardar uma cópia. No iPhone, o navegador pode apagar dados de sites pouco usados: com uma conta, seus dados ficam protegidos na nuvem.</div>
 </div>
 <div id="ctOn" class="hide">
 <div class="msg" style="margin-top:0">Conectado como <b id="ctMail"></b></div>
@@ -367,10 +349,9 @@ input,select,textarea{font-size:16px!important}
 </section>
 
 <section id="v-backup" class="hide">
-<div class="card"><h2>Backup dos dados</h2>
-<div class="mut">Guarde uma cópia de vez em quando. Você pode copiar o texto (para notas ou WhatsApp) ou baixar um arquivo.</div>
-<div class="row" style="margin-top:12px;flex-wrap:wrap"><button class="btn" id="bkFileDl">Baixar arquivo de backup</button><button class="btn sec" id="bkCopy">Copiar backup</button></div>
-<div class="row" style="margin-top:8px;flex-wrap:wrap"><button class="btn sec" id="bkRest">Restaurar colando o texto</button><button class="btn sec" id="bkFileUp">Restaurar de arquivo</button></div>
+<div class="card">
+<div class="mut">Baixe uma cópia de vez em quando e guarde o arquivo.</div>
+<div class="row" style="margin-top:12px;flex-wrap:wrap"><button class="btn" id="bkFileDl">Baixar arquivo de backup</button><button class="btn sec" id="bkFileUp">Restaurar de arquivo</button></div>
 <input type="file" id="bkFile" accept=".json,application/json" class="hide"></div>
 <div class="card"><h2>Cópias automáticas deste aparelho</h2>
 <div class="mut">O app guarda sozinho uma cópia antes de entrar numa conta, juntar com a nuvem ou restaurar um backup. Ficam as 3 mais recentes. Ao sair da conta, elas são apagadas deste aparelho.</div>
@@ -378,7 +359,7 @@ input,select,textarea{font-size:16px!important}
 </section>
 
 <section id="v-tema" class="hide">
-<div class="card"><h2>Aparência</h2><div class="themes" id="themes"></div></div>
+<div class="card"><div class="themes" id="themes"></div></div>
 </section>
 
 </main>
@@ -433,13 +414,13 @@ input,select,textarea{font-size:16px!important}
 <button class="btn sec hide" type="button" id="apRenew" style="margin-top:8px">Renovar pacote</button>
 </div>
 <label for="avl">Valor da hora-aula em R$ (opcional)</label><input id="avl" inputmode="decimal" placeholder="Ex.: 80,00">
-<div class="mut" style="margin-top:4px">Usado no valor do dia, no relatório do profissional e no texto de fechamento do mês. Não aparece na mensagem de dias previstos nem no relatório de aulas realizadas.</div>
+<div class="mut" style="margin-top:4px">Usado nos valores do dia e dos relatórios financeiros.</div>
 <label for="ai">Aluno desde (opcional)</label><input type="date" id="ai">
-<div class="mut" style="margin-top:4px">Os horários fixos só são lembrados a partir desta data.</div>
+<div class="mut" style="margin-top:4px">Horários fixos valem a partir desta data.</div>
 <label>Horários fixos na semana</label>
 <div class="row"><div><label for="pd" style="margin-top:0">Dia</label><select id="pd"><option value="0">Domingo</option><option value="1">Segunda</option><option value="2">Terça</option><option value="3">Quarta</option><option value="4">Quinta</option><option value="5">Sexta</option><option value="6">Sábado</option></select></div><div><label for="ph" style="margin-top:0">Início</label><input type="time" id="ph"></div></div>
 <div class="row" style="align-items:flex-end;margin-top:8px"><div><label for="pf" style="margin-top:0">Término (opcional)</label><input type="time" id="pf"></div><button class="btn sec" id="pAdd" style="flex:none">Adicionar</button></div>
-<div class="mut" style="margin:6px 0">Aula de 1 hora: informe só o início. Serviço fixo de várias horas (ex.: segunda das 07:00 às 12:00): informe também o término.</div>
+<div class="mut" style="margin:6px 0">Aula de 1 hora: só o início. Várias horas: informe também o término.</div>
 <div class="chips" id="pList"></div>
 <div class="row" style="margin-top:14px"><button class="btn" id="aSave">Salvar</button><button class="btn del hide" id="aDel">Excluir</button><button class="btn sec" id="aClose">Fechar</button></div>
 </dialog>
@@ -448,7 +429,7 @@ input,select,textarea{font-size:16px!important}
 (function(){
 const KEY='agenda_personal_v1',DN=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const CFG0={off:0,last:'',theme:'petroleo',entered:false};
-const TITLES={dia:'Aulas do dia',alunos:'Alunos',rel:'Relatórios',msg:'Mensagem ao aluno',perfil:'Meu perfil',conta:'Conta',backup:'Backup dos dados',tema:'Aparência'};
+const TITLES={dia:'Aulas do dia',alunos:'Alunos',rel:'Relatórios',perfil:'Meu perfil',conta:'Conta',backup:'Backup dos dados',tema:'Aparência'};
 const THEMES=[
 {id:'petroleo',nome:'Petróleo',desc:'Azul-petróleo, o visual original refinado',cores:['#0e7a8a','#eef2f4','#ffffff']},
 {id:'claro',nome:'Claro',desc:'Fundo branco, limpo e profissional',cores:['#2563eb','#f6f7f9','#ffffff']},
@@ -563,11 +544,11 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')openMenu(false)});
 document.querySelectorAll('#menu button').forEach(b=>b.onclick=()=>go(b.dataset.v));
 document.querySelectorAll('#bnav button').forEach(b=>b.onclick=()=>{if(b.dataset.v==='mais')openMenu(!$('drawer').classList.contains('open'));else go(b.dataset.v)});
 function go(v){view=v;applyPriv();openMenu(false);
-['dia','alunos','rel','msg','perfil','conta','backup','tema'].forEach(x=>$('v-'+x).classList.toggle('hide',x!==v));
+['dia','alunos','rel','perfil','conta','backup','tema'].forEach(x=>$('v-'+x).classList.toggle('hide',x!==v));
 document.querySelectorAll('#menu button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
 document.querySelectorAll('#bnav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v||(b.dataset.v==='mais'&&!['dia','alunos','rel'].includes(v))));
 $('abar').classList.toggle('hide',v!=='rel');$('vtitle').textContent=TITLES[v];$('fab').classList.toggle('hide',v!=='dia');
-if(v==='dia')renderDia();if(v==='alunos')renderAlunos();if(v==='rel')renderRel();if(v==='msg')renderMsg();if(v==='perfil')renderPerfil();if(v==='backup')renderBkAuto();if(v==='tema')renderThemes();
+if(v==='dia')renderDia();if(v==='alunos')renderAlunos();if(v==='rel')renderRel();if(v==='perfil')renderPerfil();if(v==='backup')renderBkAuto();if(v==='tema')renderThemes();
 window.scrollTo(0,0)}
 
 // login
@@ -607,7 +588,7 @@ const fm=new Map();((c.perfil&&c.perfil.feriados)||[]).concat(db.cfg.perfil.feri
 const lim=Date.now()-180*864e5;
 return{alunos:al,aulas:au,skips:[...sk.values()],del:[...dl.values()].filter(x=>x.t>lim),perfil:pf}}
 function refreshViews(){if($('app').classList.contains('hide'))return;
-({dia:renderDia,alunos:renderAlunos,rel:renderRel,msg:renderMsg,perfil:renderPerfil,conta:renderConta})[view]?.()}
+({dia:renderDia,alunos:renderAlunos,rel:renderRel,perfil:renderPerfil,conta:renderConta})[view]?.()}
 function setStatus(t){syncMsg=t;if($('ctStatus'))$('ctStatus').textContent=t}
 function cloudErr(e){const c=e&&e.code||'';
 if(c.includes('permission-denied'))return'A nuvem recusou o acesso. Confira se as regras do Firestore foram publicadas.';
@@ -821,6 +802,7 @@ if(!confirm('Excluir '+a.nome+(n?' e suas '+n+' aula(s)?':'?')))return;
 tomb(a.id);db.alunos=db.alunos.filter(x=>x!==a);db.aulas=db.aulas.filter(x=>x.alunoId!==a.id);db.skips=db.skips.filter(k=>k.alunoId!==a.id);save();$('dlA').close();renderAlunos();renderDia()};
 let alFil='todos';
 function renderAlunos(){const L=$('lista');
+const hasP=db.alunos.some(isPkg);if(!hasP)alFil='todos';$('aFil').classList.toggle('hide',!hasP);
 document.querySelectorAll('#aFil button').forEach(b=>b.classList.toggle('on',b.dataset.f===alFil));
 const all=db.alunos.slice().sort((a,b)=>a.nome.localeCompare(b.nome));
 $('aCount').textContent=all.length?all.length+(all.length>1?' alunos':' aluno'):'';
@@ -832,15 +814,18 @@ L.innerHTML='';
 if(!list.length){L.innerHTML='<div class="empty">Nenhum aluno encontrado.</div>';return}
 list.forEach(a=>{const r=document.createElement('div');r.className='acard';r.tabIndex=0;
 const done=isPkg(a)&&pkgUsed(a)>=a.pkg.total;
-r.innerHTML=avatar(a.nome)+'<div class="grow"><div class="nm">'+esc(a.nome)+pkgTag(a)+'<span class="badge'+(isPkg(a)?' p':'')+'">'+(isPkg(a)?'Pacote':'Mensal')+'</span></div>'+
+r.innerHTML=avatar(a.nome)+'<div class="grow"><div class="nm">'+esc(a.nome)+pkgTag(a)+''+(isPkg(a)?'<span class="badge p">Pacote</span>':'')+'</div>'+
 (done?'<div class="sub" style="color:#8a4b00;font-weight:600">Pacote concluído. Toque para renovar.</div>':'')+'</div><span class="go" aria-hidden="true">›</span>';
 r.setAttribute('role','button');r.setAttribute('aria-label','Editar '+a.nome);
 r.onclick=()=>openAl(a);r.onkeydown=ev=>{if(ev.key==='Enter')openAl(a)};L.appendChild(r)})}
 document.querySelectorAll('#aFil button').forEach(b=>b.onclick=()=>{alFil=b.dataset.f;renderAlunos()});
 $('aBusca').oninput=renderAlunos;
 
+function msgTexto(a,m,L){if(!L.length)return'';
+const first=a.nome.trim().split(/\s+/)[0];
+return 'Querido(a) '+first+', neste mês de '+mesSo(m)+' nossas aulas ficaram organizadas para os dias:\n\n'+L.map(x=>fmtD(x.d)+' - '+x.h+(x.f?' às '+x.f:'')).join('\n')+'\n\nQualquer ajuste é só me avisar!'}
 // relatório
-let relTipo='fech',relAluno='',msgAluno='';
+let relTipo='fech',relAluno='';
 function lessonsOf(a,m){return db.aulas.filter(x=>x.alunoId===a.id&&x.data.slice(0,7)===m).sort((x,y)=>(x.data+x.hora).localeCompare(y.data+y.hora))}
 function dados(){const m=$('mes').value;if(!m)return[];const cr=!!db.cfg.perfil.cobrarRep;
 return db.alunos.map(a=>{const aulas=lessonsOf(a,m),rep=aulas.filter(isRep).length,rs=[...new Set(aulas.map(rateL))].filter(x=>x>0),v=rs.length?rs[rs.length-1]:0,misto=rs.length>1,
@@ -855,7 +840,6 @@ const lg=safeLogo(p.logo),top=(p.nome||lg)?'<div class="rh">'+(lg?'<img src="'+l
 const dica=(p.nome||lg)?'':'<div class="msg noprint" style="margin:0 0 10px">Seu nome e sua logo ainda não foram cadastrados, então o cabeçalho do relatório está vazio. Cadastre em <b>Meu perfil</b>.</div>';
 return dica+top+'<h2>'+tit+'</h2><div class="mut">'+(sub?sub+' · ':'')+'Emitido em '+hojeBR()+'</div>'}
 function renderRel(){
-$('relTipoSel').value=relTipo;
 const needAl=relTipo!=='pro';$('cliBox').classList.toggle('hide',!needAl);
 document.querySelectorAll('#relModo button').forEach(b=>b.classList.toggle('on',(b.dataset.m==='fin')===(relTipo==='pro')));
 document.querySelectorAll('#relOpts button').forEach(b=>b.classList.toggle('on',b.dataset.t===relTipo));
@@ -914,6 +898,7 @@ out.innerHTML=head+bl.map(b=>'<div class="rep"><div class="row"><b class="grow">
 b.L.map(x=>'<span class="chip">'+DN[parse(x.d).getDay()]+' '+fmtD(x.d)+' · '+x.h+'–'+fimP(x)+(feriado(x.d)?' · '+esc(feriado(x.d).f?'ponto facultativo':'feriado'):'')+'</span>').join('')+'</div></div>').join('')+
 '<div class="mut" style="margin-top:10px">Calculado pelo horário fixo cadastrado. Não muda se a aula foi confirmada ou cancelada.</div>'}
 function textoPrev(){const bl=prevLista(),m=$('mes').value;if(!bl.length)return'';
+if(relAluno!=='__all__'&&bl.length===1)return msgTexto(bl[0].a,m,bl[0].L);
 return 'DIAS PREVISTOS DE AULA - '+mesNome(m)+'\n\n'+bl.map(b=>b.a.nome+': '+b.L.length+' aula(s)\n'+b.L.map(x=>'  '+fmtD(x.d)+' ('+DN[parse(x.d).getDay()].toLowerCase()+') '+fh(x.h)+' às '+fh(fimP(x))).join('\n')).join('\n\n')}
 
 // 4) fechamento do mês (texto de cobrança ao aluno)
@@ -940,14 +925,14 @@ out.innerHTML=head+st+
 (L.some(l=>rateL(l)>0)?'':'<div class="msg noprint">Defina o valor da hora-aula de '+esc(a.nome)+' em Alunos para o valor entrar no texto.</div>')+
 (db.cfg.perfil.pix?'':'<div class="mut noprint" style="margin-top:8px">Dica: cadastre sua chave Pix em Meu perfil para ela entrar no texto.</div>')+
 '<div class="mut noprint" style="margin:10px 0 4px">Texto para enviar (você pode editar):</div>'+
-'<textarea id="fTxt" class="noprintarea" rows="13">'+esc(fechTexto(a,m))+'</textarea><div class="printonly" id="fPrint"></div>';
+'<textarea id="fTxt" class="noprintarea" rows="13">'+esc(fechTexto(a,m))+'</textarea><div class="printonly" id="fPrint"></div>'+
+'<h3 class="sub">Aulas do mês</h3><div class="chips">'+L.map(chipL).join('')+'</div>'+(L.some(isRep)?'<div class="mut" style="margin-top:8px">↻ = reposição (aula fora do dia fixo do aluno)</div>':'');
 $('fPrint').textContent=$('fTxt').value;$('fTxt').oninput=()=>{$('fPrint').textContent=$('fTxt').value};
 const fb2=$('fFecha');if(fb2)fb2.onclick=()=>{if(m===iso(new Date()).slice(0,7)&&!confirm('Este mês ainda não terminou. Fechar mesmo assim?'))return;a.fech=a.fech||{};a.fech[m]=Date.now();save();renderRel()};
 const fr=$('fReabre');if(fr)fr.onclick=e=>{e.preventDefault();delete a.fech[m];save();renderRel()}}
 
 // ações do relatório
 function textoAtual(){if(relTipo==='fech')return $('fTxt')?$('fTxt').value:'';if(relTipo==='previstos')return textoPrev();if(relTipo==='cli')return textoCli();return textoPro()}
-$('relTipoSel').onchange=()=>{relTipo=$('relTipoSel').value;renderRel()};
 let relUlt='fech';
 document.querySelectorAll('#relModo button').forEach(b=>b.onclick=()=>{if(b.dataset.m==='fin'){if(relTipo!=='pro')relUlt=relTipo;relTipo='pro'}else relTipo=relUlt;renderRel()});
 document.querySelectorAll('#relOpts button').forEach(b=>b.onclick=()=>{relTipo=relUlt=b.dataset.t;renderRel()});
@@ -992,29 +977,11 @@ c.getContext('2d').drawImage(im,0,0,c.width,c.height);db.cfg.perfil.logo=c.toDat
 im.onerror=()=>alert('Não foi possível ler essa imagem.');im.src=rd.result};rd.readAsDataURL(f);e.target.value=''};
 $('pfDel').onclick=()=>{db.cfg.perfil.logo='';save();drawLogo();renderDHead()};
 
-// mensagem ao aluno (dias previstos pelo horário fixo, independente de confirmação)
-function msgTexto(a,m,L){if(!L.length)return'';
-const first=a.nome.trim().split(/\s+/)[0];
-return 'Querido(a) '+first+', neste mês de '+mesSo(m)+' nossas aulas ficaram organizadas para os dias:\n\n'+L.map(x=>fmtD(x.d)+' - '+x.h+(x.f?' às '+x.f:'')).join('\n')+'\n\nQualquer ajuste é só me avisar!'}
-function renderMsg(){
-const has=db.alunos.length>0;$('mEmpty').classList.toggle('hide',has);$('mBox').classList.toggle('hide',!has);
-if(!has)return;
-msgAluno=fillSel($('mAl'),msgAluno);const a=alunoBy(msgAluno),m=$('mM').value;if(!a||!m)return;
-const L=prevDatas(a,m),fx=(a.pre||[]).slice().sort((x,y)=>x.d-y.d||x.h.localeCompare(y.h)).map(p=>DN[p.d]+' '+p.h+(p.f?'–'+p.f:'')).join(', ');
-$('mCount').textContent=L.length?L.length+' aula'+(L.length>1?'s':''):'';
-$('mHint').textContent=fx?'Horário fixo: '+fx+'. Mostra todos os dias previstos do mês, mesmo os já realizados ou cancelados.':'Este aluno não tem horário fixo. Defina em Alunos > Editar.';
-$('mList').innerHTML=L.length?L.map(x=>'<div class="item"><b class="grow">'+DN[parse(x.d).getDay()]+' '+fmtD(x.d)+'</b><span>'+x.h+'–'+fimP(x)+(feriado(x.d)?' · '+esc(feriado(x.d).f?'ponto facultativo':'feriado'):'')+'</span></div>').join(''):'<div class="empty">Nenhuma aula prevista em '+mesNome(m)+'.</div>';
-$('mTxt').value=msgTexto(a,m,L);$('mWa').disabled=$('mCopy').disabled=!L.length;
-$('mTel').textContent=a.tel?'O WhatsApp abre já na conversa com '+a.tel+'.':'Sem telefone cadastrado: ao tocar em WhatsApp, você escolhe o contato.'}
-$('mAl').onchange=()=>{msgAluno=$('mAl').value;renderMsg()};$('mM').onchange=renderMsg;
-$('mWa').onclick=()=>{const t=$('mTxt').value.trim();if(!t)return;waOpen(t,(alunoBy(msgAluno)||{}).tel)};
-$('mCopy').onclick=()=>{copy($('mTxt').value,()=>toast('Mensagem copiada'),()=>alert('Não foi possível copiar.'))};
 
 // backup
 const bkObj=()=>{const o=JSON.parse(JSON.stringify(db));if(o.cfg&&o.cfg.perfil)delete o.cfg.perfil.logo;if(o.cfg)delete o.cfg.cloud;return o};
 function dlFile(obj,name){const b=new Blob([JSON.stringify(obj)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)}
 const bkName=()=>'controle-de-aulas-backup-'+iso(new Date())+'.json';
-$('bkCopy').onclick=()=>copy(JSON.stringify(bkObj()),()=>toast('Backup copiado'),()=>alert('Não foi possível copiar.'));
 $('bkFileDl').onclick=()=>{dlFile(bkObj(),bkName());toast('Arquivo de backup gerado')};
 $('sFile').onclick=()=>{dlFile(bkObj(),bkName());toast('Arquivo de backup gerado')};
 function restoreObj(o,why){if(!o||!Array.isArray(o.alunos)||!Array.isArray(o.aulas)){alert('Backup inválido.');return}
@@ -1025,7 +992,6 @@ const keep=db.cfg,cf=Object.assign({},CFG0,o.cfg||{},{theme:keep.theme,entered:k
 cf.perfil=Object.assign({nome:'',logo:'',pix:'',cobrarRep:false},keep.perfil,(o.cfg&&o.cfg.perfil)||o.perfil||{},{logo:keep.perfil.logo});
 const ids=new Set(cd.alunos.concat(cd.aulas).map(x=>x.id));db={alunos:cd.alunos,aulas:cd.aulas,skips:cd.skips,del:(db.del||[]).filter(x=>!ids.has(x.id)),cfg:cf};renderDHead();
 save();renderBkAuto();toast('Backup restaurado')}
-$('bkRest').onclick=()=>{const t=prompt('Cole aqui o backup copiado:');if(!t)return;let o;try{o=JSON.parse(t)}catch(e){alert('Backup inválido.');return}restoreObj(o,'Antes de restaurar um backup')};
 $('bkFileUp').onclick=()=>$('bkFile').click();
 $('bkFile').onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const rd=new FileReader();
 rd.onload=()=>{let o;try{o=JSON.parse(rd.result)}catch(err){alert('Esse arquivo não é um backup válido.');return}restoreObj(o,'Antes de restaurar um arquivo de backup')};rd.readAsText(f);e.target.value=''};
@@ -1041,7 +1007,7 @@ it.appendChild(bt);it.appendChild(dl);b.appendChild(it)})}
 
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
 load();applyTheme(db.cfg.theme);renderDHead();
-const hoje=iso(new Date());$('mes').value=hoje.slice(0,7);$('mM').value=hoje.slice(0,7);cur=hoje;$('dt').value=hoje;
+const hoje=iso(new Date());$('mes').value=hoje.slice(0,7);cur=hoje;$('dt').value=hoje;
 {const pn=String((db.cfg.perfil||{}).nome||'').trim().split(/\s+/)[0];if(pn)$('spH').textContent='Bem-vindo, '+pn}
 if(db.cfg.entered)showApp();else showLogin();
 {const sp=$('splash'),wait=Math.max(0,900-performance.now());setTimeout(()=>{sp.classList.add('out');setTimeout(()=>sp.remove(),400)},wait)}

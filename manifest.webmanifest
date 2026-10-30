@@ -1,6 +1,6 @@
 {
- "name": "Controle de Aulas",
- "short_name": "Aulas",
+ "name": "Personal Class",
+ "short_name": "Personal Class",
  "start_url": "./index.html",
  "scope": "./",
  "display": "standalone",
