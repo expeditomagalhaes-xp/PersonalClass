@@ -144,7 +144,43 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 .menu button.subtle.on{color:var(--ac)}
 .logoPrev{width:72px;height:72px;border:1px dashed var(--line);border-radius:14px;display:flex;align-items:center;justify-content:center;flex:none;overflow:hidden;color:var(--mut);font-size:12px;text-align:center}
 .logoPrev img{width:100%;height:100%;object-fit:contain}
-@media print{:root,:root[data-theme]{--bg:#fff;--card:#fff;--ink:#000;--mut:#444;--line:#999;--ac:#000;--acs:#eee;--ok:#000;--okb:#eee}.drawer,.scrim,.topbar,.fab,.noprint,#toast{display:none!important}.main{margin:0}body{background:#fff;color:#000}.wrap{padding:0;max-width:none}.card{border:0;padding:0;box-shadow:none}.chip,.ri{background:none;color:#000;border:1px solid #999}.sum div{background:#fff}.printonly{display:block!important;white-space:pre-wrap;font-size:15px;line-height:1.55}.noprintarea{display:none!important}.rh{border-bottom:2px solid #000;break-inside:avoid;display:flex!important}.rh img{display:block!important;width:56px!important;height:56px!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+/* navegação inferior, ações compactas, relatórios */
+#menuBtn{display:none}
+.bnav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.bnav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:58px;padding:6px 2px;border:0;background:none;color:var(--mut);font-size:12px;font-weight:600;cursor:pointer}
+.bnav button.on{color:var(--ac)}
+.act{width:44px;height:44px;flex:none;padding:0;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--mut);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.act.ok{background:var(--ac);border-color:var(--ac);color:var(--onac)}
+.seg{display:flex;padding:4px;background:var(--line);border-radius:12px;margin-bottom:12px}
+.seg button{flex:1;height:40px;border:0;border-radius:9px;background:none;color:var(--mut);font-weight:600;font-size:15px;cursor:pointer}
+.seg button.on{background:var(--card);color:var(--ac)}
+.mstep{display:flex;gap:6px;align-items:center;margin-bottom:12px}
+.mstep input{flex:1;font-weight:600;text-align:center}
+.mstep .ib{width:48px;height:48px;flex:none;font-size:24px;border:1px solid var(--line);background:var(--card);border-radius:12px;cursor:pointer;color:var(--ink)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px}
+.pill{flex:none;padding:8px 14px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:15px;cursor:pointer}
+.pill.on{background:var(--ac);border-color:var(--ac);color:var(--onac);font-weight:600}
+.opts{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.opts button{display:flex;align-items:center;gap:12px;text-align:left;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.opts button i{width:20px;height:20px;flex:none;border-radius:50%;border:2px solid var(--mut);box-sizing:border-box}
+.opts button span{display:block;font-size:13px;color:var(--mut);font-weight:400}
+.opts button.on{background:var(--acs);border:2px solid var(--ac)}
+.opts button.on i{border:6px solid var(--ac)}
+.abar{position:sticky;bottom:0;display:flex;gap:8px;flex-wrap:wrap;padding:10px 0;background:var(--bg);z-index:5}
+.abar .btn{flex:1;height:48px;padding:0 10px}
+.abar .btn.wa{flex:2;background:#25a244;border-color:#25a244;color:#fff}
+.abar .mut{flex-basis:100%;margin:0}
+@media(max-width:899px){
+.drawer{top:auto;left:0;right:0;width:auto;max-width:none;max-height:82vh;border-right:0;border-radius:18px 18px 0 0;transform:translateY(102%)}
+.drawer.open{transform:none}
+.menu .navmain{display:none}
+.fab{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+#toast{bottom:calc(140px + env(safe-area-inset-bottom,0px))}
+.wrap{padding-bottom:150px}
+.abar{bottom:calc(58px + env(safe-area-inset-bottom,0px))}}
+@media(min-width:900px){.bnav{display:none}}
+@media print{:root,:root[data-theme]{--bg:#fff;--card:#fff;--ink:#000;--mut:#444;--line:#999;--ac:#000;--acs:#eee;--ok:#000;--okb:#eee}.drawer,.scrim,.topbar,.fab,.bnav,.abar,.noprint,#toast{display:none!important}.main{margin:0}body{background:#fff;color:#000}.wrap{padding:0;max-width:none}.card{border:0;padding:0;box-shadow:none}.chip,.ri{background:none;color:#000;border:1px solid #999}.sum div{background:#fff}.printonly{display:block!important;white-space:pre-wrap;font-size:15px;line-height:1.55}.noprintarea{display:none!important}.rh{border-bottom:2px solid #000;break-inside:avoid;display:flex!important}.rh img{display:block!important;width:56px!important;height:56px!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style>
 </head>
 <body>
@@ -186,9 +222,9 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 <div><b>Agenda de Aulas</b><span class="mut" id="dSub">Modo sem cadastro</span></div>
 </div>
 <nav class="menu" id="menu">
-<button data-v="dia"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Aulas do dia</button>
-<button data-v="alunos"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7M17 4a4 4 0 0 1 0 8M22 21c0-3-2-5.5-5-6.5"/></svg>Alunos</button>
-<button data-v="rel"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Relatório do mês</button>
+<button data-v="dia" class="navmain"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Aulas do dia</button>
+<button data-v="alunos" class="navmain"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7M17 4a4 4 0 0 1 0 8M22 21c0-3-2-5.5-5-6.5"/></svg>Alunos</button>
+<button data-v="rel" class="navmain"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Relatório do mês</button>
 <button data-v="msg"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.2A8 8 0 1 1 21 12z"/></svg>Mensagem ao aluno</button>
 <hr>
 <button data-v="perfil"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>Meu perfil</button>
@@ -199,6 +235,7 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 <div class="dfoot"><button id="logout"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Sair</button></div>
 </aside>
 <div class="scrim" id="scrim"></div>
+<nav class="bnav noprint" id="bnav" aria-label="Navegação principal"><button data-v="dia"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Aulas</button><button data-v="alunos"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7M17 4a4 4 0 0 1 0 8M22 21c0-3-2-5.5-5-6.5"/></svg>Alunos</button><button data-v="rel"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Relatórios</button><button data-v="mais"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>Mais</button></nav>
 
 <div class="main">
 <header class="topbar">
@@ -221,14 +258,15 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 </section>
 
 <section id="v-rel" class="hide">
-<div class="card noprint">
-<label for="relTipoSel" style="margin-top:0">Tipo de relatório</label>
-<select id="relTipoSel"><option value="fech">Fechamento do mês (cobrança ao aluno)</option><option value="previstos">Dias previstos de aula</option><option value="cli">Aulas realizadas do aluno</option><option value="pro">Oficial do profissional (financeiro)</option></select>
-<label for="mes">Mês de referência</label><input type="month" id="mes">
-<div id="cliBox" class="hide"><label for="relAl">Aluno</label><select id="relAl"></select></div>
-<div class="row" style="margin-top:12px;flex-wrap:wrap"><button class="btn" id="print">Imprimir / PDF</button><button class="btn sec" id="copy">Copiar texto</button><button class="btn sec hide" id="relWa">WhatsApp</button></div>
-<div class="mut" id="copied" style="margin-top:6px"></div></div>
+<div class="seg noprint" id="relModo"><button type="button" data-m="aluno">Do aluno</button><button type="button" data-m="fin">Meu financeiro</button></div>
+<div class="mstep noprint"><button class="ib" type="button" id="mPrev" aria-label="Mês anterior">‹</button><input type="month" id="mes" aria-label="Mês de referência"><button class="ib" type="button" id="mNext" aria-label="Próximo mês">›</button></div>
+<div id="cliBox" class="noprint">
+<div class="chips" id="relChips"></div><select id="relAl" class="hide" aria-hidden="true" tabindex="-1"></select>
+<div class="opts" id="relOpts"><button type="button" data-t="fech"><i></i><div><b>Fechamento do mês</b><span>Valor total para cobrar</span></div></button><button type="button" data-t="cli"><i></i><div><b>Aulas realizadas</b><span>Lista com data e hora</span></div></button><button type="button" data-t="previstos"><i></i><div><b>Dias previstos</b><span>Agenda do mês com feriados</span></div></button></div>
+</div>
+<select id="relTipoSel" class="hide" aria-hidden="true" tabindex="-1"><option value="fech">fech</option><option value="previstos">previstos</option><option value="cli">cli</option><option value="pro">pro</option></select>
 <div class="card" id="relOut"></div>
+<div class="abar noprint"><div class="mut" id="copied"></div><button class="btn wa hide" id="relWa" type="button">Enviar no WhatsApp</button><button class="btn sec" id="copy" type="button">Copiar</button><button class="btn" id="print" type="button">PDF</button></div>
 </section>
 
 <section id="v-msg" class="hide">
@@ -356,7 +394,7 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 (function(){
 const KEY='agenda_personal_v1',DN=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const CFG0={off:0,last:'',theme:'petroleo',entered:false};
-const TITLES={dia:'Aulas do dia',alunos:'Alunos',rel:'Relatório do mês',msg:'Mensagem ao aluno',perfil:'Meu perfil',conta:'Conta',backup:'Backup dos dados',tema:'Aparência'};
+const TITLES={dia:'Aulas do dia',alunos:'Alunos',rel:'Relatórios',msg:'Mensagem ao aluno',perfil:'Meu perfil',conta:'Conta',backup:'Backup dos dados',tema:'Aparência'};
 const THEMES=[
 {id:'petroleo',nome:'Petróleo',desc:'Azul-petróleo, o visual original refinado',cores:['#0e7a8a','#eef2f4','#ffffff']},
 {id:'claro',nome:'Claro',desc:'Fundo branco, limpo e profissional',cores:['#2563eb','#f6f7f9','#ffffff']},
@@ -449,9 +487,11 @@ $('menuBtn').onclick=()=>openMenu(!$('drawer').classList.contains('open'));
 $('scrim').onclick=()=>openMenu(false);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')openMenu(false)});
 document.querySelectorAll('#menu button').forEach(b=>b.onclick=()=>go(b.dataset.v));
+document.querySelectorAll('#bnav button').forEach(b=>b.onclick=()=>{if(b.dataset.v==='mais')openMenu(!$('drawer').classList.contains('open'));else go(b.dataset.v)});
 function go(v){view=v;openMenu(false);
 ['dia','alunos','rel','msg','perfil','conta','backup','tema'].forEach(x=>$('v-'+x).classList.toggle('hide',x!==v));
 document.querySelectorAll('#menu button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+document.querySelectorAll('#bnav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v||(b.dataset.v==='mais'&&!['dia','alunos','rel'].includes(v))));
 $('vtitle').textContent=TITLES[v];$('fab').classList.toggle('hide',v!=='dia');
 if(v==='dia')renderDia();if(v==='alunos')renderAlunos();if(v==='rel')renderRel();if(v==='msg')renderMsg();if(v==='perfil')renderPerfil();if(v==='backup')renderBkAuto();if(v==='tema')renderThemes();
 window.scrollTo(0,0)}
@@ -595,9 +635,9 @@ function bloco(box,tit,list){
 if(!list.length)return;const w=document.createElement('div');w.className='prev';w.innerHTML='<h3>'+tit+'</h3>';
 list.forEach(v=>{const it=document.createElement('div');it.className='item';
 it.innerHTML=avatar(v.a.nome)+'<div class="grow"><b>'+esc(v.a.nome)+'</b><div class="mut">'+DN[parse(v.d).getDay()]+' '+fmtD(v.d)+' · '+v.h+'–'+fimP(v)+(feriado(v.d)?' · '+esc(fTxt(feriado(v.d))):'')+'</div></div>';
-const c=document.createElement('button');c.className='btn';c.textContent='✓ Confirmar';
+const c=document.createElement('button');c.className='act ok';c.innerHTML='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';c.title='Confirmar aula';c.setAttribute('aria-label','Confirmar aula de '+v.a.nome+' às '+v.h);
 c.onclick=()=>{confirmar(v);save();toast('Registrado: '+v.a.nome+' '+v.h);renderDia()};
-const n=document.createElement('button');n.className='btn sec';n.textContent='Não teve';
+const n=document.createElement('button');n.className='act no';n.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';n.title='Não teve aula';n.setAttribute('aria-label','Não teve aula de '+v.a.nome+' às '+v.h);
 n.onclick=()=>{db.skips.push({alunoId:v.a.id,data:v.d,hora:v.h,t:Date.now()});save();renderDia()};
 if(v.d<=iso(new Date())){it.appendChild(c);it.appendChild(n)}else{const m=document.createElement('span');m.className='mut';m.textContent='Aula futura';it.appendChild(m)}w.appendChild(it)});
 if(list.length>1&&list[0].d<=iso(new Date())){const t=document.createElement('button');t.className='btn block';t.style.marginTop='6px';t.textContent='✓ Confirmar todas ('+list.length+')';
@@ -718,7 +758,10 @@ return dica+top+'<h2>'+tit+'</h2><div class="mut">'+(sub?sub+' · ':'')+'Emitido
 function renderRel(){
 $('relTipoSel').value=relTipo;
 const needAl=relTipo!=='pro';$('cliBox').classList.toggle('hide',!needAl);
-if(needAl)relAluno=fillSel($('relAl'),relAluno,relTipo==='previstos');
+document.querySelectorAll('#relModo button').forEach(b=>b.classList.toggle('on',(b.dataset.m==='fin')===(relTipo==='pro')));
+document.querySelectorAll('#relOpts button').forEach(b=>b.classList.toggle('on',b.dataset.t===relTipo));
+if(needAl){relAluno=fillSel($('relAl'),relAluno,relTipo==='previstos');
+const ch=$('relChips');ch.innerHTML='';[...$('relAl').options].forEach(o=>{const b=document.createElement('button');b.type='button';b.className='pill'+(o.value===relAluno?' on':'');b.textContent=o.value==='__all__'?'Todos':o.textContent;b.onclick=()=>{relAluno=o.value;renderRel()};ch.appendChild(b)})}
 $('relWa').classList.toggle('hide',!(needAl&&relAluno&&relAluno!=='__all__'));
 const m=$('mes').value,out=$('relOut');$('copied').textContent='';
 if(!m){out.innerHTML='';return}
@@ -796,6 +839,11 @@ $('fPrint').textContent=$('fTxt').value;$('fTxt').oninput=()=>{$('fPrint').textC
 // ações do relatório
 function textoAtual(){if(relTipo==='fech')return $('fTxt')?$('fTxt').value:'';if(relTipo==='previstos')return textoPrev();if(relTipo==='cli')return textoCli();return textoPro()}
 $('relTipoSel').onchange=()=>{relTipo=$('relTipoSel').value;renderRel()};
+let relUlt='fech';
+document.querySelectorAll('#relModo button').forEach(b=>b.onclick=()=>{if(b.dataset.m==='fin'){if(relTipo!=='pro')relUlt=relTipo;relTipo='pro'}else relTipo=relUlt;renderRel()});
+document.querySelectorAll('#relOpts button').forEach(b=>b.onclick=()=>{relTipo=relUlt=b.dataset.t;renderRel()});
+function stepMes(d){const v=$('mes').value||iso(new Date()).slice(0,7);let[y,m]=v.split('-').map(Number);m+=d;if(m<1){m=12;y--}if(m>12){m=1;y++}$('mes').value=y+'-'+String(m).padStart(2,'0');renderRel()}
+$('mPrev').onclick=()=>stepMes(-1);$('mNext').onclick=()=>stepMes(1);
 $('relAl').onchange=()=>{relAluno=$('relAl').value;renderRel()};
 $('mes').onchange=renderRel;
 $('print').onclick=()=>ensureNome(async()=>{
