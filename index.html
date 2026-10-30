@@ -831,10 +831,8 @@ const list=all.filter(a=>(alFil==='todos'||(alFil==='pacote')===isPkg(a))&&(!q||
 L.innerHTML='';
 if(!list.length){L.innerHTML='<div class="empty">Nenhum aluno encontrado.</div>';return}
 list.forEach(a=>{const r=document.createElement('div');r.className='acard';r.tabIndex=0;
-const fx=(a.pre||[]).slice().sort((x,y)=>x.d-y.d||x.h.localeCompare(y.h)).map(p=>'<span>'+DN[p.d]+' '+p.h+(p.f?'–'+p.f:'')+'</span>').join('');
 const done=isPkg(a)&&pkgUsed(a)>=a.pkg.total;
 r.innerHTML=avatar(a.nome)+'<div class="grow"><div class="nm">'+esc(a.nome)+pkgTag(a)+'<span class="badge'+(isPkg(a)?' p':'')+'">'+(isPkg(a)?'Pacote':'Mensal')+'</span></div>'+
-'<div class="meta">'+(fx||'<span class="n">Sem horário fixo</span>')+(a.valor>0?'<span class="n"><span class="mv">'+money(a.valor)+'</span>/h</span>':'')+'</div>'+
 (done?'<div class="sub" style="color:#8a4b00;font-weight:600">Pacote concluído. Toque para renovar.</div>':'')+
 ((a.tel||a.obs)?'<div class="sub">'+esc([a.tel,a.obs].filter(Boolean).join(' • '))+'</div>':'')+'</div><span class="go" aria-hidden="true">›</span>';
 r.setAttribute('role','button');r.setAttribute('aria-label','Editar '+a.nome);
