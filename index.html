@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Personal Class</title>
 <meta name="theme-color" content="#0e7a8a">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -167,11 +167,11 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 .opts button span{display:block;font-size:13px;color:var(--mut);font-weight:400}
 .opts button.on{background:var(--acs);border:2px solid var(--ac)}
 .opts button.on i{border:6px solid var(--ac)}
-.abar{position:sticky;bottom:0;display:flex;gap:8px;flex-wrap:wrap;padding:10px 0;background:var(--bg);z-index:5}
-.abar .btn{white-space:nowrap}
-.abar .btn{flex:1;height:48px;padding:0 10px}
-.abar .btn.wa{flex:2;background:#25a244;border-color:#25a244;color:#fff}
-.abar .mut{flex-basis:100%;margin:0}
+.abar{position:fixed;left:0;right:0;bottom:0;z-index:19;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px;padding:10px 14px;background:var(--bg);border-top:1px solid var(--line)}
+.abar .btn{height:48px;padding:0 8px;white-space:nowrap;min-width:0}
+.abar .btn.wa{background:#25a244;border-color:#25a244;color:#fff}
+#v-rel{padding-bottom:84px}
+@media(min-width:900px){.abar{left:290px}}
 @media(max-width:899px){
 .drawer{top:auto;left:0;right:0;width:auto;max-width:none;max-height:82vh;border-right:0;border-radius:18px 18px 0 0;transform:translateY(102%)}
 .drawer.open{transform:none}
@@ -179,10 +179,30 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 .fab{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 #toast{bottom:calc(140px + env(safe-area-inset-bottom,0px))}
 .wrap{padding-bottom:150px}
-.abar{position:fixed;left:0;right:0;bottom:calc(58px + env(safe-area-inset-bottom,0px));padding:10px 14px;border-top:1px solid var(--line);z-index:19;transform:translateZ(0)}
-#v-rel{padding-bottom:84px}}
+.abar{position:fixed;left:0;right:0;bottom:calc(58px + env(safe-area-inset-bottom,0px));z-index:19}
+}
 @media(min-width:900px){.bnav{display:none}}
-@media print{:root,:root[data-theme]{--bg:#fff;--card:#fff;--ink:#000;--mut:#444;--line:#999;--ac:#000;--acs:#eee;--ok:#000;--okb:#eee}.drawer,.scrim,.topbar,.fab,.bnav,.abar,.noprint,#toast{display:none!important}.main{margin:0}body{background:#fff;color:#000}.wrap{padding:0;max-width:none}.card{border:0;padding:0;box-shadow:none}.chip,.ri{background:none;color:#000;border:1px solid #999}.sum div{background:#fff}.printonly{display:block!important;white-space:pre-wrap;font-size:15px;line-height:1.55}.noprintarea{display:none!important}.rh{border-bottom:2px solid #000;break-inside:avoid;display:flex!important}.rh img{display:block!important;width:56px!important;height:56px!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+/* zoom off, privacidade, alunos */
+html{touch-action:manipulation;-webkit-text-size-adjust:100%}
+.priv .mv{filter:blur(7px);user-select:none;-webkit-user-select:none}
+.priv #fTxt:not(:focus){filter:blur(6px)}
+.pk{font-size:11px;font-weight:700;color:var(--mut);margin-left:6px;background:var(--acs);border-radius:6px;padding:1px 6px;vertical-align:middle;white-space:nowrap}
+.pk.full{background:#fde7c8;color:#8a4b00}
+.ahead{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ahead h2{margin:0;font-size:22px}
+.ahead .btn{flex:none;margin-left:auto}
+.acard{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px;cursor:pointer}
+.acard .nm{font-weight:700;font-size:17px}
+.acard .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.acard .meta span{font-size:12px;background:var(--acs);color:var(--ac);border-radius:8px;padding:2px 8px;font-weight:600}
+.acard .meta span.n{background:var(--bg);color:var(--mut);font-weight:500}
+.acard .sub{font-size:13px;color:var(--mut);margin-top:4px}
+.acard .go{color:var(--mut);font-size:22px;flex:none}
+.badge{font-size:11px;font-weight:700;border-radius:6px;padding:2px 7px;background:var(--acs);color:var(--ac);margin-left:6px;vertical-align:middle}
+.badge.p{background:#e8e0fb;color:#5a3fb0}
+#aBusca{margin-bottom:10px}
+@media print{:root,:root[data-theme]{--bg:#fff;--card:#fff;--ink:#000;--mut:#444;--line:#999;--ac:#000;--acs:#eee;--ok:#000;--okb:#eee}.priv .mv,.priv #fTxt{filter:none!important}.drawer,.scrim,.topbar,.fab,.bnav,.abar,.noprint,#toast{display:none!important}.main{margin:0}body{background:#fff;color:#000}.wrap{padding:0;max-width:none}.card{border:0;padding:0;box-shadow:none}.chip,.ri{background:none;color:#000;border:1px solid #999}.sum div{background:#fff}.printonly{display:block!important;white-space:pre-wrap;font-size:15px;line-height:1.55}.noprintarea{display:none!important}.rh{border-bottom:2px solid #000;break-inside:avoid;display:flex!important}.rh img{display:block!important;width:56px!important;height:56px!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style>
 </head>
 <body>
@@ -237,12 +257,14 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 <div class="dfoot"><button id="logout"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Sair</button></div>
 </aside>
 <div class="scrim" id="scrim"></div>
+<div class="abar noprint hide" id="abar"><button class="btn wa hide" id="relWa" type="button">WhatsApp</button><button class="btn sec" id="copy" type="button">Copiar</button><button class="btn" id="print" type="button">PDF</button></div>
 <nav class="bnav noprint" id="bnav" aria-label="Navegação principal"><button data-v="dia"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Aulas</button><button data-v="alunos"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7M17 4a4 4 0 0 1 0 8M22 21c0-3-2-5.5-5-6.5"/></svg>Alunos</button><button data-v="rel"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Relatórios</button><button data-v="mais"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>Mais</button></nav>
 
 <div class="main">
 <header class="topbar">
 <button class="iconbtn" id="menuBtn" aria-label="Abrir menu" aria-expanded="false"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
 <h1 id="vtitle">Aulas do dia</h1>
+<button class="iconbtn" id="eyeBtn" type="button" aria-pressed="false" aria-label="Ocultar valores" title="Ocultar valores"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
 </header>
 <main class="wrap">
 
@@ -256,7 +278,10 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 </section>
 
 <section id="v-alunos" class="hide">
-<div class="card"><div class="row" style="margin-bottom:6px"><h2 class="grow" style="margin:0">Alunos</h2><button class="btn" id="addAluno" style="flex:none">Novo aluno</button></div><div id="lista"></div></div>
+<div class="ahead"><div><h2>Alunos</h2><span class="mut" id="aCount"></span></div><button class="btn" id="addAluno" type="button">+ Novo aluno</button></div>
+<input id="aBusca" type="search" placeholder="Buscar aluno" class="hide" aria-label="Buscar aluno" autocomplete="off">
+<div class="seg" id="aFil"><button type="button" data-f="todos">Todos</button><button type="button" data-f="mensal">Mensal</button><button type="button" data-f="pacote">Pacotes</button></div>
+<div id="lista"></div>
 </section>
 
 <section id="v-rel" class="hide">
@@ -267,8 +292,9 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 <div class="opts" id="relOpts"><button type="button" data-t="fech"><i></i><div><b>Fechamento do mês</b><span>Valor total para cobrar</span></div></button><button type="button" data-t="cli"><i></i><div><b>Aulas realizadas</b><span>Lista com data e hora</span></div></button><button type="button" data-t="previstos"><i></i><div><b>Dias previstos</b><span>Agenda do mês com feriados</span></div></button></div>
 </div>
 <select id="relTipoSel" class="hide" aria-hidden="true" tabindex="-1"><option value="fech">fech</option><option value="previstos">previstos</option><option value="cli">cli</option><option value="pro">pro</option></select>
+<div class="mut noprint" id="copied" style="margin:0 0 8px"></div>
 <div class="card" id="relOut"></div>
-<div class="abar noprint"><div class="mut" id="copied"></div><button class="btn wa hide" id="relWa" type="button">WhatsApp</button><button class="btn sec" id="copy" type="button">Copiar</button><button class="btn" id="print" type="button">PDF</button></div>
+
 </section>
 
 <section id="v-msg" class="hide">
@@ -380,6 +406,15 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 <label for="an" style="margin-top:0">Nome</label><input id="an" placeholder="Nome">
 <label for="at">Telefone (opcional)</label><input id="at" inputmode="tel">
 <label for="ao">Observações (opcional)</label><input id="ao">
+<label>Plano</label>
+<div class="seg" id="aPlano"><button type="button" data-p="mensal">Mensal</button><button type="button" data-p="pacote">Pacote</button></div>
+<div class="mut hide" id="aMenNote">Mensal: o fechamento do mês só vale depois que você confirmar em Relatórios.</div>
+<div id="aPkgBox" class="hide">
+<label for="apTot" style="margin-top:0">Quantidade de aulas do pacote</label><input id="apTot" type="number" inputmode="numeric" min="1" max="999" placeholder="Ex.: 12">
+<label for="apIni">Início do pacote</label><input type="date" id="apIni">
+<div class="mut" id="apSt" style="margin-top:6px"></div>
+<button class="btn sec hide" type="button" id="apRenew" style="margin-top:8px">Renovar pacote</button>
+</div>
 <label for="avl">Valor da hora-aula em R$ (opcional)</label><input id="avl" inputmode="decimal" placeholder="Ex.: 80,00">
 <div class="mut" style="margin-top:4px">Usado no valor do dia, no relatório do profissional e no texto de fechamento do mês. Não aparece na mensagem de dias previstos nem no relatório de aulas realizadas.</div>
 <label for="ai">Aluno desde (opcional)</label><input type="date" id="ai">
@@ -436,13 +471,19 @@ const skKey=k=>'sk|'+k.alunoId+'|'+k.data+'|'+k.hora;
 const RT=/^\d{2}:\d{2}$/,RD=/^\d{4}-\d{2}-\d{2}$/;
 function clean(p){p=p&&typeof p==='object'?p:{};let bad=0;const arr=x=>Array.isArray(x)?x:[];
 const A=arr(p.alunos).filter(a=>{const ok=a&&typeof a==='object'&&typeof a.id==='string'&&a.id&&typeof a.nome==='string';if(!ok)bad++;return ok}).map(a=>{
-a.pre=arr(a.pre).filter(q=>q&&Number.isInteger(q.d)&&q.d>=0&&q.d<=6&&RT.test(q.h||'')&&(!q.f||RT.test(q.f)));a.valor=+a.valor>0?+a.valor:0;if(a.ini&&!RD.test(a.ini))delete a.ini;return a});
+a.pre=arr(a.pre).filter(q=>q&&Number.isInteger(q.d)&&q.d>=0&&q.d<=6&&RT.test(q.h||'')&&(!q.f||RT.test(q.f)));a.valor=+a.valor>0?+a.valor:0;if(a.ini&&!RD.test(a.ini))delete a.ini;
+a.plano=a.plano==='pacote'?'pacote':'mensal';
+if(a.plano==='pacote'){const t=Math.floor(+(a.pkg&&a.pkg.total));if(t>0&&RD.test((a.pkg&&a.pkg.ini)||''))a.pkg={total:Math.min(t,999),ini:a.pkg.ini};else{delete a.pkg;a.plano='mensal'}}else delete a.pkg;
+const fe={};if(a.fech&&typeof a.fech==='object')Object.keys(a.fech).forEach(k=>{if(/^\d{4}-\d{2}$/.test(k)&&typeof a.fech[k]==='number')fe[k]=a.fech[k]});a.fech=fe;return a});
 const U=arr(p.aulas).filter(l=>{const ok=l&&typeof l==='object'&&typeof l.id==='string'&&typeof l.alunoId==='string'&&RD.test(l.data||'')&&RT.test(l.hora||'');if(!ok)bad++;return ok}).map(l=>{
 if(!(+l.dur>0))delete l.dur;else l.dur=+l.dur;if(typeof l.rep!=='boolean')delete l.rep;if(typeof l.v!=='number'||!(l.v>=0))delete l.v;return l});
 const K=arr(p.skips).filter(k=>k&&typeof k.alunoId==='string'&&RD.test(k.data||'')&&RT.test(k.hora||'')||(bad++,false));
 const D=arr(p.del).filter(x=>x&&typeof x.id==='string'&&typeof x.t==='number');
 return{alunos:A,aulas:U,skips:K,del:D,perfil:p.perfil&&typeof p.perfil==='object'?p.perfil:{},bad}}
 
+const isPkg=a=>!!(a&&a.plano==='pacote'&&a.pkg&&a.pkg.total>0);
+const pkgUsed=a=>db.aulas.filter(l=>l.alunoId===a.id&&l.data>=a.pkg.ini).length;
+const pkgTag=a=>isPkg(a)?'<small class="pk'+(pkgUsed(a)>=a.pkg.total?' full':'')+'" title="Aulas do pacote usadas">'+pkgUsed(a)+'/'+a.pkg.total+'</small>':'';
 const nome=id=>{const a=db.alunos.find(x=>x.id===id);return a?a.nome:'(aluno removido)'};
 function ini(n){const p=String(n).trim().split(/\s+/);return ((p[0]||'?')[0]+(p.length>1?p[p.length-1][0]:'')).toUpperCase()}
 function hue(n){let h=0;for(const c of String(n))h=(h*31+c.charCodeAt(0))%360;return h}
@@ -483,6 +524,17 @@ THEMES.forEach(t=>{const e=document.createElement('button');e.className='theme'+
 e.innerHTML='<span class="sw">'+t.cores.map(c=>'<i style="background:'+c+'"></i>').join('')+'</span><span class="grow"><b>'+t.nome+'</b><span class="mut">'+t.desc+'</span></span>'+(db.cfg.theme===t.id?'<span style="color:var(--ac);font-size:22px">✓</span>':'');
 e.onclick=()=>{applyTheme(t.id);save();renderThemes()};b.appendChild(e)})}
 
+
+// privacidade dos valores
+const mv=v=>'<span class="mv">'+money(v)+'</span>';
+let priv=false;try{priv=localStorage.getItem('agenda_priv')==='1'}catch(e){}
+const EYE_ON='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',EYE_OFF='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4M6.5 6.6C3.8 8.4 2 12 2 12s3.5 7 10 7a9.7 9.7 0 0 0 4.4-1M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
+function applyPriv(){document.body.classList.toggle('priv',priv);const b=$('eyeBtn');b.innerHTML=priv?EYE_OFF:EYE_ON;b.setAttribute('aria-pressed',priv?'true':'false');const t=priv?'Mostrar valores':'Ocultar valores';b.title=t;b.setAttribute('aria-label',t)}
+$('eyeBtn').onclick=()=>{priv=!priv;try{localStorage.setItem('agenda_priv',priv?'1':'0')}catch(e){}applyPriv()};
+// sem zoom
+['gesturestart','gesturechange','gestureend'].forEach(e=>document.addEventListener(e,ev=>ev.preventDefault(),{passive:false}));
+document.addEventListener('wheel',ev=>{if(ev.ctrlKey)ev.preventDefault()},{passive:false});
+document.addEventListener('keydown',ev=>{if((ev.ctrlKey||ev.metaKey)&&['+','-','=','0'].includes(ev.key))ev.preventDefault()});
 // menu lateral
 function openMenu(o){$('drawer').classList.toggle('open',o);$('scrim').classList.toggle('open',o);$('menuBtn').setAttribute('aria-expanded',o?'true':'false')}
 $('menuBtn').onclick=()=>openMenu(!$('drawer').classList.contains('open'));
@@ -490,11 +542,11 @@ $('scrim').onclick=()=>openMenu(false);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')openMenu(false)});
 document.querySelectorAll('#menu button').forEach(b=>b.onclick=()=>go(b.dataset.v));
 document.querySelectorAll('#bnav button').forEach(b=>b.onclick=()=>{if(b.dataset.v==='mais')openMenu(!$('drawer').classList.contains('open'));else go(b.dataset.v)});
-function go(v){view=v;openMenu(false);
+function go(v){view=v;applyPriv();openMenu(false);
 ['dia','alunos','rel','msg','perfil','conta','backup','tema'].forEach(x=>$('v-'+x).classList.toggle('hide',x!==v));
 document.querySelectorAll('#menu button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
 document.querySelectorAll('#bnav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v||(b.dataset.v==='mais'&&!['dia','alunos','rel'].includes(v))));
-$('vtitle').textContent=TITLES[v];$('fab').classList.toggle('hide',v!=='dia');
+$('abar').classList.toggle('hide',v!=='rel');$('vtitle').textContent=TITLES[v];$('fab').classList.toggle('hide',v!=='dia');
 if(v==='dia')renderDia();if(v==='alunos')renderAlunos();if(v==='rel')renderRel();if(v==='msg')renderMsg();if(v==='perfil')renderPerfil();if(v==='backup')renderBkAuto();if(v==='tema')renderThemes();
 window.scrollTo(0,0)}
 
@@ -636,7 +688,7 @@ const confirmar=v=>db.aulas.push(Object.assign({id:uid(),alunoId:v.a.id,data:v.d
 function bloco(box,tit,list){
 if(!list.length)return;const w=document.createElement('div');w.className='prev';w.innerHTML='<h3>'+tit+'</h3>';
 list.forEach(v=>{const it=document.createElement('div');it.className='item';
-it.innerHTML=avatar(v.a.nome)+'<div class="grow"><b>'+esc(v.a.nome)+'</b><div class="mut">'+DN[parse(v.d).getDay()]+' '+fmtD(v.d)+' · '+v.h+'–'+fimP(v)+(feriado(v.d)?' · '+esc(fTxt(feriado(v.d))):'')+'</div></div>';
+it.innerHTML=avatar(v.a.nome)+'<div class="grow"><b>'+esc(v.a.nome)+'</b>'+pkgTag(v.a)+'<div class="mut">'+DN[parse(v.d).getDay()]+' '+fmtD(v.d)+' · '+v.h+'–'+fimP(v)+(feriado(v.d)?' · '+esc(fTxt(feriado(v.d))):'')+'</div></div>';
 const c=document.createElement('button');c.className='act ok';c.innerHTML='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';c.title='Confirmar aula';c.setAttribute('aria-label','Confirmar aula de '+v.a.nome+' às '+v.h);
 c.onclick=()=>{confirmar(v);save();toast('Registrado: '+v.a.nome+' '+v.h);renderDia()};
 const n=document.createElement('button');n.className='act no';n.innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';n.title='Não teve aula';n.setAttribute('aria-label','Não teve aula de '+v.a.nome+' às '+v.h);
@@ -652,7 +704,7 @@ function renderDia(){
 if(!cur)return;
 const dia=db.aulas.filter(a=>a.data===cur).sort((a,b)=>a.hora.localeCompare(b.hora));
 const vd=Math.round(dia.reduce((s,a)=>s+valorL(a),0)*100)/100;
-$('dmoney').innerHTML=vd>0?'<span class="money" title="Valor das aulas confirmadas neste dia"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.2c-.5-.8-1.4-1.2-2.5-1.2-1.5 0-2.5.8-2.5 2 0 3 5 1.6 5 4.2 0 1.2-1.1 2-2.5 2-1.1 0-2.1-.5-2.6-1.3M12 6.5V8M12 16v1.5"/></svg>'+money(vd)+'</span>':'';
+$('dmoney').innerHTML=vd>0?'<span class="money" title="Valor das aulas confirmadas neste dia"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.2c-.5-.8-1.4-1.2-2.5-1.2-1.5 0-2.5.8-2.5 2 0 3 5 1.6 5 4.2 0 1.2-1.1 2-2.5 2-1.1 0-2.1-.5-2.6-1.3M12 6.5V8M12 16v1.5"/></svg>'+mv(vd)+'</span>':'';
 $('dname').textContent=parse(cur).toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})+(dia.length?' · '+dia.length+' aula'+(dia.length>1?'s':''):'');
 const sc=$('semConta');if(!user&&!cl().uid&&!semOff){sc.classList.remove('hide');sc.innerHTML='<b>Sem cadastro:</b> seus dados ficam só neste aparelho, <b>não vão para a nuvem</b> e podem ser perdidos. <a href="#" id="scGo">Criar conta</a> · <a href="#" id="scX">Dispensar</a>';
 $('scGo').onclick=e=>{e.preventDefault();go('conta')};$('scX').onclick=e=>{e.preventDefault();semOff=true;sc.classList.add('hide')}}else sc.classList.add('hide');
@@ -668,7 +720,7 @@ const u=document.createElement('button');u.className='btn sec';u.textContent='De
 const L=$('dia');L.innerHTML='';
 if(!dia.length){L.innerHTML='<div class="empty">Nenhuma aula registrada neste dia.<br>Toque no + para registrar.</div>';return}
 dia.forEach(a=>{const e=document.createElement('div');e.className='aula';e.tabIndex=0;
-e.innerHTML=avatar(nome(a.alunoId))+'<div class="grow"><b>'+esc(nome(a.alunoId))+'</b><span class="t">'+a.hora+'–'+fimL(a)+'</span>'+(isRep(a)?RI:'')+'</div><span class="mut">editar</span>';
+e.innerHTML=avatar(nome(a.alunoId))+'<div class="grow"><b>'+esc(nome(a.alunoId))+'</b>'+pkgTag(alunoBy(a.alunoId))+'<span class="t">'+a.hora+'–'+fimL(a)+'</span>'+(isRep(a)?RI:'')+'</div><span class="mut">editar</span>';
 e.onclick=()=>openDlg(a);e.onkeydown=ev=>{if(ev.key==='Enter')openDlg(a)};L.appendChild(e)})}
 function setDate(d){cur=d;$('dt').value=d;renderDia()}
 function shift(n){const d=parse(cur);d.setDate(d.getDate()+n);setDate(iso(d))}
@@ -717,8 +769,18 @@ function dpre(){const L=$('pList');L.innerHTML='';tmpPre.sort((a,b)=>a.d-b.d||a.
 tmpPre.forEach((p,i)=>{const c=document.createElement('span');c.className='chip';c.textContent=DN[p.d]+' '+p.h+(p.f?'–'+p.f:'');
 const x=document.createElement('button');x.textContent='×';x.setAttribute('aria-label','Remover');x.onclick=()=>{tmpPre.splice(i,1);dpre()};c.appendChild(x);L.appendChild(c)});
 if(!tmpPre.length)L.innerHTML='<span class="mut">Nenhum horário fixo.</span>'}
+let tmpPlano='mensal';
+function drawPlano(){document.querySelectorAll('#aPlano button').forEach(b=>b.classList.toggle('on',b.dataset.p===tmpPlano));
+$('aPkgBox').classList.toggle('hide',tmpPlano!=='pacote');$('aMenNote').classList.toggle('hide',tmpPlano!=='mensal');
+const has=isPkg(editA);$('apRenew').classList.toggle('hide',!has);
+$('apSt').textContent=has?'Usadas até agora: '+pkgUsed(editA)+' de '+editA.pkg.total+' (aulas e reposições contam).':'O contador aparece ao lado do nome do aluno.'}
+document.querySelectorAll('#aPlano button').forEach(b=>b.onclick=()=>{tmpPlano=b.dataset.p;drawPlano()});
+$('apRenew').onclick=()=>{const ls=db.aulas.filter(l=>l.alunoId===editA.id).map(l=>l.data).sort(),last=ls.length?ls[ls.length-1]:null;
+let nx=iso(new Date());if(last){const d=parse(last);d.setDate(d.getDate()+1);nx=iso(d)}
+$('apIni').value=nx;$('apSt').textContent='Novo pacote começa em '+fmtD(nx)+'. Salve para renovar.'};
 function openAl(a){editA=a;$('aTitle').textContent=a?'Editar aluno':'Novo aluno';
 $('ai').value=a?(a.ini||''):iso(new Date());$('an').value=a?a.nome:'';$('at').value=(a&&a.tel)||'';$('ao').value=(a&&a.obs)||'';$('avl').value=a&&a.valor>0?String(a.valor).replace('.',','):'';
+tmpPlano=isPkg(a)?'pacote':'mensal';$('apTot').value=isPkg(a)?a.pkg.total:'';$('apIni').value=isPkg(a)?a.pkg.ini:iso(new Date());drawPlano();
 tmpPre=a&&a.pre?a.pre.map(x=>({d:x.d,h:x.h,f:x.f})):[];$('aDel').classList.toggle('hide',!a);dpre();$('dlA').showModal()}
 $('addAluno').onclick=()=>openAl(null);$('aClose').onclick=()=>$('dlA').close();
 $('pAdd').onclick=()=>{const h=$('ph').value,f=$('pf').value,d=+$('pd').value;if(!h){alert('Informe o horário de início.');return}
@@ -726,21 +788,39 @@ if(f&&mins(f)<=mins(h)){alert('O término precisa ser depois do início.');retur
 if(!tmpPre.some(p=>p.d===d&&p.h===h))tmpPre.push(f?{d,h,f}:{d,h});$('pf').value='';dpre()};
 $('aSave').onclick=()=>{const n=$('an').value.trim();if(!n){alert('Informe o nome do aluno.');return}
 const ini=$('ai').value||'';
+let pl={plano:'mensal'};
+if(tmpPlano==='pacote'){const t=parseInt($('apTot').value,10);if(!(t>=1&&t<=999)){alert('Informe a quantidade de aulas do pacote (de 1 a 999).');return}
+pl={plano:'pacote',pkg:{total:t,ini:$('apIni').value||iso(new Date())}}}
 if(editA){const oldV=editA.valor>0?editA.valor:0,newV=pnum($('avl').value);
 if(oldV>0&&newV!==oldV)db.aulas.forEach(l=>{if(l.alunoId===editA.id&&typeof l.v!=='number')l.v=oldV});
-editA.nome=n;editA.tel=$('at').value.trim();editA.obs=$('ao').value.trim();editA.valor=newV;editA.pre=tmpPre;editA.ini=ini}
-else db.alunos.push({id:uid(),nome:n,tel:$('at').value.trim(),obs:$('ao').value.trim(),valor:pnum($('avl').value),pre:tmpPre,ini});
+editA.nome=n;editA.tel=$('at').value.trim();editA.obs=$('ao').value.trim();editA.valor=newV;editA.pre=tmpPre;editA.ini=ini;editA.plano=pl.plano;if(pl.pkg)editA.pkg=pl.pkg;else delete editA.pkg}
+else db.alunos.push(Object.assign({id:uid(),nome:n,tel:$('at').value.trim(),obs:$('ao').value.trim(),valor:pnum($('avl').value),pre:tmpPre,ini,fech:{}},pl));
 save();$('dlA').close();renderAlunos();renderDia()};
 $('aDel').onclick=()=>{const a=editA,n=db.aulas.filter(x=>x.alunoId===a.id).length;
 if(!confirm('Excluir '+a.nome+(n?' e suas '+n+' aula(s)?':'?')))return;
 tomb(a.id);db.alunos=db.alunos.filter(x=>x!==a);db.aulas=db.aulas.filter(x=>x.alunoId!==a.id);db.skips=db.skips.filter(k=>k.alunoId!==a.id);save();$('dlA').close();renderAlunos();renderDia()};
+let alFil='todos';
 function renderAlunos(){const L=$('lista');
-if(!db.alunos.length){L.innerHTML='<div class="empty">Nenhum aluno cadastrado ainda.<br>Toque em “Novo aluno” para começar.</div>';return}
+document.querySelectorAll('#aFil button').forEach(b=>b.classList.toggle('on',b.dataset.f===alFil));
+const all=db.alunos.slice().sort((a,b)=>a.nome.localeCompare(b.nome));
+$('aCount').textContent=all.length?all.length+(all.length>1?' alunos':' aluno'):'';
+$('aBusca').classList.toggle('hide',all.length<6);
+if(!all.length){L.innerHTML='<div class="empty">Nenhum aluno cadastrado ainda.<br>Toque em “+ Novo aluno” para começar.</div>';return}
+const q=($('aBusca').value||'').trim().toLowerCase();
+const list=all.filter(a=>(alFil==='todos'||(alFil==='pacote')===isPkg(a))&&(!q||a.nome.toLowerCase().includes(q)));
 L.innerHTML='';
-db.alunos.slice().sort((a,b)=>a.nome.localeCompare(b.nome)).forEach(a=>{const r=document.createElement('div');r.className='item';
-const fx=(a.pre||[]).slice().sort((x,y)=>x.d-y.d||x.h.localeCompare(y.h)).map(p=>DN[p.d]+' '+p.h+(p.f?'–'+p.f:'')).join(', ');
-r.innerHTML=avatar(a.nome)+'<div class="grow"><b>'+esc(a.nome)+'</b><div class="mut">'+esc(fx||'Sem horário fixo')+(a.tel?' • '+esc(a.tel):'')+(a.obs?' • '+esc(a.obs):'')+(a.valor>0?' • '+money(a.valor)+'/h':'')+'</div></div>';
-const e=document.createElement('button');e.className='btn sec';e.textContent='Editar';e.onclick=()=>openAl(a);r.appendChild(e);L.appendChild(r)})}
+if(!list.length){L.innerHTML='<div class="empty">Nenhum aluno encontrado.</div>';return}
+list.forEach(a=>{const r=document.createElement('div');r.className='acard';r.tabIndex=0;
+const fx=(a.pre||[]).slice().sort((x,y)=>x.d-y.d||x.h.localeCompare(y.h)).map(p=>'<span>'+DN[p.d]+' '+p.h+(p.f?'–'+p.f:'')+'</span>').join('');
+const done=isPkg(a)&&pkgUsed(a)>=a.pkg.total;
+r.innerHTML=avatar(a.nome)+'<div class="grow"><div class="nm">'+esc(a.nome)+pkgTag(a)+'<span class="badge'+(isPkg(a)?' p':'')+'">'+(isPkg(a)?'Pacote':'Mensal')+'</span></div>'+
+'<div class="meta">'+(fx||'<span class="n">Sem horário fixo</span>')+(a.valor>0?'<span class="n"><span class="mv">'+money(a.valor)+'</span>/h</span>':'')+'</div>'+
+(done?'<div class="sub" style="color:#8a4b00;font-weight:600">Pacote concluído. Toque para renovar.</div>':'')+
+((a.tel||a.obs)?'<div class="sub">'+esc([a.tel,a.obs].filter(Boolean).join(' • '))+'</div>':'')+'</div><span class="go" aria-hidden="true">›</span>';
+r.setAttribute('role','button');r.setAttribute('aria-label','Editar '+a.nome);
+r.onclick=()=>openAl(a);r.onkeydown=ev=>{if(ev.key==='Enter')openAl(a)};L.appendChild(r)})}
+document.querySelectorAll('#aFil button').forEach(b=>b.onclick=()=>{alFil=b.dataset.f;renderAlunos()});
+$('aBusca').oninput=renderAlunos;
 
 // relatório
 let relTipo='fech',relAluno='',msgAluno='';
@@ -777,10 +857,10 @@ function relPro(out,m,tit){const r=dados(),cr=!!db.cfg.perfil.cobrarRep;
 if(!r.length){out.innerHTML=relHead('Relatório oficial · '+tit,'Profissional')+'<div class="empty">Nenhuma aula neste mês.</div>';return}
 const tot=r.reduce((s,x)=>s+x.aulas.length,0),totRep=r.reduce((s,x)=>s+x.rep,0),totH=r.reduce((s,x)=>s+x.horas,0),totV=Math.round(r.reduce((s,x)=>s+x.total,0)*100)/100,sem=r.filter(x=>!x.valor);
 out.innerHTML=relHead('Relatório oficial · '+tit,'Profissional')+
-'<div class="sum"><div><b>'+tot+'</b>aulas</div><div><b>'+totRep+'</b>reposições</div><div><b>'+money(totV)+'</b>total do mês</div></div>'+
+'<div class="sum"><div><b>'+tot+'</b>aulas</div><div><b>'+totRep+'</b>reposições</div><div><b>'+mv(totV)+'</b>total do mês</div></div>'+
 '<h3 class="sub">Relação financeira</h3><table class="fin"><thead><tr><th>Aluno</th><th>Aulas</th><th>Horas</th><th>Valor/h</th><th>Total</th></tr></thead><tbody>'+
-r.map(x=>'<tr><td>'+esc(x.nome)+'</td><td>'+x.aulas.length+(x.rep?' <span class="mut">('+x.rep+' rep.)</span>':'')+'</td><td>'+fmtH(x.horas)+'</td><td>'+(x.valor?(x.misto?'variável':money(x.valor)):'—')+'</td><td>'+(x.valor?money(x.total):'—')+'</td></tr>').join('')+
-'</tbody><tfoot><tr><td>Total</td><td>'+tot+'</td><td>'+fmtH(totH)+'</td><td></td><td>'+money(totV)+'</td></tr></tfoot></table>'+
+r.map(x=>'<tr><td>'+esc(x.nome)+'</td><td>'+x.aulas.length+(x.rep?' <span class="mut">('+x.rep+' rep.)</span>':'')+'</td><td>'+fmtH(x.horas)+'</td><td>'+(x.valor?(x.misto?'variável':mv(x.valor)):'—')+'</td><td>'+(x.valor?mv(x.total):'—')+'</td></tr>').join('')+
+'</tbody><tfoot><tr><td>Total</td><td>'+tot+'</td><td>'+fmtH(totH)+'</td><td></td><td>'+mv(totV)+'</td></tr></tfoot></table>'+
 (totRep&&!cr?'<div class="mut" style="margin-top:8px">Reposições (↻) são adicionais e não entram no valor. Para cobrá-las, ative em Meu perfil.</div>':'')+
 (sem.length?'<div class="msg noprint">Sem valor da hora-aula: '+sem.map(x=>esc(x.nome)).join(', ')+'. Defina em Alunos para entrarem no total.</div>':'')+
 '<h3 class="sub">Aulas por aluno</h3>'+
@@ -827,16 +907,25 @@ if(reg.length)t+=' ('+reg.map(l=>l.data.slice(8)).join(', ')+')';
 if(ext.length)t+='\nAdicionais - ('+ext.map(l=>fmtD(l.data)).join(', ')+')'+(cr?', incluídos no valor.':'.');
 if(v)t+='\n\nTotal: '+money(tot)+', correspondente às aulas realizadas.';
 t+='\n\nQualquer dúvida, fico à disposição.';
+if(isPkg(a))t+='\n\nPacote: '+pkgUsed(a)+' de '+a.pkg.total+' aulas utilizadas.';
 if(p.pix)t+='\n\nPix - '+p.pix;return t}
+const fechado=(a,m)=>!!(a&&a.fech&&a.fech[m]);
+const fechLiberado=()=>{const a=alunoBy(relAluno);return !a||isPkg(a)||fechado(a,$('mes').value)};
 function relFech(out,m,tit,a){const L=lessonsOf(a,m);
 const head=relHead('Fechamento do mês · '+tit,'Aluno: '+esc(a.nome));
 if(!L.length){out.innerHTML=head+'<div class="empty">Nenhuma aula de '+esc(a.nome)+' em '+tit+'.</div>';return}
-out.innerHTML=head+
+let st='';
+if(isPkg(a))st='<div class="msg noprint">Pacote: <b>'+pkgUsed(a)+'/'+a.pkg.total+'</b> aulas usadas desde '+fmtD(a.pkg.ini)+'.</div>';
+else if(fechado(a,m))st='<div class="msg noprint">Mês fechado em <b>'+new Date(a.fech[m]).toLocaleDateString('pt-BR')+'</b>. <a href="#" id="fReabre">Reabrir</a></div>';
+else st='<div class="msg noprint">Mês em aberto. Confira as aulas e confirme o fechamento para liberar o envio.<br><button class="btn" type="button" id="fFecha" style="margin-top:8px">Confirmar fechamento de '+esc(tit)+'</button></div>';
+out.innerHTML=head+st+
 (L.some(l=>rateL(l)>0)?'':'<div class="msg noprint">Defina o valor da hora-aula de '+esc(a.nome)+' em Alunos para o valor entrar no texto.</div>')+
 (db.cfg.perfil.pix?'':'<div class="mut noprint" style="margin-top:8px">Dica: cadastre sua chave Pix em Meu perfil para ela entrar no texto.</div>')+
 '<div class="mut noprint" style="margin:10px 0 4px">Texto para enviar (você pode editar):</div>'+
 '<textarea id="fTxt" class="noprintarea" rows="13">'+esc(fechTexto(a,m))+'</textarea><div class="printonly" id="fPrint"></div>';
-$('fPrint').textContent=$('fTxt').value;$('fTxt').oninput=()=>{$('fPrint').textContent=$('fTxt').value}}
+$('fPrint').textContent=$('fTxt').value;$('fTxt').oninput=()=>{$('fPrint').textContent=$('fTxt').value};
+const fb2=$('fFecha');if(fb2)fb2.onclick=()=>{if(m===iso(new Date()).slice(0,7)&&!confirm('Este mês ainda não terminou. Fechar mesmo assim?'))return;a.fech=a.fech||{};a.fech[m]=Date.now();save();renderRel()};
+const fr=$('fReabre');if(fr)fr.onclick=e=>{e.preventDefault();delete a.fech[m];save();renderRel()}}
 
 // ações do relatório
 function textoAtual(){if(relTipo==='fech')return $('fTxt')?$('fTxt').value:'';if(relTipo==='previstos')return textoPrev();if(relTipo==='cli')return textoCli();return textoPro()}
@@ -848,16 +937,16 @@ function stepMes(d){const v=$('mes').value||iso(new Date()).slice(0,7);let[y,m]=
 $('mPrev').onclick=()=>stepMes(-1);$('mNext').onclick=()=>stepMes(1);
 $('relAl').onchange=()=>{relAluno=$('relAl').value;renderRel()};
 $('mes').onchange=renderRel;
-$('print').onclick=()=>ensureNome(async()=>{
+$('print').onclick=()=>{if(relTipo==='fech'&&!fechLiberado()){$('copied').textContent='Confirme o fechamento do mês antes de enviar ou imprimir.';return}ensureNome(async()=>{
 const keep=relTipo==='fech'&&$('fTxt')?$('fTxt').value:null;renderRel();
 if(keep!==null&&$('fTxt')){$('fTxt').value=keep;$('fPrint').textContent=keep}
 const old=document.title,a=alunoBy(relAluno),base={fech:'Fechamento',previstos:'Dias previstos',cli:'Relatório',pro:'Relatório profissional'}[relTipo];
 document.title=base+(relTipo!=='pro'&&a&&relAluno!=='__all__'?' '+a.nome:'')+' '+$('mes').value;
 try{await Promise.all([...$('relOut').querySelectorAll('img')].map(i=>i.decode?i.decode().catch(()=>{}):0))}catch(e){}
-window.print();setTimeout(()=>{document.title=old},3000)});
-$('copy').onclick=()=>{const t=textoAtual();if(!t){$('copied').textContent='Não há dados neste mês.';return}
+window.print();setTimeout(()=>{document.title=old},3000)})};
+$('copy').onclick=()=>{if(relTipo==='fech'&&!fechLiberado()){$('copied').textContent='Confirme o fechamento do mês antes de enviar ou imprimir.';return}const t=textoAtual();if(!t){$('copied').textContent='Não há dados neste mês.';return}
 copy(t,()=>$('copied').textContent='Texto copiado.',()=>$('copied').textContent='Não foi possível copiar.')};
-$('relWa').onclick=()=>{const t=textoAtual();if(!t){$('copied').textContent='Não há dados neste mês.';return}waOpen(t,(alunoBy(relAluno)||{}).tel)};
+$('relWa').onclick=()=>{if(relTipo==='fech'&&!fechLiberado()){$('copied').textContent='Confirme o fechamento do mês antes de enviar ou imprimir.';return}const t=textoAtual();if(!t){$('copied').textContent='Não há dados neste mês.';return}waOpen(t,(alunoBy(relAluno)||{}).tel)};
 
 // perfil (nome, logo, pix) e pedido do nome na primeira vez
 let nCb=null,SVG0='';
