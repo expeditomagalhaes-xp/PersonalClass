@@ -183,6 +183,15 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 }
 @media(min-width:900px){.bnav{display:none}}
 
+/* tela de abertura */
+#splash{position:fixed;inset:0;z-index:100;background:var(--bg);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:24px;transition:opacity .35s ease}
+#splash.out{opacity:0;pointer-events:none}
+#splash img{width:96px;height:96px;border-radius:22px;box-shadow:0 6px 22px rgba(0,0,0,.25)}
+#splash h1{margin:8px 0 0;font-size:28px}
+#splash p{margin:0;color:var(--mut);font-size:16px}
+#splash .sp{width:26px;height:26px;margin-top:18px;border:3px solid var(--line);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){#splash .sp{animation-duration:2s}#splash{transition:none}}
 /* zoom off, privacidade, alunos */
 html,body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-touch-callout:none}
 input,select,textarea{font-size:16px!important}
@@ -203,10 +212,11 @@ input,select,textarea{font-size:16px!important}
 .badge{font-size:11px;font-weight:700;border-radius:6px;padding:2px 7px;background:var(--acs);color:var(--ac);margin-left:6px;vertical-align:middle}
 .badge.p{background:#e8e0fb;color:#5a3fb0}
 #aBusca{margin-bottom:10px}
-@media print{:root,:root[data-theme]{--bg:#fff;--card:#fff;--ink:#000;--mut:#444;--line:#999;--ac:#000;--acs:#eee;--ok:#000;--okb:#eee}.priv .mv,.priv #fTxt{filter:none!important}.drawer,.scrim,.topbar,.fab,.bnav,.abar,.noprint,#toast{display:none!important}.main{margin:0}body{background:#fff;color:#000}.wrap{padding:0;max-width:none}.card{border:0;padding:0;box-shadow:none}.chip,.ri{background:none;color:#000;border:1px solid #999}.sum div{background:#fff}.printonly{display:block!important;white-space:pre-wrap;font-size:15px;line-height:1.55}.noprintarea{display:none!important}.rh{border-bottom:2px solid #000;break-inside:avoid;display:flex!important}.rh img{display:block!important;width:56px!important;height:56px!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+@media print{:root,:root[data-theme]{--bg:#fff;--card:#fff;--ink:#000;--mut:#444;--line:#999;--ac:#000;--acs:#eee;--ok:#000;--okb:#eee}.priv .mv,.priv #fTxt{filter:none!important}.drawer,.scrim,.topbar,.fab,.bnav,.abar,.noprint,#toast,#splash{display:none!important}.main{margin:0}body{background:#fff;color:#000}.wrap{padding:0;max-width:none}.card{border:0;padding:0;box-shadow:none}.chip,.ri{background:none;color:#000;border:1px solid #999}.sum div{background:#fff}.printonly{display:block!important;white-space:pre-wrap;font-size:15px;line-height:1.55}.noprintarea{display:none!important}.rh{border-bottom:2px solid #000;break-inside:avoid;display:flex!important}.rh img{display:block!important;width:56px!important;height:56px!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style>
 </head>
 <body>
+<div id="splash" role="status" aria-live="polite"><img src="icon-192.png" alt=""><h1 id="spH">Bem-vindo</h1><p>Personal Class</p><div class="sp" aria-hidden="true"></div></div>
 
 <!-- Tela inicial -->
 <section id="login" class="hide">
@@ -1028,7 +1038,9 @@ it.appendChild(bt);it.appendChild(dl);b.appendChild(it)})}
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
 load();applyTheme(db.cfg.theme);renderDHead();
 const hoje=iso(new Date());$('mes').value=hoje.slice(0,7);$('mM').value=hoje.slice(0,7);cur=hoje;$('dt').value=hoje;
+{const pn=String((db.cfg.perfil||{}).nome||'').trim().split(/\s+/)[0];if(pn)$('spH').textContent='Bem-vindo, '+pn}
 if(db.cfg.entered)showApp();else showLogin();
+{const sp=$('splash'),wait=Math.max(0,900-performance.now());setTimeout(()=>{sp.classList.add('out');setTimeout(()=>sp.remove(),400)},wait)}
 if(cl().uid)fbLoad().then(initAuth).catch(()=>{});
 try{if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)(()=>{const had=navigator.serviceWorker.controller;let rl=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had&&!rl){rl=true;location.reload()}});navigator.serviceWorker.register('sw.js').then(r=>r.update&&r.update()).catch(()=>{})})()}catch(e){}
 })();
