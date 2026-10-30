@@ -183,6 +183,12 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 }
 @media(min-width:900px){.bnav{display:none}}
 
+/* lista recolhível */
+.accb{display:flex;align-items:center;gap:10px;width:100%;padding:12px 0;border:0;background:none;color:var(--ink);font-size:16px;text-align:left;cursor:pointer}
+.accb .arr{flex:none;font-size:20px;line-height:1;color:var(--mut);transition:transform .2s}
+.acc.open .accb .arr{transform:rotate(180deg)}
+.acc .col{display:none}
+.acc.open .col{display:flex}
 /* tela de abertura */
 #splash{position:fixed;inset:0;z-index:100;background:var(--bg);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:24px;transition:opacity .35s ease}
 #splash.out{opacity:0;pointer-events:none}
@@ -212,7 +218,7 @@ input,select,textarea{font-size:16px!important}
 .badge{font-size:11px;font-weight:700;border-radius:6px;padding:2px 7px;background:var(--acs);color:var(--ac);margin-left:6px;vertical-align:middle}
 .badge.p{background:#e8e0fb;color:#5a3fb0}
 #aBusca{margin-bottom:10px}
-@media print{:root,:root[data-theme]{--bg:#fff;--card:#fff;--ink:#000;--mut:#444;--line:#999;--ac:#000;--acs:#eee;--ok:#000;--okb:#eee}.priv .mv,.priv #fTxt{filter:none!important}.drawer,.scrim,.topbar,.fab,.bnav,.abar,.noprint,#toast,#splash{display:none!important}.main{margin:0}body{background:#fff;color:#000}.wrap{padding:0;max-width:none}.card{border:0;padding:0;box-shadow:none}.chip,.ri{background:none;color:#000;border:1px solid #999}.sum div{background:#fff}.printonly{display:block!important;white-space:pre-wrap;font-size:15px;line-height:1.55}.noprintarea{display:none!important}.rh{border-bottom:2px solid #000;break-inside:avoid;display:flex!important}.rh img{display:block!important;width:56px!important;height:56px!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+@media print{:root,:root[data-theme]{--bg:#fff;--card:#fff;--ink:#000;--mut:#444;--line:#999;--ac:#000;--acs:#eee;--ok:#000;--okb:#eee}.priv .mv,.priv #fTxt{filter:none!important}.drawer,.scrim,.topbar,.fab,.bnav,.abar,.noprint,#toast,#splash{display:none!important}.acc .col{display:flex!important}.accb .arr{display:none}.main{margin:0}body{background:#fff;color:#000}.wrap{padding:0;max-width:none}.card{border:0;padding:0;box-shadow:none}.chip,.ri{background:none;color:#000;border:1px solid #999}.sum div{background:#fff}.printonly{display:block!important;white-space:pre-wrap;font-size:15px;line-height:1.55}.noprintarea{display:none!important}.rh{border-bottom:2px solid #000;break-inside:avoid;display:flex!important}.rh img{display:block!important;width:56px!important;height:56px!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style>
 </head>
 <body>
@@ -878,8 +884,9 @@ r.map(x=>'<tr><td>'+esc(x.nome)+'</td><td>'+x.aulas.length+(x.rep?' <span class=
 (totRep&&!cr?'<div class="mut" style="margin-top:8px">Reposições (↻) são adicionais e não entram no valor. Para cobrá-las, ative em Meu perfil.</div>':'')+
 (sem.length?'<div class="msg noprint">Sem valor da hora-aula: '+sem.map(x=>esc(x.nome)).join(', ')+'. Defina em Alunos para entrarem no total.</div>':'')+
 '<h3 class="sub">Aulas por aluno</h3>'+
-r.map(x=>'<div class="rep"><div class="row"><b class="grow">'+esc(x.nome)+'</b><span class="num" style="flex:none">'+x.aulas.length+'</span></div><div class="chips">'+x.aulas.map(chipL).join('')+'</div></div>').join('')+
-(totRep?'<div class="mut" style="margin-top:10px">↻ = reposição (aula fora do dia fixo do aluno)</div>':'')}
+r.map(x=>'<div class="rep acc"><button type="button" class="accb" aria-expanded="false"><b class="grow">'+esc(x.nome)+'</b><span class="num" style="flex:none">'+x.aulas.length+'</span><span class="arr" aria-hidden="true">⌄</span></button><div class="chips col">'+x.aulas.map(chipL).join('')+'</div></div>').join('')+
+(totRep?'<div class="mut" style="margin-top:10px">↻ = reposição (aula fora do dia fixo do aluno)</div>':'');
+out.querySelectorAll('.accb').forEach(b=>b.onclick=()=>{const o=b.getAttribute('aria-expanded')!=='true';b.setAttribute('aria-expanded',o?'true':'false');b.parentNode.classList.toggle('open',o)})}
 function textoPro(){const r=dados(),m=$('mes').value;if(!r.length)return'';
 let t='RELATÓRIO PROFISSIONAL - '+mesNome(m)+'\n\n';
 r.forEach(x=>{t+=x.nome+': '+x.aulas.length+' aula(s)'+(x.rep?' ('+x.rep+' reposição)':'')+(x.valor?(x.misto?' - '+fmtH(x.horas)+' h = ':' - '+fmtH(x.horas)+' h x '+money(x.valor)+' = ')+money(x.total):'')+'\n  '+x.aulas.map(l=>fmtD(l.data)+' '+l.hora+(isRep(l)?'*':'')).join(', ')+'\n\n'});
