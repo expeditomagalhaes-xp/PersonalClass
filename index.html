@@ -184,7 +184,8 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 @media(min-width:900px){.bnav{display:none}}
 
 /* zoom off, privacidade, alunos */
-html{touch-action:manipulation;-webkit-text-size-adjust:100%}
+html,body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-touch-callout:none}
+input,select,textarea{font-size:16px!important}
 .priv .mv{filter:blur(7px);user-select:none;-webkit-user-select:none}
 .priv #fTxt:not(:focus){filter:blur(6px)}
 .pk{font-size:11px;font-weight:700;color:var(--mut);margin-left:6px;background:var(--acs);border-radius:6px;padding:1px 6px;vertical-align:middle;white-space:nowrap}
@@ -533,6 +534,9 @@ function applyPriv(){document.body.classList.toggle('priv',priv);const b=$('eyeB
 $('eyeBtn').onclick=()=>{priv=!priv;try{localStorage.setItem('agenda_priv',priv?'1':'0')}catch(e){}applyPriv()};
 // sem zoom
 ['gesturestart','gesturechange','gestureend'].forEach(e=>document.addEventListener(e,ev=>ev.preventDefault(),{passive:false}));
+document.addEventListener('touchmove',ev=>{if(ev.touches&&ev.touches.length>1||(ev.scale&&ev.scale!==1))ev.preventDefault()},{passive:false});
+document.addEventListener('touchstart',ev=>{if(ev.touches&&ev.touches.length>1)ev.preventDefault()},{passive:false});
+document.addEventListener('dblclick',ev=>ev.preventDefault());
 document.addEventListener('wheel',ev=>{if(ev.ctrlKey)ev.preventDefault()},{passive:false});
 document.addEventListener('keydown',ev=>{if((ev.ctrlKey||ev.metaKey)&&['+','-','=','0'].includes(ev.key))ev.preventDefault()});
 // menu lateral
@@ -1026,7 +1030,7 @@ load();applyTheme(db.cfg.theme);renderDHead();
 const hoje=iso(new Date());$('mes').value=hoje.slice(0,7);$('mM').value=hoje.slice(0,7);cur=hoje;$('dt').value=hoje;
 if(db.cfg.entered)showApp();else showLogin();
 if(cl().uid)fbLoad().then(initAuth).catch(()=>{});
-try{if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
+try{if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)(()=>{const had=navigator.serviceWorker.controller;let rl=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had&&!rl){rl=true;location.reload()}});navigator.serviceWorker.register('sw.js').then(r=>r.update&&r.update()).catch(()=>{})})()}catch(e){}
 })();
 </script>
 </body>
