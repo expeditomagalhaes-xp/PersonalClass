@@ -158,8 +158,8 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 .mstep{display:flex;gap:6px;align-items:center;margin-bottom:12px}
 .mstep input{flex:1;font-weight:600;text-align:center}
 .mstep .ib{width:48px;height:48px;flex:none;font-size:24px;border:1px solid var(--line);background:var(--card);border-radius:12px;cursor:pointer;color:var(--ink)}
-.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px}
-.pill{flex:none;padding:8px 14px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:15px;cursor:pointer}
+.pills{display:flex;flex-wrap:nowrap;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;-webkit-overflow-scrolling:touch}
+.pill{flex:none;white-space:nowrap;padding:8px 14px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:15px;cursor:pointer}
 .pill.on{background:var(--ac);border-color:var(--ac);color:var(--onac);font-weight:600}
 .opts{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .opts button{display:flex;align-items:center;gap:12px;text-align:left;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
@@ -168,6 +168,7 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 .opts button.on{background:var(--acs);border:2px solid var(--ac)}
 .opts button.on i{border:6px solid var(--ac)}
 .abar{position:sticky;bottom:0;display:flex;gap:8px;flex-wrap:wrap;padding:10px 0;background:var(--bg);z-index:5}
+.abar .btn{white-space:nowrap}
 .abar .btn{flex:1;height:48px;padding:0 10px}
 .abar .btn.wa{flex:2;background:#25a244;border-color:#25a244;color:#fff}
 .abar .mut{flex-basis:100%;margin:0}
@@ -178,7 +179,8 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 .fab{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 #toast{bottom:calc(140px + env(safe-area-inset-bottom,0px))}
 .wrap{padding-bottom:150px}
-.abar{bottom:calc(58px + env(safe-area-inset-bottom,0px))}}
+.abar{position:fixed;left:0;right:0;bottom:calc(58px + env(safe-area-inset-bottom,0px));padding:10px 14px;border-top:1px solid var(--line);z-index:19;transform:translateZ(0)}
+#v-rel{padding-bottom:84px}}
 @media(min-width:900px){.bnav{display:none}}
 @media print{:root,:root[data-theme]{--bg:#fff;--card:#fff;--ink:#000;--mut:#444;--line:#999;--ac:#000;--acs:#eee;--ok:#000;--okb:#eee}.drawer,.scrim,.topbar,.fab,.bnav,.abar,.noprint,#toast{display:none!important}.main{margin:0}body{background:#fff;color:#000}.wrap{padding:0;max-width:none}.card{border:0;padding:0;box-shadow:none}.chip,.ri{background:none;color:#000;border:1px solid #999}.sum div{background:#fff}.printonly{display:block!important;white-space:pre-wrap;font-size:15px;line-height:1.55}.noprintarea{display:none!important}.rh{border-bottom:2px solid #000;break-inside:avoid;display:flex!important}.rh img{display:block!important;width:56px!important;height:56px!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style>
@@ -261,12 +263,12 @@ table.fin tfoot td{font-weight:700;border-top:2px solid var(--ink);border-bottom
 <div class="seg noprint" id="relModo"><button type="button" data-m="aluno">Do aluno</button><button type="button" data-m="fin">Meu financeiro</button></div>
 <div class="mstep noprint"><button class="ib" type="button" id="mPrev" aria-label="Mês anterior">‹</button><input type="month" id="mes" aria-label="Mês de referência"><button class="ib" type="button" id="mNext" aria-label="Próximo mês">›</button></div>
 <div id="cliBox" class="noprint">
-<div class="chips" id="relChips"></div><select id="relAl" class="hide" aria-hidden="true" tabindex="-1"></select>
+<div class="pills" id="relChips"></div><select id="relAl" class="hide" aria-hidden="true" tabindex="-1"></select>
 <div class="opts" id="relOpts"><button type="button" data-t="fech"><i></i><div><b>Fechamento do mês</b><span>Valor total para cobrar</span></div></button><button type="button" data-t="cli"><i></i><div><b>Aulas realizadas</b><span>Lista com data e hora</span></div></button><button type="button" data-t="previstos"><i></i><div><b>Dias previstos</b><span>Agenda do mês com feriados</span></div></button></div>
 </div>
 <select id="relTipoSel" class="hide" aria-hidden="true" tabindex="-1"><option value="fech">fech</option><option value="previstos">previstos</option><option value="cli">cli</option><option value="pro">pro</option></select>
 <div class="card" id="relOut"></div>
-<div class="abar noprint"><div class="mut" id="copied"></div><button class="btn wa hide" id="relWa" type="button">Enviar no WhatsApp</button><button class="btn sec" id="copy" type="button">Copiar</button><button class="btn" id="print" type="button">PDF</button></div>
+<div class="abar noprint"><div class="mut" id="copied"></div><button class="btn wa hide" id="relWa" type="button">WhatsApp</button><button class="btn sec" id="copy" type="button">Copiar</button><button class="btn" id="print" type="button">PDF</button></div>
 </section>
 
 <section id="v-msg" class="hide">
