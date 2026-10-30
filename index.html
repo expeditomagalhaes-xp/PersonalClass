@@ -833,8 +833,7 @@ if(!list.length){L.innerHTML='<div class="empty">Nenhum aluno encontrado.</div>'
 list.forEach(a=>{const r=document.createElement('div');r.className='acard';r.tabIndex=0;
 const done=isPkg(a)&&pkgUsed(a)>=a.pkg.total;
 r.innerHTML=avatar(a.nome)+'<div class="grow"><div class="nm">'+esc(a.nome)+pkgTag(a)+'<span class="badge'+(isPkg(a)?' p':'')+'">'+(isPkg(a)?'Pacote':'Mensal')+'</span></div>'+
-(done?'<div class="sub" style="color:#8a4b00;font-weight:600">Pacote concluído. Toque para renovar.</div>':'')+
-((a.tel||a.obs)?'<div class="sub">'+esc([a.tel,a.obs].filter(Boolean).join(' • '))+'</div>':'')+'</div><span class="go" aria-hidden="true">›</span>';
+(done?'<div class="sub" style="color:#8a4b00;font-weight:600">Pacote concluído. Toque para renovar.</div>':'')+'</div><span class="go" aria-hidden="true">›</span>';
 r.setAttribute('role','button');r.setAttribute('aria-label','Editar '+a.nome);
 r.onclick=()=>openAl(a);r.onkeydown=ev=>{if(ev.key==='Enter')openAl(a)};L.appendChild(r)})}
 document.querySelectorAll('#aFil button').forEach(b=>b.onclick=()=>{alFil=b.dataset.f;renderAlunos()});
